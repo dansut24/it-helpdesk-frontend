@@ -26,15 +26,15 @@ const Login = () => {
       const mockUser = {
         id: 1,
         username: "testuser",
-        roles: ["admin"],
+        roles: ["admin", "selfservice"],
         team_id: 1,
         token: "fake-jwt-token"
       };
 
       sessionStorage.setItem("user", JSON.stringify(mockUser));
       sessionStorage.setItem("token", mockUser.token);
-      sessionStorage.setItem("selectedRole", mockUser.roles[0]);
 
+      // Do not set selectedRole to allow SPA logic to redirect to /select-role
       navigate("/select-role");
     } else {
       setError("Invalid test credentials");
