@@ -33,9 +33,9 @@ const Login = () => {
 
       sessionStorage.setItem("user", JSON.stringify(mockUser));
       sessionStorage.setItem("token", mockUser.token);
+      sessionStorage.setItem("selectedRole", "choose"); // placeholder to prevent /login loop
 
-      // Do not set selectedRole to allow SPA logic to redirect to /select-role
-      navigate("/select-role");
+      navigate("/");
     } else {
       setError("Invalid test credentials");
     }
