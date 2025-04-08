@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Box,
   TextField,
@@ -11,7 +10,6 @@ import {
 } from "@mui/material";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
@@ -35,8 +33,8 @@ const Login = () => {
       sessionStorage.setItem("token", mockUser.token);
       sessionStorage.setItem("selectedRole", "choose");
 
-      navigate("/temp", { replace: true });
-      setTimeout(() => navigate("/"), 0);
+      // Force reload to trigger SPA routing and layout detection
+      window.location.href = "/";
     } else {
       setError("Invalid test credentials");
     }
