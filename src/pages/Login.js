@@ -33,9 +33,10 @@ const Login = () => {
 
       sessionStorage.setItem("user", JSON.stringify(mockUser));
       sessionStorage.setItem("token", mockUser.token);
-      sessionStorage.setItem("selectedRole", "choose"); // placeholder to prevent /login loop
+      sessionStorage.setItem("selectedRole", "choose");
 
-      navigate("/");
+      navigate("/temp", { replace: true });
+      setTimeout(() => navigate("/"), 0);
     } else {
       setError("Invalid test credentials");
     }
