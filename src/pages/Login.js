@@ -1,110 +1,74 @@
-import React, { useState, useContext } from "react";
+
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 import {
   Box,
-  Button,
-  Container,
   TextField,
+  Button,
   Typography,
-  Alert,
   Paper,
+  Alert,
 } from "@mui/material";
 
-const Login = ({ setToken }) => {
+const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+  const handleLogin = () => {
+    const { username, password } = formData;
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+    if (username === "testuser" && password === "password123") {
+      const mockUser = {
+        id: 1,
+        username: "testuser",
+        roles: ["admin"],
+        team_id: 1,
+        token: "fake-jwt-token"
+      };
 
-      // Store token globally
-      login(data); // Sets user context
-      setToken(data.token);
-      sessionStorage.setItem("token", data.token);
-      sessionStorage.setItem("user", JSON.stringify(data)); // Store full user object
+      sessionStorage.setItem("user", JSON.stringify(mockUser));
+      sessionStorage.setItem("token", mockUser.token);
+      sessionStorage.setItem("selectedRole", mockUser.roles[0]);
 
-      if (data.roles?.length > 1) {
-        // Redirect to role selection
-        navigate("/select-role", {
-          state: {
-            roles: data.roles,
-            user: data,
-          },
-        });
-      } else {
-        const selectedRole = (data.roles?.[0] || data.role || "user").toLowerCase();
-        sessionStorage.setItem("selectedRole", selectedRole);
-        login({ ...data, role: selectedRole });
-        navigate("/"); // Main app
-      }
-
-    } catch (err) {
-      setError(err.message || "Login failed");
+      navigate("/admin-dashboard");
+    } else {
+      setError("Invalid test credentials");
     }
   };
 
   return (
-    <Container maxWidth="sm">
-      <Paper elevation={6} sx={{ p: 4, mt: 10 }}>
-        <Typography variant="h4" gutterBottom align="center">
-          Login
-        </Typography>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-
+    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+      <Paper elevation={3} sx={{ p: 4, width: 300 }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>Login</Typography>
+        {error && <Alert severity="error">{error}</Alert>}
         <TextField
+          fullWidth
           label="Username"
           name="username"
           value={formData.username}
           onChange={handleChange}
-          fullWidth
-          margin="normal"
-          variant="outlined"
+          sx={{ mb: 2 }}
         />
         <TextField
+          fullWidth
+          type="password"
           label="Password"
           name="password"
-          type="password"
           value={formData.password}
           onChange={handleChange}
-          fullWidth
-          margin="normal"
-          variant="outlined"
+          sx={{ mb: 2 }}
         />
-
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={handleLogin}
-        >
+        <Button variant="contained" color="primary" fullWidth onClick={handleLogin}>
           Login
         </Button>
       </Paper>
-    </Container>
+    </Box>
   );
 };
-
-console.log("API Base URL:", process.env.REACT_APP_API_URL);
 
 export default Login;
