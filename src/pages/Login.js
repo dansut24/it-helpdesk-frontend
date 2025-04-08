@@ -35,7 +35,7 @@ const Login = () => {
       sessionStorage.setItem("token", mockUser.token);
       sessionStorage.setItem("selectedRole", mockUser.roles[0]);
 
-      navigate("/admin-dashboard");
+      navigate("/select-role");
     } else {
       setError("Invalid test credentials");
     }
