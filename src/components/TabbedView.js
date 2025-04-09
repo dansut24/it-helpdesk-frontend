@@ -865,7 +865,17 @@ if (savedQuery) {
             </Box>
           )}
 
-<Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1200, paddingBottom: 'env(safe-area-inset-bottom, 60px)' }}>
+<Paper
+  sx={{
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1200,
+    height: "64px", // standard BottomNavigation height
+    paddingBottom: "env(safe-area-inset-bottom)",
+  }}
+>
   <BottomNavigation
     value={selectedTab}
     onChange={(event, newValue) => {
@@ -1038,8 +1048,9 @@ if (savedQuery) {
 <Box
   sx={{
     marginLeft: !isMobile ? "250px" : 0,
-    marginTop: isMobile && showSearch ? "80px" : 0,  // ✅ pushes content down
+    marginTop: isMobile && showSearch ? "80px" : 0,
     padding: "24px",
+    paddingBottom: isMobile ? "100px" : 0, // add space for bottom nav
     minHeight: "100vh",
     bgcolor: "#f4f4f4",
     overflowX: "hidden",
