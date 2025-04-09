@@ -42,6 +42,18 @@ import TaskDetails from "../pages/TaskDetails";
 // Due to length, this will be posted in multiple parts
 
 const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs }) => {
+  const handleSwitchRole = () => {
+    const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+    const roles = userData?.roles || [];
+
+    if (roles.length > 1) {
+      sessionStorage.removeItem("selectedRole");
+      navigate("/select-role", { state: { roles, user: userData } });
+    } else {
+      alert("Only one role assigned to this account.");
+    }
+  };
+
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
