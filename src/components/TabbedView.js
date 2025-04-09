@@ -899,13 +899,13 @@ if (savedQuery) {
     }}
     showLabels
   >
-    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
-    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} onClick={(e) => handleMobileMenu(e, "Incidents")} />
-    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} onClick={(e) => handleMobileMenu(e, "Service Requests")} />
-    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} onClick={(e) => handleMobileMenu(e, "Changes")} />
-    <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon />} />
-    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
-    <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon />} />
+    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
+    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} onClick={(e) => handleMobileMenu(e, "Incidents")} />
+    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} onClick={(e) => handleMobileMenu(e, "Service Requests")} />
+    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} onClick={(e) => handleMobileMenu(e, "Changes")} />
+    <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
+    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
+    <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
   </BottomNavigation>
 </Box>
 
