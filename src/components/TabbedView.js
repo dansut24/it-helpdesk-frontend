@@ -882,6 +882,8 @@ if (savedQuery) {
     onChange={(event, newValue) => {
       if (newValue === "More") {
         setMoreAnchor(event.currentTarget);
+      } else if (newValue === "Logout") {
+        setShowLogoutConfirm(true);
       } else {
         openTab(newValue);
       }
@@ -900,6 +902,8 @@ if (savedQuery) {
     <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
     <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
     <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
     <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
   </BottomNavigation>
 </Box>
