@@ -232,18 +232,6 @@ if (savedQuery) {
     window.location.reload();
   };
 
-  const handleSwitchRole = () => {
-    const userData = JSON.parse(sessionStorage.getItem("user")); // assuming user data is stored
-    const roles = userData?.roles || [];
-  
-    if (roles.length > 1) {
-      sessionStorage.removeItem("selectedRole");
-      navigate("/select-role", { state: { roles, user: userData } });
-    } else {
-      alert("Only one role assigned to this account.");
-    }
-  };
-  
   const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}");
   const activeRole = sessionStorage.getItem("selectedRole") || storedUser?.role?.toLowerCase() || "Unknown";
 
