@@ -865,23 +865,26 @@ if (savedQuery) {
             </Box>
           )}
 
-<Paper
+<Box
   sx={{
     position: "fixed",
     bottom: 0,
     left: 0,
     right: 0,
     zIndex: 1200,
+    width: "100vw",
     height: "64px",
-    width: "100%",
+    backgroundColor: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: "env(safe-area-inset-bottom)",
     paddingLeft: "env(safe-area-inset-left)",
     paddingRight: "env(safe-area-inset-right)",
-    paddingBottom: "env(safe-area-inset-bottom)",
-    boxSizing: "border-box",
+    boxShadow: 3,
   }}
 >
   <BottomNavigation
-    sx={{ width: "100%" }}
     value={selectedTab}
     onChange={(event, newValue) => {
       if (newValue === "More") {
@@ -892,47 +895,33 @@ if (savedQuery) {
         openTab(newValue);
       }
     }}
-    showLabels
-  >
-    value={selectedTab}
-    onChange={(event, newValue) => {
-      if (newValue === "More") {
-        handleMoreClick(event);
-      } else if (newValue === "Logout") {
-        setShowLogoutConfirm(true);
-      } else {
-        openTab(newValue);
-      }
-    }}
+    sx={{ width: "100%", maxWidth: 600 }}
     showLabels
   >
     <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
     <BottomNavigationAction
-  label="Incidents"
-  value="Incidents"
-  icon={<FolderIcon />}
-  onClick={(e) => handleMobileMenu(e, "Incidents")}
-/>
-
-<BottomNavigationAction
-  label="Requests"
-  value="Service Requests"
-  icon={<BuildIcon />}
-  onClick={(e) => handleMobileMenu(e, "Service Requests")}
-/>
-
-<BottomNavigationAction
-  label="Changes"
-  value="Changes"
-  icon={<BuildIcon />}
-  onClick={(e) => handleMobileMenu(e, "Changes")}
-/>
-
+      label="Incidents"
+      value="Incidents"
+      icon={<FolderIcon />}
+      onClick={(e) => handleMobileMenu(e, "Incidents")}
+    />
+    <BottomNavigationAction
+      label="Requests"
+      value="Service Requests"
+      icon={<BuildIcon />}
+      onClick={(e) => handleMobileMenu(e, "Service Requests")}
+    />
+    <BottomNavigationAction
+      label="Changes"
+      value="Changes"
+      icon={<BuildIcon />}
+      onClick={(e) => handleMobileMenu(e, "Changes")}
+    />
     <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon />} />
     <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
     <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon />} />
   </BottomNavigation>
-</Paper>
+</Box>
 
 
 <Menu
