@@ -55,18 +55,6 @@ const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs })
     } else {
       alert("Only one role assigned to this account.");
     }
-  };
-
-  const handleSwitchRole = () => {
-    const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
-    const roles = userData?.roles || [];
-
-    if (roles.length > 1) {
-      sessionStorage.removeItem("selectedRole");
-      navigate("/select-role", { state: { roles, user: userData } });
-    } else {
-      alert("Only one role assigned to this account.");
-    }
   };const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchQuery, setSearchQuery] = useState("");
