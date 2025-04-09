@@ -882,9 +882,7 @@ if (savedQuery) {
     value={selectedTab}
     onChange={(event, newValue) => {
       if (newValue === "More") {
-        handleMoreClick(event);
-      } else if (newValue === "Logout") {
-        setShowLogoutConfirm(true);
+        setMoreAnchor(event.currentTarget);
       } else {
         openTab(newValue);
       }
@@ -894,18 +892,16 @@ if (savedQuery) {
       height: "100%",
       display: "flex",
       justifyContent: "space-around",
-      paddingLeft: "env(safe-area-inset-left)",
-      paddingRight: "env(safe-area-inset-right)",
+      maxWidth: "100vw",
+      overflow: "hidden",
     }}
     showLabels
   >
-    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
-    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} onClick={(e) => handleMobileMenu(e, "Incidents")} />
-    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} onClick={(e) => handleMobileMenu(e, "Service Requests")} />
-    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} onClick={(e) => handleMobileMenu(e, "Changes")} />
-    <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
-    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
-    <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon  sx={{ flexShrink: 0, minWidth: 0 }}/>} />
+    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
   </BottomNavigation>
 </Box>
 
@@ -1249,3 +1245,32 @@ if (savedQuery) {
 };
 
 export default TabbedView;
+
+
+<Menu
+  anchorEl={moreAnchor}
+  open={Boolean(moreAnchor)}
+  onClose={() => setMoreAnchor(null)}
+  PaperProps={{
+    sx: {
+      minWidth: 180,
+      borderRadius: 2,
+      boxShadow: 5,
+      p: 1,
+      bgcolor: "background.paper",
+    },
+  }}
+>
+  <MenuItem onClick={() => {
+    setMoreAnchor(null);
+    handleSwitchRole();
+  }}>
+    Switch Role
+  </MenuItem>
+  <MenuItem onClick={() => {
+    setMoreAnchor(null);
+    setShowLogoutConfirm(true);
+  }}>
+    Logout
+  </MenuItem>
+</Menu>
