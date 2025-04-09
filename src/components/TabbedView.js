@@ -57,7 +57,18 @@ const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs })
     }
   };
 
-  const [moreAnchor, setMoreAnchor] = useState(null);
+  const handleSwitchRole = () => {
+    const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+    const roles = userData?.roles || [];
+
+    if (roles.length > 1) {
+      sessionStorage.removeItem("selectedRole");
+      navigate("/select-role", { state: { roles, user: userData } });
+    } else {
+      alert("Only one role assigned to this account.");
+    }
+  };
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,11 +81,6 @@ const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs })
   const navigate = useNavigate();
   const [confirmCloseAllOpen, setConfirmCloseAllOpen] = useState(false);
   const [showMobileTabs, setShowMobileTabs] = useState(false);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-
-
-
-
   useEffect(() => {
     console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
   }, []);
