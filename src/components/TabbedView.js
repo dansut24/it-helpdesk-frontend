@@ -42,8 +42,10 @@ import TaskDetails from "../pages/TaskDetails";
 // Due to length, this will be posted in multiple parts
 
 const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs }) => {
-  const [moreAnchor, setMoreAnchor] = useState(null);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  
+const [moreAnchor, setMoreAnchor] = useState(null);
+  
+const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleSwitchRole = () => {
     const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
@@ -55,7 +57,9 @@ const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs })
     } else {
       alert("Only one role assigned to this account.");
     }
-  };const theme = useTheme();
+  };
+
+const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchQuery, setSearchQuery] = useState("");
   const [lastSearchQuery, setLastSearchQuery] = useState("");
