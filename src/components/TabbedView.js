@@ -870,18 +870,12 @@ if (savedQuery) {
     position: "fixed",
     bottom: 0,
     left: 0,
-    right: 0,
-    zIndex: 1200,
     width: "100vw",
+    zIndex: 1200,
     height: "64px",
     backgroundColor: "white",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    overflow: "hidden",
     paddingBottom: "env(safe-area-inset-bottom)",
-    paddingLeft: "env(safe-area-inset-left)",
-    paddingRight: "env(safe-area-inset-right)",
-    boxShadow: 3,
   }}
 >
   <BottomNavigation
@@ -895,28 +889,20 @@ if (savedQuery) {
         openTab(newValue);
       }
     }}
-    sx={{ width: "100%", maxWidth: 600 }}
+    sx={{
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      justifyContent: "space-around",
+      paddingLeft: "env(safe-area-inset-left)",
+      paddingRight: "env(safe-area-inset-right)",
+    }}
     showLabels
   >
     <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
-    <BottomNavigationAction
-      label="Incidents"
-      value="Incidents"
-      icon={<FolderIcon />}
-      onClick={(e) => handleMobileMenu(e, "Incidents")}
-    />
-    <BottomNavigationAction
-      label="Requests"
-      value="Service Requests"
-      icon={<BuildIcon />}
-      onClick={(e) => handleMobileMenu(e, "Service Requests")}
-    />
-    <BottomNavigationAction
-      label="Changes"
-      value="Changes"
-      icon={<BuildIcon />}
-      onClick={(e) => handleMobileMenu(e, "Changes")}
-    />
+    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} onClick={(e) => handleMobileMenu(e, "Incidents")} />
+    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} onClick={(e) => handleMobileMenu(e, "Service Requests")} />
+    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} onClick={(e) => handleMobileMenu(e, "Changes")} />
     <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon />} />
     <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
     <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon />} />
