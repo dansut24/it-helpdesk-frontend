@@ -865,7 +865,7 @@ if (savedQuery) {
             </Box>
           )}
 
-<Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1200 }}>
+<Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1200, paddingBottom: 'env(safe-area-inset-bottom, 60px)' }}>
   <BottomNavigation
     value={selectedTab}
     onChange={(event, newValue) => {
