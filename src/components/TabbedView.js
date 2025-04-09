@@ -872,11 +872,28 @@ if (savedQuery) {
     left: 0,
     right: 0,
     zIndex: 1200,
-    height: "64px", // standard BottomNavigation height
+    height: "64px",
+    width: "100%",
+    paddingLeft: "env(safe-area-inset-left)",
+    paddingRight: "env(safe-area-inset-right)",
     paddingBottom: "env(safe-area-inset-bottom)",
+    boxSizing: "border-box",
   }}
 >
   <BottomNavigation
+    sx={{ width: "100%" }}
+    value={selectedTab}
+    onChange={(event, newValue) => {
+      if (newValue === "More") {
+        handleMoreClick(event);
+      } else if (newValue === "Logout") {
+        setShowLogoutConfirm(true);
+      } else {
+        openTab(newValue);
+      }
+    }}
+    showLabels
+  >
     value={selectedTab}
     onChange={(event, newValue) => {
       if (newValue === "More") {
@@ -1048,9 +1065,8 @@ if (savedQuery) {
 <Box
   sx={{
     marginLeft: !isMobile ? "250px" : 0,
-    marginTop: isMobile && showSearch ? "80px" : 0,
+    marginTop: isMobile && showSearch ? "80px" : 0,  // ✅ pushes content down
     padding: "24px",
-    paddingBottom: isMobile ? "100px" : 0, // add space for bottom nav
     minHeight: "100vh",
     bgcolor: "#f4f4f4",
     overflowX: "hidden",
