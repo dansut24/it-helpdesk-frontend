@@ -1240,32 +1240,3 @@ if (savedQuery) {
 };
 
 export default TabbedView;
-
-
-<Menu
-  anchorEl={moreAnchor}
-  open={Boolean(moreAnchor)}
-  onClose={() => setMoreAnchor(null)}
-  PaperProps={{
-    sx: {
-      minWidth: 180,
-      borderRadius: 2,
-      boxShadow: 5,
-      p: 1,
-      bgcolor: "background.paper",
-    },
-  }}
->
-  <MenuItem onClick={() => {
-    setMoreAnchor(null);
-    handleSwitchRole();
-  }}>
-    Switch Role
-  </MenuItem>
-  <MenuItem onClick={() => {
-    setMoreAnchor(null);
-    setShowLogoutConfirm(true);
-  }}>
-    Logout
-  </MenuItem>
-</Menu>
