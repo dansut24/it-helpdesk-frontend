@@ -192,9 +192,7 @@ if (savedQuery) {
   
     setSocket(newSocket);
   
-    return (
-  <>
-  ) => {
+    return () => {
       newSocket.disconnect();
     };
   }, []);
