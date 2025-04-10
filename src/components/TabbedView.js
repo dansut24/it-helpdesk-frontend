@@ -192,7 +192,9 @@ if (savedQuery) {
   
     setSocket(newSocket);
   
-    return () => {
+    return (
+  <>
+  ) => {
       newSocket.disconnect();
   }, []);
   
@@ -897,7 +899,14 @@ if (savedQuery) {
     }}
     showLabels
   >
-    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon /><BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon /><BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon /><BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon /><BottomNavigationAction label="More" value="More" icon={<MoreVertIcon /></BottomNavigation>
+    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    } sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+    } sx={{ flexShrink: 0, minWidth: 0 }} />
+    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} sx={{ flexShrink: 0, minWidth: 0 }} />
+  </BottomNavigation>
 </Box>
 
 
