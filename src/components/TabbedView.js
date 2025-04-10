@@ -70,8 +70,7 @@ const theme = useTheme();
   const [searchTriggered, setSearchTriggered] = useState(false);
   const navigate = useNavigate();
   const [confirmCloseAllOpen, setConfirmCloseAllOpen] = useState(false);
-  const [showMobileTabs, setShowMobileTabs] = useState(false);
-  useEffect(() => {
+    useEffect(() => {
     console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
   }, []);
 
@@ -109,9 +108,9 @@ if (savedQuery) {
   
       try {
         const [incidentsRes, requestsRes, changesRes] = await Promise.all([
-          fetch("${process.env.REACT_APP_API_URL}/api/incidents", { headers }),
-          fetch("${process.env.REACT_APP_API_URL}/api/service-requests", { headers }),
-          fetch("${process.env.REACT_APP_API_URL}/api/changes", { headers }),
+          fetch(`${process.env.REACT_APP_API_URL}/api/incidents`, { headers }),
+          fetch(`${process.env.REACT_APP_API_URL}/api/service-requests`, { headers }),
+          fetch(`${process.env.REACT_APP_API_URL}/api/changes`, { headers }),
         ]);
   
         if (!incidentsRes.ok || !requestsRes.ok || !changesRes.ok) {
@@ -156,7 +155,7 @@ if (savedQuery) {
   const fetchNotifications = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const res = await fetch("${process.env.REACT_APP_API_URL}/api/notifications", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -194,6 +193,7 @@ if (savedQuery) {
   
     return () => {
       newSocket.disconnect();
+    };
   }, []);
   
   const openTab = (tab) => {
@@ -523,10 +523,7 @@ if (savedQuery) {
   "& .MuiListItemText-primary": {
     fontSize: "0.90rem",           // ⬅️ shrink text
   },
-  "& .MuiListItem-root": {
-        py: 0.5,                   // ⬅️ Reduce vertical padding (space between items)
-        minHeight: "28px",         // Optional: compact list items
-      },
+
 },
           }}
         >
@@ -760,7 +757,7 @@ if (savedQuery) {
         const token = sessionStorage.getItem("token");
 
         await axios.post(
-          "${process.env.REACT_APP_API_URL}/api/notifications",
+          `${process.env.REACT_APP_API_URL}/api/notifications`,
           {
             user_id: user.id,
             message: "🧪 Live test notification from UI",
@@ -897,7 +894,11 @@ if (savedQuery) {
     }}
     showLabels
   >
-    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon /><BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon /><BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon /><BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon /><BottomNavigationAction label="More" value="More" icon={<MoreVertIcon /></BottomNavigation>
+    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
+<BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
+<BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
+<BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
+<BottomNavigationAction label="More" value="More" icon={<MoreVertIcon /></BottomNavigation>
 </Box>
 
 
@@ -1206,7 +1207,7 @@ if (savedQuery) {
           onClick={async () => {
             try {
               await axios.put(
-                "${process.env.REACT_APP_API_URL}/api/notifications/mark-all-read",
+                `${process.env.REACT_APP_API_URL}/api/notifications/mark-all-read`,
                 {},
                 {
                   headers: {
