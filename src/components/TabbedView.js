@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -69,7 +68,6 @@ const theme = useTheme();
   const [changes, setChanges] = useState([]);
   const [searchTriggered, setSearchTriggered] = useState(false);
   const navigate = useNavigate();
-  const [confirmCloseAllOpen, setConfirmCloseAllOpen] = useState(false);
     useEffect(() => {
     console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
   }, []);
@@ -898,12 +896,6 @@ if (savedQuery) {
     <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
     <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
     <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
-    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
-  </BottomNavigation>
-    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
-<BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
-<BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
-<BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
 <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
 </BottomNavigation>
 </Box>
