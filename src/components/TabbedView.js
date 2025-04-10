@@ -636,7 +636,6 @@ if (savedQuery) {
   
   return (
   <>
-    <>
       {!isMobile && (
         <Drawer
           anchor="left"
