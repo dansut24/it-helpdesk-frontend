@@ -305,8 +305,7 @@ if (savedQuery) {
           {items.length > 0 && (
             <>
               <Typography variant="caption" sx={{ pl: 2 }} color={isMobileView ? "black" : "white"}>
-                {key.charAt(0).toUpperCase() + key.slice(1</>
-)}
+                {key.charAt(0).toUpperCase() + key.slice(1)}
               </Typography>
               {items.map((item) => {
   if (key === "kb") {
@@ -349,22 +348,18 @@ if (savedQuery) {
       <ListItemText primary={item.title} />
     </ListItem>
   );
-}</>
-)}
+})}
 
             </>
-          </>
-)}
+          )}
         </React.Fragment>
-      )</>
-)}
+      ))}
 
       {Object.values(filteredResults).every((arr) => arr.length === 0) && (
         <Typography variant="body2" sx={{ px: 2 }} color={isMobileView ? "black" : "white"}>
           No results found.
         </Typography>
-      </>
-)}
+      )}
     </Box>
   );
 
@@ -497,8 +492,7 @@ if (savedQuery) {
                 {article.category}
               </Typography>
             </Paper>
-          )</>
-)}
+          ))}
         </Box>
       );
     }
@@ -549,8 +543,7 @@ if (savedQuery) {
   </Typography>
 
   <Tooltip title="Notifications">
-    <IconButton onClick={(e) => setNotificationAnchorEl(e.currentTarget</>
-)} sx={{ color: "white" }}>
+    <IconButton onClick={(e) => setNotificationAnchorEl(e.currentTarget)} sx={{ color: "white" }}>
         <Badge
       badgeContent={
         Array.isArray(notifications)
@@ -607,8 +600,7 @@ if (savedQuery) {
             />
           </Box>
 
-          {searchQuery && !searchTriggered && renderSearchResults(false</>
-)}
+          {searchQuery && !searchTriggered && renderSearchResults(false)}
 
 
 
@@ -628,32 +620,27 @@ if (savedQuery) {
       <ListItem key={navItem} sx={{ pl: 2, pr: 1 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
           <Box
-            onClick={() => openTab(navItem</>
-)}
+            onClick={() => openTab(navItem)}
             sx={{ cursor: "pointer", flexGrow: 1 }}
           >
             <ListItemText primary={navItem} />
           </Box>
 
           {showPlus && (
-            <Tooltip title={`Raise ${navItem.slice(0, -1</>
-)}`}>
+            <Tooltip title={`Raise ${navItem.slice(0, -1)}`}>
               <IconButton
                 size="small"
                 sx={{ color: "white", ml: 1 }}
-                onClick={() => openTab(plusTab</>
-)}
+                onClick={() => openTab(plusTab)}
               >
                 <Typography fontWeight="bold">+</Typography>
               </IconButton>
             </Tooltip>
-          </>
-)}
+          )}
         </Box>
       </ListItem>
     );
-  }</>
-)}
+  })}
 </List>
 
 
@@ -692,8 +679,7 @@ if (savedQuery) {
       <ListItem
         key={tab}
         sx={{ display: "flex", justifyContent: "space-between" }}
-        onClick={() => openTab(tab</>
-)}
+        onClick={() => openTab(tab)}
         button
       >
         <ListItemText primary={tab} />
@@ -708,11 +694,9 @@ if (savedQuery) {
           >
             <CloseIcon fontSize="small" />
           </IconButton>
-        </>
-)}
+        )}
       </ListItem>
-    )</>
-)}
+    ))}
   </List>
 </Box>
 
@@ -800,16 +784,13 @@ if (savedQuery) {
 
               </Box>
     </Drawer>
-      </>
-)}
+      )}
 
-      {isMobile && (<>
-
+      {isMobile && (
         <>
           <Tooltip title="Search">
             <IconButton
-              onClick={() => setShowSearch(true</>
-)}
+              onClick={() => setShowSearch(true)}
               sx={{
                 position: "fixed",
                 top: 10,
@@ -874,15 +855,12 @@ if (savedQuery) {
               />
              {searchQuery && !searchTriggered && (
               <Box sx={{ mt: 2, maxHeight: "60vh", overflowY: "auto" }}>
-                {renderSearchResults(true</>
-)}
+                {renderSearchResults(true)}
             </Box>
-              </>
-)}
+              )}
 
             </Box>
-          </>
-)}
+          )}
 
 <Box
   sx={{
@@ -929,8 +907,7 @@ if (savedQuery) {
 
 <Menu
   anchorEl={moreAnchor?.currentTarget || moreAnchor}
-  open={Boolean(moreAnchor</>
-)}
+  open={Boolean(moreAnchor)}
   onClose={handleMoreClose}
   PaperProps={{
     sx: {
@@ -992,8 +969,7 @@ if (savedQuery) {
     ) : (
       <MenuItem disabled>No Open Tabs</MenuItem>
     )
-  </>
-)}
+  )}
 </Menu>
 
 
@@ -1001,8 +977,7 @@ if (savedQuery) {
           {selectedTab !== "Dashboard" && (
             <Tooltip title="Close Tab">
               <IconButton
-                onClick={() => closeTab(selectedTab</>
-)}
+                onClick={() => closeTab(selectedTab)}
                 sx={{
                   position: "fixed",
                   top: 10,
@@ -1015,11 +990,9 @@ if (savedQuery) {
                 <CloseIcon />
               </IconButton>
             </Tooltip>
-          </>
-)}
+          )}
         </>
-      </>
-)}
+      )}
 
 {!isMobile && tabHistory.length > 0 && (
   <Tooltip title="Go Back">
@@ -1037,16 +1010,13 @@ if (savedQuery) {
       <Typography variant="body2" fontWeight="bold">⬅</Typography>
     </IconButton>
   </Tooltip>
-</>
 )}
 
 
-{isMobile && (<>
-
+{isMobile && (
   <>
     <IconButton
-      onClick={() => setMobileDrawerOpen(true</>
-)}
+      onClick={() => setMobileDrawerOpen(true)}
       sx={{
         position: "fixed",
         top: 10,
@@ -1062,8 +1032,7 @@ if (savedQuery) {
     <Drawer
       anchor="left"
       open={mobileDrawerOpen}
-      onClose={() => setMobileDrawerOpen(false</>
-)}
+      onClose={() => setMobileDrawerOpen(false)}
     >
       <Box sx={{ width: 250, p: 2 }}>
         <Typography variant="h6" gutterBottom>Menu</Typography>
@@ -1093,14 +1062,12 @@ if (savedQuery) {
             >
               <ListItemText primary={item} />
             </ListItem>
-          )</>
-)}
+          ))}
         </List>
       </Box>
           </Box>
     </Drawer>
   </>
-</>
 )}
 
 
@@ -1120,7 +1087,6 @@ if (savedQuery) {
       <Typography variant="body2" fontWeight="bold">⬅</Typography>
     </IconButton>
   </Tooltip>
-</>
 )}
 
 
@@ -1135,14 +1101,12 @@ if (savedQuery) {
     overflowX: "hidden",
   }}
 >
-  {renderContent(</>
-)}
+  {renderContent()}
 
 </Box>
 
 {/* ✅ KB Article Modal goes here */}
-<Modal open={kbModalOpen} onClose={() => setKbModalOpen(false</>
-)}>
+<Modal open={kbModalOpen} onClose={() => setKbModalOpen(false)}>
   <Box
     sx={{
       position: 'absolute',
@@ -1165,8 +1129,7 @@ if (savedQuery) {
         </Typography>
         <Typography>{selectedKbArticle.content}</Typography>
       </>
-    </>
-)}
+    )}
   </Box>
 </Modal>
 
@@ -1174,8 +1137,7 @@ if (savedQuery) {
 {/* ✅ Logout Confirmation Modal */}
 <Modal
   open={showLogoutConfirm}
-  onClose={() => setShowLogoutConfirm(false</>
-)}
+  onClose={() => setShowLogoutConfirm(false)}
 >
   <Box
     sx={{
@@ -1197,8 +1159,7 @@ if (savedQuery) {
       Are you sure you want to log out?
     </Typography>
     <Box display="flex" justifyContent="flex-end" gap={1}>
-      <Button variant="outlined" onClick={() => setShowLogoutConfirm(false</>
-)}>
+      <Button variant="outlined" onClick={() => setShowLogoutConfirm(false)}>
         Cancel
       </Button>
       <Button variant="contained" color="error" onClick={handleLogout}>
@@ -1209,11 +1170,9 @@ if (savedQuery) {
 </Modal>
 
 <Popover
-  open={Boolean(notificationAnchorEl</>
-)}
+  open={Boolean(notificationAnchorEl)}
   anchorEl={notificationAnchorEl}
-  onClose={() => setNotificationAnchorEl(null</>
-)}
+  onClose={() => setNotificationAnchorEl(null)}
   anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
   transformOrigin={{ vertical: "top", horizontal: "left" }}
 >
@@ -1248,8 +1207,7 @@ if (savedQuery) {
                       {},
                       {
                         headers: {
-                          Authorization: `Bearer ${sessionStorage.getItem("token"</>
-)}`,
+                          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                         },
                       }
                     );
@@ -1269,8 +1227,7 @@ if (savedQuery) {
               >
                 View
               </Button>
-            </>
-)}
+            )}
 
             {!note.is_read && (
               <Button
@@ -1282,8 +1239,7 @@ if (savedQuery) {
                       {},
                       {
                         headers: {
-                          Authorization: `Bearer ${sessionStorage.getItem("token"</>
-)}`,
+                          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                         },
                       }
                     );
@@ -1300,13 +1256,11 @@ if (savedQuery) {
               >
                 Mark as Read
               </Button>
-            </>
-)}
+            )}
           </Box>
         </Paper>
       ))
-    </>
-)}
+    )}
 
     {notifications.length > 0 && (
       <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -1319,8 +1273,7 @@ if (savedQuery) {
                 {},
                 {
                   headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem("token"</>
-)}`,
+                    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                   },
                 }
               );
@@ -1338,8 +1291,7 @@ if (savedQuery) {
           Mark all as read
         </Button>
       </Box>
-    </>
-)}
+    )}
   </Box>
 </Popover>
 
