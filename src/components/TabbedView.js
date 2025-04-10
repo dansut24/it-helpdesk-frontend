@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -239,6 +240,7 @@ if (savedQuery) {
   const [searchResults, setSearchResults] = useState({});
 
   const [kbArticles, setKbArticles] = useState([]);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [kbModalOpen, setKbModalOpen] = useState(false);
   const [selectedKbArticle, setSelectedKbArticle] = useState(null);
 
@@ -897,8 +899,15 @@ if (savedQuery) {
     <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
     <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
     <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
+    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
+  </BottomNavigation>
+    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
+<BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
+<BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
+<BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
 <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
 </BottomNavigation>
+)
   )}
 </Box>
 
@@ -1009,6 +1018,64 @@ if (savedQuery) {
     </IconButton>
   </Tooltip>
 )}
+
+
+{isMobile && (
+  <>
+    <IconButton
+      onClick={() => setMobileDrawerOpen(true)}
+      sx={{
+        position: "fixed",
+        top: 10,
+        left: 10,
+        zIndex: 1300,
+        bgcolor: "white",
+        boxShadow: 3,
+      }}
+    >
+      <MoreVertIcon />
+    </IconButton>
+
+    <Drawer
+      anchor="left"
+      open={mobileDrawerOpen}
+      onClose={() => setMobileDrawerOpen(false)}
+    >
+      <Box sx={{ width: 250, p: 2 }}>
+        <Typography variant="h6" gutterBottom>Menu</Typography>
+        <List>
+          {[
+            "Dashboard",
+            "Incidents",
+            "New Incident",
+            "Service Requests",
+            "Raise Service Request",
+            "Changes",
+            "New Change",
+            "Profile",
+            "Logout"
+          ].map((item) => (
+            <ListItem
+              button
+              key={item}
+              onClick={() => {
+                if (item === "Logout") {
+                  setShowLogoutConfirm(true);
+                } else {
+                  openTab(item);
+                }
+                setMobileDrawerOpen(false);
+              }}
+            >
+              <ListItemText primary={item} />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Drawer>
+  </>
+)}
+
 
 {tabHistory.length > 0 && selectedTab !== "Dashboard" && (
   <Tooltip title="Go Back">
