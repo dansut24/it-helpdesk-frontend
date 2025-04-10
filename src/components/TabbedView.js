@@ -42,9 +42,9 @@ import TaskDetails from "../pages/TaskDetails";
 // Due to length, this will be posted in multiple parts
 
 const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs }) => {
-  
+
 const [moreAnchor, setMoreAnchor] = useState(null  );
-  
+
 const [showLogoutConfirm, setShowLogoutConfirm] = useState(false  );
 
   const handleSwitchRole = () => {
@@ -74,7 +74,7 @@ const theme = useTheme(  );
     console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
   }, []  );
 
-  
+
   useEffect(() => {
     const savedQuery = localStorage.getItem("lastSearchQuery"  );
 if (savedQuery) {
@@ -84,43 +84,41 @@ if (savedQuery) {
 
 
     const wasSearching = localStorage.getItem("searchTriggered") === "true";
-  
+
     if (savedQuery) {
       setSearchQuery(savedQuery  );
     }
-  
+
     if (wasSearching) {
       setSearchTriggered(true  );
     }
-  
+
     const fetchData = async () => {
       const token = sessionStorage.getItem("token") || localStorage.getItem("token"  );
-  
+
       if (!token) {
         console.error("❌ No token found. Cannot fetch secured data."  );
         return;
       }
-  
+
       const headers = {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      };
-  
+        "Content-Type": "application/json"};
+
       try {
         const [incidentsRes, requestsRes, changesRes] = await Promise.all([
           fetch(`${process.env.REACT_APP_API_URL}/api/incidents`, { headers }),
           fetch(`${process.env.REACT_APP_API_URL}/api/service-requests`, { headers }),
-          fetch(`${process.env.REACT_APP_API_URL}/api/changes`, { headers }),
-        ]  );
-  
+          fetch(`${process.env.REACT_APP_API_URL}/api/changes`, { headers })]  );
+
         if (!incidentsRes.ok || !requestsRes.ok || !changesRes.ok) {
           throw new Error("❌ Failed to fetch one or more API responses."  );
         }
-  
+
         const incidentsData = await incidentsRes.json(  );
         const requestsData = await requestsRes.json(  );
         const changesData = await changesRes.json(  );
-  
+
         setIncidents(Array.isArray(incidentsData) ? incidentsData : incidentsData.incidents || []  );
         setRequests(requestsData  );
         setChanges(changesData  );
@@ -128,10 +126,10 @@ if (savedQuery) {
         console.error("❌ Failed to fetch data for global search.", err  );
       }
     };
-  
+
     fetchData(  );
   }, []  );
-  
+
   useEffect(() => {
     const fetchArticles = async () => {
       try {
@@ -141,62 +139,59 @@ if (savedQuery) {
         console.error("❌ Failed to fetch KB articles:", err  );
       }
     };
-  
+
     fetchArticles(  );
   }, []  );
-  
+
 
   const [notifications, setNotifications] = useState([]  );
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null  );
-  
+
   const [socket, setSocket] = useState(null  );
 
-  
+
   const fetchNotifications = async () => {
     try {
       const token = sessionStorage.getItem("token"  );
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }  );
+        headers: { Authorization: `Bearer ${token}` }}  );
       const data = await res.json(  );
       setNotifications(Array.isArray(data) ? data : data.notifications || []  );
     } catch (err) {
       console.error("❌ Failed to fetch notifications", err  );
     }
   };
-  
+
   useEffect(() => {
     fetchNotifications(  );
   }, []  );
-  
+
 
   useEffect(() => {
     const token = sessionStorage.getItem("token"  );
     const user = JSON.parse(sessionStorage.getItem("user") || "{}"  );
-  
+
     if (!user?.id || !token) return;
-  
+
     const newSocket = io("http://localhost:5000", {
       auth: {
-        token,
-      },
-    }  );
-  
+        token}}  );
+
     newSocket.emit("join", user.id  ); // ✅ Join the user's private room
-  
+
     newSocket.on("new_notification", (notification) => {
       console.log("📥 New live notification:", notification  );
       setNotifications((prev) => [notification, ...prev]  );
     }  );
-  
+
     setSocket(newSocket  );
-  
+
     return (
   <>) => {
       newSocket.disconnect(  );
     };
   }, []  );
-  
+
   const openTab = (tab) => {
     if (selectedTab && selectedTab !== tab) {
       setTabHistory((prev) => [...prev, selectedTab]  );
@@ -207,8 +202,8 @@ if (savedQuery) {
     setSelectedTab(tab  );
     setMoreAnchor(null  );
   };
-  
-  
+
+
 
   const closeTab = (tab) => {
     if (tab === "Dashboard") return;
@@ -251,31 +246,27 @@ if (savedQuery) {
       i.referenceNumber?.toString().toLowerCase().includes(searchQuery.toLowerCase()) // ✅ ensure string
     ),
     requests: requests.filter((r) =>
-      r.title?.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
+      r.title?.toLowerCase().includes(searchQuery.toLowerCase())),
     changes: changes.filter((c) =>
-      c.title?.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
+      c.title?.toLowerCase().includes(searchQuery.toLowerCase())),
     kb: kbArticles.filter((k) =>
-      k.title?.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
-  };
+      k.title?.toLowerCase().includes(searchQuery.toLowerCase()))};
 
   const clearTabHistory = () => {
     setTabHistory([]  );
   };
-  
+
   const [tabHistory, setTabHistory] = useState([]  );
 
   const goBack = () => {
     if (tabHistory.length > 0) {
       const lastTab = tabHistory[tabHistory.length - 1];
-  
+
       // Remove current tab
       const newTabs = tabs.filter((t) => t !== selectedTab  );
       setTabs(newTabs  );
       localStorage.setItem("openTabs", JSON.stringify(newTabs));
-  
+
       // Navigate back
       setSelectedTab(lastTab  );
       localStorage.setItem("selectedTab", lastTab  );
@@ -289,13 +280,12 @@ if (savedQuery) {
       "Service Requests": ["Service Requests", "Raise Service Request"],
       "Changes": ["Changes", "New Change"]
     };
-  
+
     const menuItems = options[type] || [];
-  
+
     setMoreAnchor({
       ...event,
-      menuItems,
-    }  );
+      menuItems}  );
   };
 
 
@@ -367,7 +357,7 @@ if (savedQuery) {
 
   const renderContent = () => {
     if (typeof selectedTab !== "string") return null;
-  
+
     if (selectedTab === "Dashboard") return <Dashboard openTab={openTab} />;
     if (selectedTab === "Incidents") return <Incidents openTab={openTab} />;
     if (selectedTab === "Service Requests") return <ServiceRequests openTab={openTab} />;
@@ -375,7 +365,7 @@ if (savedQuery) {
     if (selectedTab === "Changes") return <Changes openTab={openTab} />;
     if (selectedTab === "Tasks") return <Tasks openTab={openTab} />;
 
-  
+
     if (selectedTab === "Search results") {
       const previousTab = tabs.find(tab => tab !== "Search results" && tab !== selectedTab  );
       return (
@@ -388,14 +378,14 @@ if (savedQuery) {
         />
         );
     }
-    
-    
-    
+
+
+
     if (selectedTab === "Admin Settings" && allowedTabs.includes("Admin Settings")) {
       return <AdminSettings />;
-    }    
-    
-  
+    }
+
+
     if (selectedTab === "New Incident") {
       return (
   <>
@@ -408,7 +398,7 @@ if (savedQuery) {
         />
         );
     }
-  
+
     if (selectedTab === "Raise Service Request") {
       return (
   <>
@@ -422,7 +412,7 @@ if (savedQuery) {
         />
         );
     }
-  
+
     if (selectedTab === "New Change") {
       return (
   <>
@@ -435,7 +425,7 @@ if (savedQuery) {
         />
         );
     }
-  
+
     if (selectedTab.startsWith("Incident")) {
       const ref = selectedTab.split(" ")[1];
       const fromSearch = tabs.includes("Search results"  );
@@ -447,13 +437,13 @@ if (savedQuery) {
           openTab={openTab}
         />
         );
-    }    
-  
+    }
+
     if (selectedTab.startsWith("Service Request")) {
       const id = selectedTab.split(" ")[2];
       return <ServiceRequestDetails id={id} />;
     }
-  
+
     if (selectedTab.startsWith("Change")) {
       const id = selectedTab.split(" ")[1];
       return <ChangeDetails id={id} />;
@@ -463,10 +453,10 @@ if (savedQuery) {
       const id = selectedTab.split(" ")[1];
       return <TaskDetails id={id} openTab={openTab} />;
     }
-    
-    
-    
-  
+
+
+
+
     if (selectedTab.startsWith("KB")) {
       const id = selectedTab.split(" ")[1];
       const article = kbArticles.find((a) => a.id === id  );
@@ -505,12 +495,12 @@ if (savedQuery) {
         </Box>
         );
     }
-  
-  
-    return null;
-  };  
 
-  
+
+    return null;
+  };
+
+
   return (
   <>
       {!isMobile && (
@@ -532,10 +522,7 @@ if (savedQuery) {
   },
   "& .MuiListItemText-primary": {
     fontSize: "0.90rem",           // ⬅️ shrink text
-  },
-
-},
-          }}
+  }}}}
         >
           <Box
   sx={{
@@ -544,8 +531,7 @@ if (savedQuery) {
     justifyContent: "space-between",
     px: 2,
     py: 2,
-    bgcolor: "#0056b3",
-  }}
+    bgcolor: "#0056b3"}}
 >
   <Typography variant="h6" sx={{ color: "white" }}>
     IT Helpdesk
@@ -579,33 +565,32 @@ if (savedQuery) {
               onChange={(e) => {
                 const value = e.target.value;
                 setSearchQuery(value  );
-              
+
                 if (value) {
                   setLastSearchQuery(value  );
                   localStorage.setItem("lastSearchQuery", value  );
-              
+
                   if (selectedTab !== "Search results") {
                     setSearchTriggered(true  );
                     localStorage.setItem("searchTriggered", "true"  );
                     openTab("Search results"  );
                   }
                 }
-              
+
                 // ❌ Remove this — don't reset the trigger when clearing text
                 // if (!value) {
                 //   setSearchTriggered(false  );
                 //   localStorage.removeItem("searchTriggered"  );
                 // }
               }}
-              
-              
+
+
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
-              }}
+                )}}
             />
           </Box>
 
@@ -663,8 +648,7 @@ if (savedQuery) {
         justifyContent: "space-between",
         alignItems: "center",
         px: 2,
-        py: 1,
-      }}
+        py: 1}}
     >
       <Typography sx={{ fontWeight: "bold" }}>Open Tabs</Typography>
       <IconButton
@@ -775,8 +759,7 @@ if (savedQuery) {
             link: "Dashboard"
           },
           {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+            headers: { Authorization: `Bearer ${token}` }}
           );
 
         console.log("✅ Test notification sent."  );
@@ -807,8 +790,7 @@ if (savedQuery) {
                 left: 10,
                 zIndex: 1300,
                 bgcolor: "white",
-                boxShadow: 3,
-              }}
+                boxShadow: 3}}
             >
               <SearchIcon />
             </IconButton>
@@ -826,8 +808,7 @@ if (savedQuery) {
               zIndex: 1400,
               p: 2,
               pt: 4, // ✅ Add extra top padding (or use safe area inset if desired)
-              boxShadow: 3,
-            }}
+              boxShadow: 3}}
           >
               <TextField
                 fullWidth
@@ -838,21 +819,21 @@ if (savedQuery) {
                 onChange={(e) => {
                   const value = e.target.value;
                   setSearchQuery(value  );
-                
+
                   if (value) {
                     setLastSearchQuery(value  );
                     localStorage.setItem("lastSearchQuery", value  );
-                
+
                     if (selectedTab !== "Search results") {
                       setSearchTriggered(true  );
                       localStorage.setItem("searchTriggered", "true"  );
                       openTab("Search results"  );
                     }
                   }
-                
+
                   // ❌ Do NOT reset searchTriggered here — we want to keep the last search even if input is cleared
                 }}
-                
+
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -860,8 +841,7 @@ if (savedQuery) {
                         <CloseIcon />
                       </IconButton>
                     </InputAdornment>
-                  ),
-                }}
+                  )}}
               />
              {searchQuery && !searchTriggered && (
               <Box sx={{ mt: 2, maxHeight: "60vh", overflowY: "auto" }}>
@@ -882,8 +862,7 @@ if (savedQuery) {
     height: "80px",
     backgroundColor: "white",
     overflow: "hidden",
-    paddingBottom: "env(safe-area-inset-bottom)",
-  }}
+    paddingBottom: "env(safe-area-inset-bottom)"}}
 >
   <BottomNavigation
     value={selectedTab}
@@ -902,8 +881,7 @@ if (savedQuery) {
       display: "flex",
       justifyContent: "space-around",
       maxWidth: "100vw",
-      overflow: "hidden",
-    }}
+      overflow: "hidden"}}
     showLabels
   >
     <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
@@ -925,9 +903,7 @@ if (savedQuery) {
       borderRadius: 2,
       boxShadow: 5,
       p: 1,
-      bgcolor: "background.paper",
-    },
-  }}
+      bgcolor: "background.paper"}}}
 >
   <Typography variant="subtitle2" sx={{ px: 2, pt: 1, pb: 0.5, color: "text.secondary" }}>
     {moreAnchor?.menuItems ? "Select Option" : "Open Tabs"}
@@ -946,16 +922,13 @@ if (savedQuery) {
         sx={{
           "&:hover": {
             bgcolor: "primary.light",
-            color: "white",
-          },
+            color: "white"},
           borderRadius: 1,
-          mb: 0.5,
-        }}
+          mb: 0.5}}
       >
         {item}
       </MenuItem>
-    ))
-  ) : (
+    ))) : (
     tabs.length > 0 ? (
       tabs.map((tab) => (
         <MenuItem
@@ -967,19 +940,15 @@ if (savedQuery) {
           sx={{
             "&:hover": {
               bgcolor: "primary.light",
-              color: "white",
-            },
+              color: "white"},
             borderRadius: 1,
-            mb: 0.5,
-          }}
+            mb: 0.5}}
         >
           {tab}
         </MenuItem>
-      ))
-    ) : (
+      ))) : (
       <MenuItem disabled>No Open Tabs</MenuItem>
-    )
-  )}
+    ))}
 </Menu>
 
 
@@ -994,8 +963,7 @@ if (savedQuery) {
                   right: 10,
                   zIndex: 1300,
                   bgcolor: "white",
-                  boxShadow: 3,
-                }}
+                  boxShadow: 3}}
               >
                 <CloseIcon />
               </IconButton>
@@ -1013,8 +981,7 @@ if (savedQuery) {
         left: 260, // Just outside the sidebar
         zIndex: 1300,
         bgcolor: "white",
-        boxShadow: 3,
-      }}
+        boxShadow: 3}}
     >
       <Typography variant="body2" fontWeight="bold">⬅</Typography>
     </IconButton>
@@ -1032,8 +999,7 @@ if (savedQuery) {
         left: 10,
         zIndex: 1300,
         bgcolor: "white",
-        boxShadow: 3,
-      }}
+        boxShadow: 3}}
     >
       <MoreVertIcon />
     </IconButton>
@@ -1089,8 +1055,7 @@ if (savedQuery) {
         left: isMobile ? 60 : 260,
         zIndex: 1300,
         bgcolor: "white",
-        boxShadow: 3,
-      }}
+        boxShadow: 3}}
     >
       <Typography variant="body2" fontWeight="bold">⬅</Typography>
     </IconButton>
@@ -1106,8 +1071,7 @@ if (savedQuery) {
     padding: "24px",
     minHeight: "100vh",
     bgcolor: "#f4f4f4",
-    overflowX: "hidden",
-  }}
+    overflowX: "hidden"}}
 >
   {renderContent()}
 
@@ -1126,8 +1090,7 @@ if (savedQuery) {
       bgcolor: 'background.paper',
       boxShadow: 24,
       p: 4,
-      borderRadius: 2,
-    }}
+      borderRadius: 2}}
   >
     {selectedKbArticle && (
       <>
@@ -1156,8 +1119,7 @@ if (savedQuery) {
       bgcolor: 'background.paper',
       boxShadow: 24,
       borderRadius: 2,
-      p: 4,
-    }}
+      p: 4}}
   >
     <Typography variant="h6" gutterBottom>
       Confirm Logout
@@ -1198,8 +1160,7 @@ if (savedQuery) {
             p: 1,
             mb: 1,
             bgcolor: note.is_read ? "grey.100" : "#fff8e1",
-            opacity: note.is_read ? 0.7 : 1,
-          }}
+            opacity: note.is_read ? 0.7 : 1}}
         >
           <Typography variant="body2">{note.message}</Typography>
 
@@ -1214,9 +1175,7 @@ if (savedQuery) {
                       {},
                       {
                         headers: {
-                          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-                        },
-                      }
+                          Authorization: `Bearer ${sessionStorage.getItem("token")}`}}
                       );
 
                     setNotifications((prev) =>
@@ -1245,9 +1204,7 @@ if (savedQuery) {
                       {},
                       {
                         headers: {
-                          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-                        },
-                      }
+                          Authorization: `Bearer ${sessionStorage.getItem("token")}`}}
                       );
 
                     setNotifications((prev) =>
@@ -1264,8 +1221,7 @@ if (savedQuery) {
             )}
           </Box>
         </Paper>
-      ))
-    )}
+      )))}
 
     {notifications.length > 0 && (
       <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -1278,9 +1234,7 @@ if (savedQuery) {
                 {},
                 {
                   headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-                  },
-                }
+                    Authorization: `Bearer ${sessionStorage.getItem("token")}`}}
                 );
 
               setNotifications((prev) =>
@@ -1302,7 +1256,7 @@ if (savedQuery) {
 
 
 
- 
+
 
     );
 };
