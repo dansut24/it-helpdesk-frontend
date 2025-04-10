@@ -895,6 +895,12 @@ if (savedQuery) {
     showLabels
   >
     <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
+    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
+    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
+    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
+    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
+  </BottomNavigation>
+    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
 <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
 <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
 <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
