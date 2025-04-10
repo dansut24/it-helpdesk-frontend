@@ -557,7 +557,7 @@ if (savedQuery) {
     </IconButton>
   </Tooltip>
 </Box>
-
+</Drawer>
 
 
           <Box sx={{ px: 2, pt: 2 }}>
