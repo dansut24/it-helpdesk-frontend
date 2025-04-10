@@ -283,6 +283,13 @@ if (savedQuery) {
     const options = {
       "Incidents": ["Incidents", "New Incident"],
       "Service Requests": ["Service Requests", "Raise Service Request"],
+      "Changes": ["Changes", "New Change"],
+      "More": ["Profile", "Logout"]
+    };
+
+    const options = {
+      "Incidents": ["Incidents", "New Incident"],
+      "Service Requests": ["Service Requests", "Raise Service Request"],
       "Changes": ["Changes", "New Change"]
     };
   
@@ -926,8 +933,12 @@ if (savedQuery) {
       <MenuItem
         key={item}
         onClick={() => {
+          if (item === "Logout") {
+          setShowLogoutConfirm(true);
+        } else {
           openTab(item);
-          handleMoreClose();
+        }
+        handleMoreClose();
         }}
         sx={{
           "&:hover": {
