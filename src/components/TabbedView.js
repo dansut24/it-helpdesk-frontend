@@ -279,14 +279,14 @@ if (savedQuery) {
     }
   };
 
-  const handleMobileMenu = (event, type) => {
-    const options = {
-      "Incidents": ["Incidents", "New Incident"],
-      "Service Requests": ["Service Requests", "Raise Service Request"],
-      "Changes": ["Changes", "New Change"],
-      "More": ["Profile", "Logout"]
-    };
+  const options = {
+  "Incidents": ["Incidents", "New Incident"],
+  "Service Requests": ["Service Requests", "Raise Service Request"],
+  "Changes": ["Changes", "New Change"],
+  "More": ["Profile", "Logout"]
+};
 
+const handleMobileMenu = (event, type) => {
     const options = {
       "Incidents": ["Incidents", "New Incident"],
       "Service Requests": ["Service Requests", "Raise Service Request"],
