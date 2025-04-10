@@ -192,7 +192,9 @@ if (savedQuery) {
   
     setSocket(newSocket);
   
-    return () => {
+    return (
+  <>
+  ) => {
       newSocket.disconnect();
     };
   }, []);
@@ -234,7 +236,7 @@ if (savedQuery) {
     window.location.reload();
   };
 
-  const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}") || {};
   const activeRole = sessionStorage.getItem("selectedRole") || storedUser?.role?.toLowerCase() || "Unknown";
 
 
@@ -720,7 +722,7 @@ if (savedQuery) {
       }
       sx={{ width: 40, height: 40 }}
     >
-      {storedUser.username?.[0]?.toUpperCase() || "U"}
+      {storedUser?.username?.[0]?.toUpperCase() || "U"}
     </Avatar>
 
     <Box sx={{ flexGrow: 1 }}>
