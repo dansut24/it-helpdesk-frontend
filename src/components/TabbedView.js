@@ -782,7 +782,8 @@ if (savedQuery) {
 </List>
 
 
-        </Drawer>
+              </Box>
+    </Drawer>
       )}
 
       {isMobile && (
@@ -1072,6 +1073,7 @@ if (savedQuery) {
           ))}
         </List>
       </Box>
+          </Box>
     </Drawer>
   </>
 )}
