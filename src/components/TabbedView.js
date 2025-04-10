@@ -871,7 +871,7 @@ if (savedQuery) {
     left: 0,
     width: "100vw",
     zIndex: 1200,
-    height: "64px",
+    height: "80px",
     backgroundColor: "white",
     overflow: "hidden",
     paddingBottom: "env(safe-area-inset-bottom)",
