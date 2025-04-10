@@ -68,6 +68,7 @@ const theme = useTheme();
   const [changes, setChanges] = useState([]);
   const [searchTriggered, setSearchTriggered] = useState(false);
   const navigate = useNavigate();
+  const [confirmCloseAllOpen, setConfirmCloseAllOpen] = useState(false);
     useEffect(() => {
     console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
   }, []);
@@ -279,14 +280,7 @@ if (savedQuery) {
     }
   };
 
-  const options = {
-  "Incidents": ["Incidents", "New Incident"],
-  "Service Requests": ["Service Requests", "Raise Service Request"],
-  "Changes": ["Changes", "New Change"],
-  "More": ["Profile", "Logout"]
-};
-
-const handleMobileMenu = (event, type) => {
+  const handleMobileMenu = (event, type) => {
     const options = {
       "Incidents": ["Incidents", "New Incident"],
       "Service Requests": ["Service Requests", "Raise Service Request"],
@@ -905,6 +899,7 @@ const handleMobileMenu = (event, type) => {
     <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
 <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
 </BottomNavigation>
+  )}
 </Box>
 
 
@@ -933,12 +928,8 @@ const handleMobileMenu = (event, type) => {
       <MenuItem
         key={item}
         onClick={() => {
-          if (item === "Logout") {
-          setShowLogoutConfirm(true);
-        } else {
           openTab(item);
-        }
-        handleMoreClose();
+          handleMoreClose();
         }}
         sx={{
           "&:hover": {
