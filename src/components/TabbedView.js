@@ -196,7 +196,6 @@ if (savedQuery) {
   <>
   ) => {
       newSocket.disconnect();
-    };
   }, []);
   
   const openTab = (tab) => {
