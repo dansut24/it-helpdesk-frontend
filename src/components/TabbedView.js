@@ -186,8 +186,9 @@ if (savedQuery) {
 
     setSocket(newSocket  );
 
-    return () => {
-      newSocket.disconnect();
+    return (
+  <>) => {
+      newSocket.disconnect(  );
     };
   }, []  );
 
@@ -301,7 +302,7 @@ if (savedQuery) {
   if (key === "kb") {
     return (
   <>
-      <ListItem
+    <ListItem
         key={item.id}
         button
         onClick={() => {
@@ -313,8 +314,8 @@ if (savedQuery) {
       >
         <ListItemText primary={item.title} />
       </ListItem>
-</>
-      );
+  </>
+);
   }
 
   const tabLabel =
@@ -340,7 +341,8 @@ if (savedQuery) {
     >
       <ListItemText primary={item.title} />
     </ListItem>
-    );
+  </>
+);
 })}
 
             )}
@@ -353,7 +355,8 @@ if (savedQuery) {
         </Typography>
       )}
     </Box>
-    );
+  </>
+);
 
   const renderContent = () => {
     if (typeof selectedTab !== "string") return null;
@@ -370,7 +373,7 @@ if (savedQuery) {
       const previousTab = tabs.find(tab => tab !== "Search results" && tab !== selectedTab  );
       return (
   <>
-        <SearchResults
+    <SearchResults
           query={searchQuery}
           results={filteredResults} // ✅ This must contain the incidents array
           openTab={openTab}
@@ -389,22 +392,20 @@ if (savedQuery) {
     if (selectedTab === "New Incident") {
       return (
   <>
-       return (
-  <>
     <RaiseIncidentForm
-      renameTabAfterSubmit={(oldTab, newRef) => {
-        const updatedTabs = tabs.map((t) => (t === oldTab ? `Incident ${newRef}` : t));
-        setTabs(updatedTabs);
-        setSelectedTab(`Incident ${newRef}`);
-      }}
-    />
-  </React.Fragment>
-);
+          renameTabAfterSubmit={(oldTab, newRef) => {
+            const updatedTabs = tabs.map((t) => (t === oldTab ? `Incident ${newRef}` : t));
+            setTabs(updatedTabs  );
+            setSelectedTab(`Incident ${newRef}`  );
+          }}
+        />
+        );
+    }
 
     if (selectedTab === "Raise Service Request") {
       return (
   <>
-        <RaiseServiceRequestForm
+    <RaiseServiceRequestForm
           renameTabAfterSubmit={(oldTab, newId) => {
             const newTabName = `Service Request ${newId}`;
             const updatedTabs = tabs.map((t) => (t === oldTab ? newTabName : t));
@@ -418,7 +419,7 @@ if (savedQuery) {
     if (selectedTab === "New Change") {
       return (
   <>
-        <RaiseChangeForm
+    <RaiseChangeForm
           renameTabAfterSubmit={(oldTab, newId) => {
             const updatedTabs = tabs.map((t) => (t === oldTab ? `Change ${newId}` : t));
             setTabs(updatedTabs  );
@@ -433,7 +434,7 @@ if (savedQuery) {
       const fromSearch = tabs.includes("Search results"  );
       return (
   <>
-        <IncidentDetails
+    <IncidentDetails
           referenceNumber={ref}
           fromSearch={fromSearch}
           openTab={openTab}
@@ -464,20 +465,21 @@ if (savedQuery) {
       const article = kbArticles.find((a) => a.id === id  );
       return (
   <>
-        <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3 }}>
           <Typography variant="h4">{article?.title}</Typography>
           <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
             Category: {article?.category}
           </Typography>
           <Typography>{article?.content}</Typography>
         </Box>
-        );
+  </>
+);
     }
 
     if (selectedTab === "Knowledge Base") {
       return (
   <>
-        <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3 }}>
           <Typography variant="h4" gutterBottom>Knowledge Base</Typography>
           {kbArticles.map((article) => (
             <Paper
@@ -495,7 +497,8 @@ if (savedQuery) {
             </Paper>
           ))}
         </Box>
-        );
+  </>
+);
     }
 
 
@@ -614,7 +617,7 @@ if (savedQuery) {
 
     return (
   <>
-      <ListItem key={navItem} sx={{ pl: 2, pr: 1 }}>
+    <ListItem key={navItem} sx={{ pl: 2, pr: 1 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
           <Box
             onClick={() => openTab(navItem)}
@@ -636,7 +639,8 @@ if (savedQuery) {
           )}
         </Box>
       </ListItem>
-      );
+  </>
+);
   })}
 </List>
 
