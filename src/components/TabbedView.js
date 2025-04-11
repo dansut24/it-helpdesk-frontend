@@ -322,7 +322,7 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      
       <IconButton onClick={goBack}>
         <Typography variant="body2">Back</Typography>
       </IconButton>
@@ -623,7 +623,7 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      
       <IconButton onClick={goBack}>
         <Typography variant="body2">Back</Typography>
       </IconButton>
@@ -979,7 +979,7 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      
       <IconButton onClick={goBack}>
         <Typography variant="body2">Back</Typography>
       </IconButton>
@@ -1317,7 +1317,7 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      
       <IconButton onClick={goBack}>
         <Typography variant="body2">Back</Typography>
       </IconButton>
