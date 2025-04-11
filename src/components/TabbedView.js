@@ -10,7 +10,13 @@ import {
   Menu, MenuItem, Tooltip, TextField, InputAdornment, Button
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      <IconButton onClick={goBack}>
+        <Typography variant="body2">Back
+        </Typography>
+      </IconButton>
+</Box>
 import HomeIcon from "@mui/icons-material/Home";
 import FolderIcon from "@mui/icons-material/Folder";
 import BuildIcon from "@mui/icons-material/Build";
@@ -313,7 +319,7 @@ if (savedQuery) {
         top: 0,
         left: 0,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 2,
         zIndex: 1200,
         display: 'flex',
@@ -323,7 +329,10 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-        <MoreVertIcon />
+      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      <IconButton onClick={goBack}>
+        <Typography variant="body2">Back</Typography>
+      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
@@ -340,7 +349,7 @@ if (savedQuery) {
         left: 0,
         right: 0,
         bottom: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         zIndex: 1300,
         p: 3
       }}
@@ -427,7 +436,7 @@ if (savedQuery) {
         bottom: 0,
         left: 250,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 3,
         overflowX: 'auto',
         whiteSpace: 'nowrap',
@@ -611,7 +620,7 @@ if (savedQuery) {
         top: 0,
         left: 0,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 2,
         zIndex: 1200,
         display: 'flex',
@@ -621,7 +630,10 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-        <MoreVertIcon />
+      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      <IconButton onClick={goBack}>
+        <Typography variant="body2">Back</Typography>
+      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
@@ -638,7 +650,7 @@ if (savedQuery) {
         left: 0,
         right: 0,
         bottom: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         zIndex: 1300,
         p: 3
       }}
@@ -964,7 +976,7 @@ if (savedQuery) {
         top: 0,
         left: 0,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 2,
         zIndex: 1200,
         display: 'flex',
@@ -974,7 +986,10 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-        <MoreVertIcon />
+      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      <IconButton onClick={goBack}>
+        <Typography variant="body2">Back</Typography>
+      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
@@ -991,7 +1006,7 @@ if (savedQuery) {
         left: 0,
         right: 0,
         bottom: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         zIndex: 1300,
         p: 3
       }}
@@ -1196,7 +1211,7 @@ if (savedQuery) {
         bottom: 0,
         left: 250,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 3,
         overflowX: 'auto',
         whiteSpace: 'nowrap',
@@ -1299,7 +1314,7 @@ if (savedQuery) {
         top: 0,
         left: 0,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 2,
         zIndex: 1200,
         display: 'flex',
@@ -1309,7 +1324,10 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-        <MoreVertIcon />
+      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
+      <IconButton onClick={goBack}>
+        <Typography variant="body2">Back</Typography>
+      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
@@ -1326,7 +1344,7 @@ if (savedQuery) {
         left: 0,
         right: 0,
         bottom: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         zIndex: 1300,
         p: 3
       }}
@@ -1372,7 +1390,7 @@ if (savedQuery) {
         bottom: 0,
         left: 250,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 3,
         overflowX: 'auto',
         whiteSpace: 'nowrap',
@@ -1572,7 +1590,7 @@ if (savedQuery) {
         bottom: 0,
         left: 250,
         right: 0,
-        bgcolor: 'white',
+        bgcolor: '#1976d2',
         boxShadow: 3,
         overflowX: 'auto',
         whiteSpace: 'nowrap',
