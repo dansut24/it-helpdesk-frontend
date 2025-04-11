@@ -10,12 +10,6 @@ import {
   Menu, MenuItem, Tooltip, TextField, InputAdornment, Button
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-      <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Menu</Typography>
-      <IconButton onClick={goBack}>
-        <Typography variant="body2">Back</Typography>
-      </IconButton>
-</Box>
 import HomeIcon from "@mui/icons-material/Home";
 import FolderIcon from "@mui/icons-material/Folder";
 import BuildIcon from "@mui/icons-material/Build";
