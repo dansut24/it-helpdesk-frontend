@@ -386,17 +386,18 @@ if (savedQuery) {
 
 
     if (selectedTab === "New Incident") {
-      return (
-  <>
-        <RaiseIncidentForm
-          renameTabAfterSubmit={(oldTab, newRef) => {
-            const updatedTabs = tabs.map((t) => (t === oldTab ? `Incident ${newRef}` : t));
-            setTabs(updatedTabs  );
-            setSelectedTab(`Incident ${newRef}`  );
-          }}
-        />
-        );
-    }
+  return (
+    <>
+      <RaiseIncidentForm
+        renameTabAfterSubmit={(oldTab, newRef) => {
+          const updatedTabs = tabs.map((t) => (t === oldTab ? `Incident ${newRef}` : t));
+          setTabs(updatedTabs);
+          setSelectedTab(`Incident ${newRef}`);
+        }}
+      />
+    </>
+  );
+}
 
     if (selectedTab === "Raise Service Request") {
       return (
