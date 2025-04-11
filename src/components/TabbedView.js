@@ -42,202 +42,208 @@ import TaskDetails from "../pages/TaskDetails";
 // Due to length, this will be posted in multiple parts
 
 const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs }) => {
-
-const [moreAnchor, setMoreAnchor] = useState(null  );
-
-const [showLogoutConfirm, setShowLogoutConfirm] = useState(false  );
-
-  const handleSwitchRole = () => {
-    const userData = JSON.parse(sessionStorage.getItem("user") || "{}"  );
-    const roles = userData?.roles || [];
-
-    if (roles.length > 1) {
-      sessionStorage.removeItem("selectedRole"  );
-      navigate("/select-role", { state: { roles, user: userData } }  );
-    } else {
-      alert("Only one role assigned to this account."  );
-    }
-  };
-
-const theme = useTheme(  );
+  const [moreAnchor, setMoreAnchor] = useState(null);
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [searchQuery, setSearchQuery] = useState(""  );
-  const [lastSearchQuery, setLastSearchQuery] = useState(""  );
-  const [showSearch, setShowSearch] = useState(false  );
-  const [incidents, setIncidents] = useState([]  );
-  const [requests, setRequests] = useState([]  );
-  const [changes, setChanges] = useState([]  );
-  const [searchTriggered, setSearchTriggered] = useState(false  );
-  const navigate = useNavigate(  );
-  const [confirmCloseAllOpen, setConfirmCloseAllOpen] = useState(false  );
-    useEffect(() => {
-    console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
-  }, []  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [lastSearchQuery, setLastSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [incidents, setIncidents] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [changes, setChanges] = useState([]);
+  const [searchTriggered, setSearchTriggered] = useState(false);
+  const navigate = useNavigate();
+  const [confirmCloseAllOpen, setConfirmCloseAllOpen] = useState(false);
+  const [showMobileTabs, setShowMobileTabs] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+
 
 
   useEffect(() => {
-    const savedQuery = localStorage.getItem("lastSearchQuery"  );
+    console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
+  }, []);
+
+  
+  useEffect(() => {
+    const savedQuery = localStorage.getItem("lastSearchQuery");
 if (savedQuery) {
-  setSearchQuery(savedQuery  );
-  setLastSearchQuery(savedQuery  );
+  setSearchQuery(savedQuery);
+  setLastSearchQuery(savedQuery);
 }
 
 
     const wasSearching = localStorage.getItem("searchTriggered") === "true";
-
+  
     if (savedQuery) {
-      setSearchQuery(savedQuery  );
+      setSearchQuery(savedQuery);
     }
-
+  
     if (wasSearching) {
-      setSearchTriggered(true  );
+      setSearchTriggered(true);
     }
-
+  
     const fetchData = async () => {
-      const token = sessionStorage.getItem("token") || localStorage.getItem("token"  );
-
+      const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+  
       if (!token) {
-        console.error("❌ No token found. Cannot fetch secured data."  );
+        console.error("❌ No token found. Cannot fetch secured data.");
         return;
       }
-
+  
       const headers = {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"};
-
+        "Content-Type": "application/json",
+      };
+  
       try {
         const [incidentsRes, requestsRes, changesRes] = await Promise.all([
-          fetch(`${process.env.REACT_APP_API_URL}/api/incidents`, { headers }),
-          fetch(`${process.env.REACT_APP_API_URL}/api/service-requests`, { headers }),
-          fetch(`${process.env.REACT_APP_API_URL}/api/changes`, { headers })]  );
-
+          fetch("${process.env.REACT_APP_API_URL}/api/incidents", { headers }),
+          fetch("${process.env.REACT_APP_API_URL}/api/service-requests", { headers }),
+          fetch("${process.env.REACT_APP_API_URL}/api/changes", { headers }),
+        ]);
+  
         if (!incidentsRes.ok || !requestsRes.ok || !changesRes.ok) {
-          throw new Error("❌ Failed to fetch one or more API responses."  );
+          throw new Error("❌ Failed to fetch one or more API responses.");
         }
-
-        const incidentsData = await incidentsRes.json(  );
-        const requestsData = await requestsRes.json(  );
-        const changesData = await changesRes.json(  );
-
-        setIncidents(Array.isArray(incidentsData) ? incidentsData : incidentsData.incidents || []  );
-        setRequests(requestsData  );
-        setChanges(changesData  );
+  
+        const incidentsData = await incidentsRes.json();
+        const requestsData = await requestsRes.json();
+        const changesData = await changesRes.json();
+  
+        setIncidents(Array.isArray(incidentsData) ? incidentsData : incidentsData.incidents || []);
+        setRequests(requestsData);
+        setChanges(changesData);
       } catch (err) {
-        console.error("❌ Failed to fetch data for global search.", err  );
+        console.error("❌ Failed to fetch data for global search.", err);
       }
     };
-
-    fetchData(  );
-  }, []  );
-
+  
+    fetchData();
+  }, []);
+  
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const articles = await fetchKbArticles(  );
-        setKbArticles(articles  );
+        const articles = await fetchKbArticles();
+        setKbArticles(articles);
       } catch (err) {
-        console.error("❌ Failed to fetch KB articles:", err  );
+        console.error("❌ Failed to fetch KB articles:", err);
       }
     };
+  
+    fetchArticles();
+  }, []);
+  
 
-    fetchArticles(  );
-  }, []  );
+  const [notifications, setNotifications] = useState([]);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
+  
+  const [socket, setSocket] = useState(null);
 
-
-  const [notifications, setNotifications] = useState([]  );
-  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null  );
-
-  const [socket, setSocket] = useState(null  );
-
-
+  
   const fetchNotifications = async () => {
     try {
-      const token = sessionStorage.getItem("token"  );
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` }}  );
-      const data = await res.json(  );
-      setNotifications(Array.isArray(data) ? data : data.notifications || []  );
+      const token = sessionStorage.getItem("token");
+      const res = await fetch("${process.env.REACT_APP_API_URL}/api/notifications", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setNotifications(Array.isArray(data) ? data : data.notifications || []);
     } catch (err) {
-      console.error("❌ Failed to fetch notifications", err  );
+      console.error("❌ Failed to fetch notifications", err);
     }
   };
+  
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+  
 
   useEffect(() => {
-    fetchNotifications(  );
-  }, []  );
-
-
-  useEffect(() => {
-    const token = sessionStorage.getItem("token"  );
-    const user = JSON.parse(sessionStorage.getItem("user") || "{}"  );
-
+    const token = sessionStorage.getItem("token");
+    const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  
     if (!user?.id || !token) return;
-
+  
     const newSocket = io("http://localhost:5000", {
       auth: {
-        token}}  );
-
-    newSocket.emit("join", user.id  ); // ✅ Join the user's private room
-
+        token,
+      },
+    });
+  
+    newSocket.emit("join", user.id); // ✅ Join the user's private room
+  
     newSocket.on("new_notification", (notification) => {
-      console.log("📥 New live notification:", notification  );
-      setNotifications((prev) => [notification, ...prev]  );
-    }  );
-
-    setSocket(newSocket  );
-
+      console.log("📥 New live notification:", notification);
+      setNotifications((prev) => [notification, ...prev]);
+    });
+  
+    setSocket(newSocket);
+  
     return () => {
       newSocket.disconnect();
     };
-  }, []  );
-
+  }, []);
+  
   const openTab = (tab) => {
     if (selectedTab && selectedTab !== tab) {
-      setTabHistory((prev) => [...prev, selectedTab]  );
+      setTabHistory((prev) => [...prev, selectedTab]);
     }
     if (!tabs.includes(tab)) {
-      setTabs([...tabs, tab]  );
+      setTabs([...tabs, tab]);
     }
-    setSelectedTab(tab  );
-    setMoreAnchor(null  );
+    setSelectedTab(tab);
+    setMoreAnchor(null);
   };
-
-
+  
+  
 
   const closeTab = (tab) => {
     if (tab === "Dashboard") return;
-    const newTabs = tabs.filter((t) => t !== tab  );
-    setTabs(newTabs  );
+    const newTabs = tabs.filter((t) => t !== tab);
+    setTabs(newTabs);
     localStorage.setItem("openTabs", JSON.stringify(newTabs));
 
     if (selectedTab === tab) {
       const newSelectedTab = newTabs[0] || "Dashboard";
-      setSelectedTab(newSelectedTab  );
-      localStorage.setItem("selectedTab", newSelectedTab  );
+      setSelectedTab(newSelectedTab);
+      localStorage.setItem("selectedTab", newSelectedTab);
     }
   };
 
-  const handleMoreClick = (e) => setMoreAnchor(e.currentTarget  );
-  const handleMoreClose = () => setMoreAnchor(null  );
+  const handleMoreClick = (e) => setMoreAnchor(e.currentTarget);
+  const handleMoreClose = () => setMoreAnchor(null);
 
   const handleLogout = () => {
-    sessionStorage.clear(  );
-    localStorage.removeItem("searchTriggered"  );
-    localStorage.removeItem("lastSearchQuery"  );
-    localStorage.clear(  );
-    window.location.reload(  );
+    sessionStorage.clear();
+    localStorage.removeItem("searchTriggered");
+    localStorage.removeItem("lastSearchQuery");
+    localStorage.clear();
+    window.location.reload();
   };
 
-  const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}") || {};
+  const handleSwitchRole = () => {
+    const userData = JSON.parse(sessionStorage.getItem("user")); // assuming user data is stored
+    const roles = userData?.roles || [];
+  
+    if (roles.length > 1) {
+      sessionStorage.removeItem("selectedRole");
+      navigate("/select-role", { state: { roles, user: userData } });
+    } else {
+      alert("Only one role assigned to this account.");
+    }
+  };
+  
+  const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}");
   const activeRole = sessionStorage.getItem("selectedRole") || storedUser?.role?.toLowerCase() || "Unknown";
 
 
-  const [searchResults, setSearchResults] = useState({}  );
+  const [searchResults, setSearchResults] = useState({});
 
-  const [kbArticles, setKbArticles] = useState([]  );
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false  );
-  const [kbModalOpen, setKbModalOpen] = useState(false  );
-  const [selectedKbArticle, setSelectedKbArticle] = useState(null  );
+  const [kbArticles, setKbArticles] = useState([]);
+  const [kbModalOpen, setKbModalOpen] = useState(false);
+  const [selectedKbArticle, setSelectedKbArticle] = useState(null);
 
   const filteredResults = {
     incidents: incidents.filter((i) =>
@@ -245,30 +251,34 @@ if (savedQuery) {
       i.referenceNumber?.toString().toLowerCase().includes(searchQuery.toLowerCase()) // ✅ ensure string
     ),
     requests: requests.filter((r) =>
-      r.title?.toLowerCase().includes(searchQuery.toLowerCase())),
+      r.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
     changes: changes.filter((c) =>
-      c.title?.toLowerCase().includes(searchQuery.toLowerCase())),
+      c.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
     kb: kbArticles.filter((k) =>
-      k.title?.toLowerCase().includes(searchQuery.toLowerCase()))};
-
-  const clearTabHistory = () => {
-    setTabHistory([]  );
+      k.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
   };
 
-  const [tabHistory, setTabHistory] = useState([]  );
+  const clearTabHistory = () => {
+    setTabHistory([]);
+  };
+  
+  const [tabHistory, setTabHistory] = useState([]);
 
   const goBack = () => {
     if (tabHistory.length > 0) {
       const lastTab = tabHistory[tabHistory.length - 1];
-
+  
       // Remove current tab
-      const newTabs = tabs.filter((t) => t !== selectedTab  );
-      setTabs(newTabs  );
+      const newTabs = tabs.filter((t) => t !== selectedTab);
+      setTabs(newTabs);
       localStorage.setItem("openTabs", JSON.stringify(newTabs));
-
+  
       // Navigate back
-      setSelectedTab(lastTab  );
-      localStorage.setItem("selectedTab", lastTab  );
+      setSelectedTab(lastTab);
+      localStorage.setItem("selectedTab", lastTab);
       setTabHistory(tabHistory.slice(0, -1));
     }
   };
@@ -279,12 +289,13 @@ if (savedQuery) {
       "Service Requests": ["Service Requests", "Raise Service Request"],
       "Changes": ["Changes", "New Change"]
     };
-
+  
     const menuItems = options[type] || [];
-
+  
     setMoreAnchor({
       ...event,
-      menuItems}  );
+      menuItems,
+    });
   };
 
 
@@ -300,20 +311,19 @@ if (savedQuery) {
               {items.map((item) => {
   if (key === "kb") {
     return (
-  <>
       <ListItem
         key={item.id}
         button
         onClick={() => {
-          setSelectedKbArticle(item  );
-          setKbModalOpen(true  );
-          setShowSearch(false  );
+          setSelectedKbArticle(item);
+          setKbModalOpen(true);
+          setShowSearch(false);
         }}
         sx={{ color: isMobileView ? "black" : "white", pl: 2 }}
       >
         <ListItemText primary={item.title} />
       </ListItem>
-      );
+    );
   }
 
   const tabLabel =
@@ -326,23 +336,23 @@ if (savedQuery) {
       : `Unknown`;
 
   return (
-  <>
     <ListItem
       key={item.id}
       button
       onClick={() => {
-        openTab(tabLabel  );
-        setSearchQuery(""  );
-        setShowSearch(false  );
+        openTab(tabLabel);
+        setSearchQuery("");
+        setShowSearch(false);
       }}
       sx={{ color: isMobileView ? "black" : "white", pl: 2 }}
     >
       <ListItemText primary={item.title} />
     </ListItem>
-    );
+  );
 })}
 
-            )}
+            </>
+          )}
         </React.Fragment>
       ))}
 
@@ -352,11 +362,11 @@ if (savedQuery) {
         </Typography>
       )}
     </Box>
-    );
+  );
 
   const renderContent = () => {
     if (typeof selectedTab !== "string") return null;
-
+  
     if (selectedTab === "Dashboard") return <Dashboard openTab={openTab} />;
     if (selectedTab === "Incidents") return <Incidents openTab={openTab} />;
     if (selectedTab === "Service Requests") return <ServiceRequests openTab={openTab} />;
@@ -364,85 +374,80 @@ if (savedQuery) {
     if (selectedTab === "Changes") return <Changes openTab={openTab} />;
     if (selectedTab === "Tasks") return <Tasks openTab={openTab} />;
 
-
+  
     if (selectedTab === "Search results") {
-      const previousTab = tabs.find(tab => tab !== "Search results" && tab !== selectedTab  );
+      const previousTab = tabs.find(tab => tab !== "Search results" && tab !== selectedTab);
       return (
-  <>
         <SearchResults
           query={searchQuery}
           results={filteredResults} // ✅ This must contain the incidents array
           openTab={openTab}
           previousTab={previousTab}
         />
-        );
+      );
     }
-
-
-
+    
+    
+    
     if (selectedTab === "Admin Settings" && allowedTabs.includes("Admin Settings")) {
       return <AdminSettings />;
-    }
-
-
+    }    
+    
+  
     if (selectedTab === "New Incident") {
       return (
-  <>
         <RaiseIncidentForm
           renameTabAfterSubmit={(oldTab, newRef) => {
             const updatedTabs = tabs.map((t) => (t === oldTab ? `Incident ${newRef}` : t));
-            setTabs(updatedTabs  );
-            setSelectedTab(`Incident ${newRef}`  );
+            setTabs(updatedTabs);
+            setSelectedTab(`Incident ${newRef}`);
           }}
         />
-        );
+      );
     }
-
+  
     if (selectedTab === "Raise Service Request") {
       return (
-  <>
         <RaiseServiceRequestForm
           renameTabAfterSubmit={(oldTab, newId) => {
             const newTabName = `Service Request ${newId}`;
             const updatedTabs = tabs.map((t) => (t === oldTab ? newTabName : t));
-            setTabs(updatedTabs  );
-            setSelectedTab(newTabName  );
+            setTabs(updatedTabs);
+            setSelectedTab(newTabName);
           }}
         />
-        );
+      );
     }
-
+  
     if (selectedTab === "New Change") {
       return (
-  <>
         <RaiseChangeForm
           renameTabAfterSubmit={(oldTab, newId) => {
             const updatedTabs = tabs.map((t) => (t === oldTab ? `Change ${newId}` : t));
-            setTabs(updatedTabs  );
-            setSelectedTab(`Change ${newId}`  );
+            setTabs(updatedTabs);
+            setSelectedTab(`Change ${newId}`);
           }}
         />
-        );
+      );
     }
-
+  
     if (selectedTab.startsWith("Incident")) {
       const ref = selectedTab.split(" ")[1];
-      const fromSearch = tabs.includes("Search results"  );
+      const fromSearch = tabs.includes("Search results");
       return (
-  <>
         <IncidentDetails
           referenceNumber={ref}
           fromSearch={fromSearch}
           openTab={openTab}
         />
-        );
-    }
-
+      );
+    }    
+  
     if (selectedTab.startsWith("Service Request")) {
       const id = selectedTab.split(" ")[2];
       return <ServiceRequestDetails id={id} />;
     }
-
+  
     if (selectedTab.startsWith("Change")) {
       const id = selectedTab.split(" ")[1];
       return <ChangeDetails id={id} />;
@@ -452,15 +457,14 @@ if (savedQuery) {
       const id = selectedTab.split(" ")[1];
       return <TaskDetails id={id} openTab={openTab} />;
     }
-
-
-
-
+    
+    
+    
+  
     if (selectedTab.startsWith("KB")) {
       const id = selectedTab.split(" ")[1];
-      const article = kbArticles.find((a) => a.id === id  );
+      const article = kbArticles.find((a) => a.id === id);
       return (
-  <>
         <Box sx={{ p: 3 }}>
           <Typography variant="h4">{article?.title}</Typography>
           <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
@@ -468,12 +472,11 @@ if (savedQuery) {
           </Typography>
           <Typography>{article?.content}</Typography>
         </Box>
-        );
+      );
     }
 
     if (selectedTab === "Knowledge Base") {
       return (
-  <>
         <Box sx={{ p: 3 }}>
           <Typography variant="h4" gutterBottom>Knowledge Base</Typography>
           {kbArticles.map((article) => (
@@ -481,8 +484,8 @@ if (savedQuery) {
               key={article.id}
               sx={{ p: 2, mb: 2, cursor: "pointer" }}
               onClick={() => {
-                setSelectedKbArticle(article  );
-                setKbModalOpen(true  );
+                setSelectedKbArticle(article);
+                setKbModalOpen(true);
               }}
             >
               <Typography variant="h6">{article.title}</Typography>
@@ -492,16 +495,16 @@ if (savedQuery) {
             </Paper>
           ))}
         </Box>
-        );
+      );
     }
-
-
+  
+  
     return null;
-  };
+  };  
 
-
+  
   return (
-  <>
+    <>
       {!isMobile && (
         <Drawer
           anchor="left"
@@ -521,7 +524,13 @@ if (savedQuery) {
   },
   "& .MuiListItemText-primary": {
     fontSize: "0.90rem",           // ⬅️ shrink text
-  }}}}
+  },
+  "& .MuiListItem-root": {
+        py: 0.5,                   // ⬅️ Reduce vertical padding (space between items)
+        minHeight: "28px",         // Optional: compact list items
+      },
+},
+          }}
         >
           <Box
   sx={{
@@ -530,7 +539,8 @@ if (savedQuery) {
     justifyContent: "space-between",
     px: 2,
     py: 2,
-    bgcolor: "#0056b3"}}
+    bgcolor: "#0056b3",
+  }}
 >
   <Typography variant="h6" sx={{ color: "white" }}>
     IT Helpdesk
@@ -551,7 +561,7 @@ if (savedQuery) {
     </IconButton>
   </Tooltip>
 </Box>
-</Drawer>
+
 
 
           <Box sx={{ px: 2, pt: 2 }}>
@@ -563,33 +573,34 @@ if (savedQuery) {
               value={searchQuery}
               onChange={(e) => {
                 const value = e.target.value;
-                setSearchQuery(value  );
-
+                setSearchQuery(value);
+              
                 if (value) {
-                  setLastSearchQuery(value  );
-                  localStorage.setItem("lastSearchQuery", value  );
-
+                  setLastSearchQuery(value);
+                  localStorage.setItem("lastSearchQuery", value);
+              
                   if (selectedTab !== "Search results") {
-                    setSearchTriggered(true  );
-                    localStorage.setItem("searchTriggered", "true"  );
-                    openTab("Search results"  );
+                    setSearchTriggered(true);
+                    localStorage.setItem("searchTriggered", "true");
+                    openTab("Search results");
                   }
                 }
-
+              
                 // ❌ Remove this — don't reset the trigger when clearing text
                 // if (!value) {
-                //   setSearchTriggered(false  );
-                //   localStorage.removeItem("searchTriggered"  );
+                //   setSearchTriggered(false);
+                //   localStorage.removeItem("searchTriggered");
                 // }
               }}
-
-
+              
+              
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                )}}
+                ),
+              }}
             />
           </Box>
 
@@ -600,7 +611,7 @@ if (savedQuery) {
           <Divider sx={{ bgcolor: "white", mt: 2 }} />
           <List>
   {allowedTabs.map((navItem) => {
-    const showPlus = ["Incidents", "Service Requests", "Changes"].includes(navItem  );
+    const showPlus = ["Incidents", "Service Requests", "Changes"].includes(navItem);
     const plusTab = navItem === "Incidents"
       ? "New Incident"
       : navItem === "Service Requests"
@@ -610,7 +621,6 @@ if (savedQuery) {
       : null;
 
     return (
-  <>
       <ListItem key={navItem} sx={{ pl: 2, pr: 1 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
           <Box
@@ -633,7 +643,7 @@ if (savedQuery) {
           )}
         </Box>
       </ListItem>
-      );
+    );
   })}
 </List>
 
@@ -647,7 +657,8 @@ if (savedQuery) {
         justifyContent: "space-between",
         alignItems: "center",
         px: 2,
-        py: 1}}
+        py: 1,
+      }}
     >
       <Typography sx={{ fontWeight: "bold" }}>Open Tabs</Typography>
       <IconButton
@@ -655,11 +666,11 @@ if (savedQuery) {
   sx={{ color: "white" }}
   onClick={() => {
     const dashboardOnly = tabs.includes("Dashboard") ? ["Dashboard"] : [];
-    setTabs(dashboardOnly  );
-    setSelectedTab("Dashboard"  );
+    setTabs(dashboardOnly);
+    setSelectedTab("Dashboard");
     localStorage.setItem("openTabs", JSON.stringify(dashboardOnly));
-    localStorage.setItem("selectedTab", "Dashboard"  );
-    clearTabHistory(  ); // ✅ Actually clears it now
+    localStorage.setItem("selectedTab", "Dashboard");
+    clearTabHistory(); // ✅ Actually clears it now
   }}
 >
   <CloseIcon fontSize="small" />
@@ -679,8 +690,8 @@ if (savedQuery) {
         {tab !== "Dashboard" && (
           <IconButton
             onClick={(e) => {
-              e.stopPropagation(  );
-              closeTab(tab  );
+              e.stopPropagation();
+              closeTab(tab);
             }}
             sx={{ color: "white" }}
             size="small"
@@ -710,7 +721,7 @@ if (savedQuery) {
       }
       sx={{ width: 40, height: 40 }}
     >
-      {storedUser?.username?.[0]?.toUpperCase() || "U"}
+      {storedUser.username?.[0]?.toUpperCase() || "U"}
     </Avatar>
 
     <Box sx={{ flexGrow: 1 }}>
@@ -748,22 +759,23 @@ if (savedQuery) {
     onClick={async () => {
       try {
         const user = JSON.parse(sessionStorage.getItem("user"));
-        const token = sessionStorage.getItem("token"  );
+        const token = sessionStorage.getItem("token");
 
         await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/notifications`,
+          "${process.env.REACT_APP_API_URL}/api/notifications",
           {
             user_id: user.id,
             message: "🧪 Live test notification from UI",
             link: "Dashboard"
           },
           {
-            headers: { Authorization: `Bearer ${token}` }}
-          );
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-        console.log("✅ Test notification sent."  );
+        console.log("✅ Test notification sent.");
       } catch (err) {
-        console.error("❌ Failed to send test notification:", err  );
+        console.error("❌ Failed to send test notification:", err);
       }
     }}
   >
@@ -774,8 +786,7 @@ if (savedQuery) {
 </List>
 
 
-              </Box>
-    </Drawer>
+        </Drawer>
       )}
 
       {isMobile && (
@@ -789,7 +800,8 @@ if (savedQuery) {
                 left: 10,
                 zIndex: 1300,
                 bgcolor: "white",
-                boxShadow: 3}}
+                boxShadow: 3,
+              }}
             >
               <SearchIcon />
             </IconButton>
@@ -807,7 +819,8 @@ if (savedQuery) {
               zIndex: 1400,
               p: 2,
               pt: 4, // ✅ Add extra top padding (or use safe area inset if desired)
-              boxShadow: 3}}
+              boxShadow: 3,
+            }}
           >
               <TextField
                 fullWidth
@@ -817,30 +830,31 @@ if (savedQuery) {
                 value={searchQuery}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setSearchQuery(value  );
-
+                  setSearchQuery(value);
+                
                   if (value) {
-                    setLastSearchQuery(value  );
-                    localStorage.setItem("lastSearchQuery", value  );
-
+                    setLastSearchQuery(value);
+                    localStorage.setItem("lastSearchQuery", value);
+                
                     if (selectedTab !== "Search results") {
-                      setSearchTriggered(true  );
-                      localStorage.setItem("searchTriggered", "true"  );
-                      openTab("Search results"  );
+                      setSearchTriggered(true);
+                      localStorage.setItem("searchTriggered", "true");
+                      openTab("Search results");
                     }
                   }
-
+                
                   // ❌ Do NOT reset searchTriggered here — we want to keep the last search even if input is cleared
                 }}
-
+                
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => { setShowSearch(false  ); setSearchQuery(""  ); }}>
+                      <IconButton onClick={() => { setShowSearch(false); setSearchQuery(""); }}>
                         <CloseIcon />
                       </IconButton>
                     </InputAdornment>
-                  )}}
+                  ),
+                }}
               />
              {searchQuery && !searchTriggered && (
               <Box sx={{ mt: 2, maxHeight: "60vh", overflowY: "auto" }}>
@@ -851,45 +865,47 @@ if (savedQuery) {
             </Box>
           )}
 
-<Box
-  sx={{
-    position: "fixed",
-    bottom: 0,
-    left: 0,
-    width: "100vw",
-    zIndex: 1200,
-    height: "80px",
-    backgroundColor: "white",
-    overflow: "hidden",
-    paddingBottom: "env(safe-area-inset-bottom)"}}
->
+<Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1200 }}>
   <BottomNavigation
     value={selectedTab}
     onChange={(event, newValue) => {
       if (newValue === "More") {
-        setMoreAnchor(event.currentTarget  );
+        handleMoreClick(event);
       } else if (newValue === "Logout") {
-        setShowLogoutConfirm(true  );
+        setShowLogoutConfirm(true);
       } else {
-        openTab(newValue  );
+        openTab(newValue);
       }
     }}
-    sx={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      justifyContent: "space-around",
-      maxWidth: "100vw",
-      overflow: "hidden"}}
     showLabels
   >
     <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
-    <BottomNavigationAction label="Incidents" value="Incidents" icon={<FolderIcon />} />
-    <BottomNavigationAction label="Requests" value="Service Requests" icon={<BuildIcon />} />
-    <BottomNavigationAction label="Changes" value="Changes" icon={<BuildIcon />} />
+    <BottomNavigationAction
+  label="Incidents"
+  value="Incidents"
+  icon={<FolderIcon />}
+  onClick={(e) => handleMobileMenu(e, "Incidents")}
+/>
+
+<BottomNavigationAction
+  label="Requests"
+  value="Service Requests"
+  icon={<BuildIcon />}
+  onClick={(e) => handleMobileMenu(e, "Service Requests")}
+/>
+
+<BottomNavigationAction
+  label="Changes"
+  value="Changes"
+  icon={<BuildIcon />}
+  onClick={(e) => handleMobileMenu(e, "Changes")}
+/>
+
+    <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon />} />
     <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
+    <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon />} />
   </BottomNavigation>
-</Box>
+</Paper>
 
 
 <Menu
@@ -902,7 +918,9 @@ if (savedQuery) {
       borderRadius: 2,
       boxShadow: 5,
       p: 1,
-      bgcolor: "background.paper"}}}
+      bgcolor: "background.paper",
+    },
+  }}
 >
   <Typography variant="subtitle2" sx={{ px: 2, pt: 1, pb: 0.5, color: "text.secondary" }}>
     {moreAnchor?.menuItems ? "Select Option" : "Open Tabs"}
@@ -915,39 +933,46 @@ if (savedQuery) {
       <MenuItem
         key={item}
         onClick={() => {
-          openTab(item  );
-          handleMoreClose(  );
+          openTab(item);
+          handleMoreClose();
         }}
         sx={{
           "&:hover": {
             bgcolor: "primary.light",
-            color: "white"},
+            color: "white",
+          },
           borderRadius: 1,
-          mb: 0.5}}
+          mb: 0.5,
+        }}
       >
         {item}
       </MenuItem>
-    ))) : (
+    ))
+  ) : (
     tabs.length > 0 ? (
       tabs.map((tab) => (
         <MenuItem
           key={tab}
           onClick={() => {
-            openTab(tab  );
-            handleMoreClose(  );
+            openTab(tab);
+            handleMoreClose();
           }}
           sx={{
             "&:hover": {
               bgcolor: "primary.light",
-              color: "white"},
+              color: "white",
+            },
             borderRadius: 1,
-            mb: 0.5}}
+            mb: 0.5,
+          }}
         >
           {tab}
         </MenuItem>
-      ))) : (
+      ))
+    ) : (
       <MenuItem disabled>No Open Tabs</MenuItem>
-    ))}
+    )
+  )}
 </Menu>
 
 
@@ -962,13 +987,15 @@ if (savedQuery) {
                   right: 10,
                   zIndex: 1300,
                   bgcolor: "white",
-                  boxShadow: 3}}
+                  boxShadow: 3,
+                }}
               >
                 <CloseIcon />
               </IconButton>
             </Tooltip>
           )}
-        )}
+        </>
+      )}
 
 {!isMobile && tabHistory.length > 0 && (
   <Tooltip title="Go Back">
@@ -980,69 +1007,13 @@ if (savedQuery) {
         left: 260, // Just outside the sidebar
         zIndex: 1300,
         bgcolor: "white",
-        boxShadow: 3}}
+        boxShadow: 3,
+      }}
     >
       <Typography variant="body2" fontWeight="bold">⬅</Typography>
     </IconButton>
   </Tooltip>
 )}
-
-
-{isMobile && (
-  <>
-    <IconButton
-      onClick={() => setMobileDrawerOpen(true)}
-      sx={{
-        position: "fixed",
-        top: 10,
-        left: 10,
-        zIndex: 1300,
-        bgcolor: "white",
-        boxShadow: 3}}
-    >
-      <MoreVertIcon />
-    </IconButton>
-
-    <Drawer
-      anchor="left"
-      open={mobileDrawerOpen}
-      onClose={() => setMobileDrawerOpen(false)}
-    >
-      <Box sx={{ width: 250, p: 2 }}>
-        <Typography variant="h6" gutterBottom>Menu</Typography>
-        <List>
-          {[
-            "Dashboard",
-            "Incidents",
-            "New Incident",
-            "Service Requests",
-            "Raise Service Request",
-            "Changes",
-            "New Change",
-            "Profile",
-            "Logout"
-          ].map((item) => (
-            <ListItem
-              button
-              key={item}
-              onClick={() => {
-                if (item === "Logout") {
-                  setShowLogoutConfirm(true  );
-                } else {
-                  openTab(item  );
-                }
-                setMobileDrawerOpen(false  );
-              }}
-            >
-              <ListItemText primary={item} />
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-          </Box>
-    </Drawer>
-  )}
-
 
 {tabHistory.length > 0 && selectedTab !== "Dashboard" && (
   <Tooltip title="Go Back">
@@ -1054,7 +1025,8 @@ if (savedQuery) {
         left: isMobile ? 60 : 260,
         zIndex: 1300,
         bgcolor: "white",
-        boxShadow: 3}}
+        boxShadow: 3,
+      }}
     >
       <Typography variant="body2" fontWeight="bold">⬅</Typography>
     </IconButton>
@@ -1066,11 +1038,12 @@ if (savedQuery) {
 <Box
   sx={{
     marginLeft: !isMobile ? "250px" : 0,
-    marginTop: isMobile ? "56px" : 0,  // ✅ pushes content down
+    marginTop: isMobile && showSearch ? "80px" : 0,  // ✅ pushes content down
     padding: "24px",
     minHeight: "100vh",
     bgcolor: "#f4f4f4",
-    overflowX: "hidden"}}
+    overflowX: "hidden",
+  }}
 >
   {renderContent()}
 
@@ -1089,7 +1062,8 @@ if (savedQuery) {
       bgcolor: 'background.paper',
       boxShadow: 24,
       p: 4,
-      borderRadius: 2}}
+      borderRadius: 2,
+    }}
   >
     {selectedKbArticle && (
       <>
@@ -1098,7 +1072,8 @@ if (savedQuery) {
           Category: {selectedKbArticle.category}
         </Typography>
         <Typography>{selectedKbArticle.content}</Typography>
-      )}
+      </>
+    )}
   </Box>
 </Modal>
 
@@ -1118,7 +1093,8 @@ if (savedQuery) {
       bgcolor: 'background.paper',
       boxShadow: 24,
       borderRadius: 2,
-      p: 4}}
+      p: 4,
+    }}
   >
     <Typography variant="h6" gutterBottom>
       Confirm Logout
@@ -1159,7 +1135,8 @@ if (savedQuery) {
             p: 1,
             mb: 1,
             bgcolor: note.is_read ? "grey.100" : "#fff8e1",
-            opacity: note.is_read ? 0.7 : 1}}
+            opacity: note.is_read ? 0.7 : 1,
+          }}
         >
           <Typography variant="body2">{note.message}</Typography>
 
@@ -1174,18 +1151,21 @@ if (savedQuery) {
                       {},
                       {
                         headers: {
-                          Authorization: `Bearer ${sessionStorage.getItem("token")}`}}
-                      );
+                          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+                        },
+                      }
+                    );
 
                     setNotifications((prev) =>
                       prev.map((n) =>
                         n.id === note.id ? { ...n, is_read: 1 } : n
-                      ));
+                      )
+                    );
 
-                    openTab(note.link  );
-                    setNotificationAnchorEl(null  );
+                    openTab(note.link);
+                    setNotificationAnchorEl(null);
                   } catch (err) {
-                    console.error("❌ Failed to mark as read:", err  );
+                    console.error("❌ Failed to mark as read:", err);
                   }
                 }}
               >
@@ -1203,15 +1183,18 @@ if (savedQuery) {
                       {},
                       {
                         headers: {
-                          Authorization: `Bearer ${sessionStorage.getItem("token")}`}}
-                      );
+                          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+                        },
+                      }
+                    );
 
                     setNotifications((prev) =>
                       prev.map((n) =>
                         n.id === note.id ? { ...n, is_read: 1 } : n
-                      ));
+                      )
+                    );
                   } catch (err) {
-                    console.error("❌ Failed to mark as read:", err  );
+                    console.error("❌ Failed to mark as read:", err);
                   }
                 }}
               >
@@ -1220,7 +1203,8 @@ if (savedQuery) {
             )}
           </Box>
         </Paper>
-      )))}
+      ))
+    )}
 
     {notifications.length > 0 && (
       <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -1229,20 +1213,22 @@ if (savedQuery) {
           onClick={async () => {
             try {
               await axios.put(
-                `${process.env.REACT_APP_API_URL}/api/notifications/mark-all-read`,
+                "${process.env.REACT_APP_API_URL}/api/notifications/mark-all-read",
                 {},
                 {
                   headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem("token")}`}}
-                );
+                    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+                  },
+                }
+              );
 
               setNotifications((prev) =>
                 Array.isArray(prev)
                   ? prev.map((n) => ({ ...n, is_read: 1 }))
                   : []
-                );
+              );
             } catch (err) {
-              console.error("❌ Failed to mark all as read:", err  );
+              console.error("❌ Failed to mark all as read:", err);
             }
           }}
         >
@@ -1255,9 +1241,9 @@ if (savedQuery) {
 
 
 
+</> 
 
-
-    );
+  );
 };
 
 export default TabbedView;
