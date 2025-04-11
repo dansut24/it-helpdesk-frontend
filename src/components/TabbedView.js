@@ -313,6 +313,7 @@ if (savedQuery) {
       >
         <ListItemText primary={item.title} />
       </ListItem>
+</>
       );
   }
 
