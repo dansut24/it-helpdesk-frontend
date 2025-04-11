@@ -1,13 +1,6 @@
 
 import React, { useState } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  Alert,
-} from "@mui/material";
+import { Container, Paper, TextField, Button, Typography } from "@mui/material";
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -17,56 +10,73 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = () => {
-    const { username, password } = formData;
+  const handleLogin = async () => {
+    setError(""); // clear previous error
 
-    if (username === "testuser" && password === "password123") {
-      const mockUser = {
-        id: 1,
-        username: "testuser",
-        roles: ["admin", "selfservice"],
-        team_id: 1,
-        token: "fake-jwt-token"
-      };
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-      sessionStorage.setItem("user", JSON.stringify(mockUser));
-      sessionStorage.setItem("token", mockUser.token);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
+
+      const data = await response.json();
+
+      sessionStorage.setItem("user", JSON.stringify(data.user));
+      sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("selectedRole", "choose");
 
-      // Force reload to trigger SPA routing and layout detection
+      console.log("✅ Login successful");
       window.location.href = "/";
-    } else {
-      setError("Invalid test credentials");
+    } catch (err) {
+      console.error("❌ Login error:", err);
+      setError(err.message || "Login failed");
     }
   };
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-      <Paper elevation={3} sx={{ p: 4, width: 300 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>Login</Typography>
-        {error && <Alert severity="error">{error}</Alert>}
+    <Container maxWidth="sm" style={{ marginTop: "100px" }}>
+      <Paper elevation={3} style={{ padding: "30px" }}>
+        <Typography variant="h5" gutterBottom>
+          Login
+        </Typography>
         <TextField
           fullWidth
           label="Username"
           name="username"
           value={formData.username}
           onChange={handleChange}
-          sx={{ mb: 2 }}
+          margin="normal"
         />
         <TextField
           fullWidth
-          type="password"
           label="Password"
           name="password"
+          type="password"
           value={formData.password}
           onChange={handleChange}
-          sx={{ mb: 2 }}
+          margin="normal"
         />
-        <Button variant="contained" color="primary" fullWidth onClick={handleLogin}>
+        {error && (
+          <Typography color="error" style={{ marginTop: "10px" }}>
+            {error}
+          </Typography>
+        )}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleLogin}
+          style={{ marginTop: "20px" }}
+        >
           Login
         </Button>
       </Paper>
-    </Box>
+    </Container>
   );
 };
 
