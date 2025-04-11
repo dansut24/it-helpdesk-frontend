@@ -305,8 +305,6 @@ if (savedQuery) {
           {items.length > 0 && (
             <>
   {/* Top Navbar */}
-  return (
-<>
   {isMobile && (
     <Box
       sx={{
@@ -331,8 +329,6 @@ if (savedQuery) {
       </Typography>
     </Box>
   )}
-  </>
-  );
 
   {/* Overlay Menu */}
   {showMobileTabs && (
@@ -624,7 +620,6 @@ if (savedQuery) {
       }}
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
-      
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
@@ -1082,14 +1077,15 @@ if (savedQuery) {
                 }}
                 
                 InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => { setShowSearch(false); setSearchQuery(""); }}>
-                        <CloseIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+  endAdornment: (
+    <InputAdornment position="end">
+      <IconButton onClick={() => setShowSearch(false)}>
+        <SearchIcon />
+      </IconButton>
+    </InputAdornment>
+  ),
+}}
+        
               />
              {searchQuery && !searchTriggered && (
               <Box sx={{ mt: 2, maxHeight: "60vh", overflowY: "auto" }}>
