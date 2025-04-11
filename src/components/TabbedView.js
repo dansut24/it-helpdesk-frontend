@@ -186,9 +186,8 @@ if (savedQuery) {
 
     setSocket(newSocket  );
 
-    return (
-  <>) => {
-      newSocket.disconnect(  );
+    return () => {
+      newSocket.disconnect();
     };
   }, []  );
 
