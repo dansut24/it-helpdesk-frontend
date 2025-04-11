@@ -364,79 +364,80 @@ if (savedQuery) {
     if (selectedTab === "Changes") return <Changes openTab={openTab} />;
     if (selectedTab === "Tasks") return <Tasks openTab={openTab} />;
 
+
     if (selectedTab === "Search results") {
-      const previousTab = tabs.find(tab => tab !== "Search results" && tab !== selectedTab);
+      const previousTab = tabs.find(tab => tab !== "Search results" && tab !== selectedTab  );
       return (
-        <>
-          <SearchResults
-            query={searchQuery}
-            results={filteredResults}
-            openTab={openTab}
-            previousTab={previousTab}
-          />
-        </>
-      );
+  <>
+        <SearchResults
+          query={searchQuery}
+          results={filteredResults} // ✅ This must contain the incidents array
+          openTab={openTab}
+          previousTab={previousTab}
+        />
+        );
     }
+
+
 
     if (selectedTab === "Admin Settings" && allowedTabs.includes("Admin Settings")) {
       return <AdminSettings />;
     }
 
+
     if (selectedTab === "New Incident") {
       return (
-        <>
-          <RaiseIncidentForm
-            renameTabAfterSubmit={(oldTab, newRef) => {
-              const updatedTabs = tabs.map(t => (t === oldTab ? `Incident ${newRef}` : t));
-              setTabs(updatedTabs);
-              setSelectedTab(`Incident ${newRef}`);
-            }}
-          />
-        </>
-      );
-    }
+  <>
+       return (
+  <>
+    <RaiseIncidentForm
+      renameTabAfterSubmit={(oldTab, newRef) => {
+        const updatedTabs = tabs.map((t) => (t === oldTab ? `Incident ${newRef}` : t));
+        setTabs(updatedTabs);
+        setSelectedTab(`Incident ${newRef}`);
+      }}
+    />
+  </React.Fragment>
+);
 
     if (selectedTab === "Raise Service Request") {
       return (
-        <>
-          <RaiseServiceRequestForm
-            renameTabAfterSubmit={(oldTab, newId) => {
-              const newTabName = `Service Request ${newId}`;
-              const updatedTabs = tabs.map(t => (t === oldTab ? newTabName : t));
-              setTabs(updatedTabs);
-              setSelectedTab(newTabName);
-            }}
-          />
-        </>
-      );
+  <>
+        <RaiseServiceRequestForm
+          renameTabAfterSubmit={(oldTab, newId) => {
+            const newTabName = `Service Request ${newId}`;
+            const updatedTabs = tabs.map((t) => (t === oldTab ? newTabName : t));
+            setTabs(updatedTabs  );
+            setSelectedTab(newTabName  );
+          }}
+        />
+        );
     }
 
     if (selectedTab === "New Change") {
       return (
-        <>
-          <RaiseChangeForm
-            renameTabAfterSubmit={(oldTab, newId) => {
-              const updatedTabs = tabs.map(t => (t === oldTab ? `Change ${newId}` : t));
-              setTabs(updatedTabs);
-              setSelectedTab(`Change ${newId}`);
-            }}
-          />
-        </>
-      );
+  <>
+        <RaiseChangeForm
+          renameTabAfterSubmit={(oldTab, newId) => {
+            const updatedTabs = tabs.map((t) => (t === oldTab ? `Change ${newId}` : t));
+            setTabs(updatedTabs  );
+            setSelectedTab(`Change ${newId}`  );
+          }}
+        />
+        );
     }
 
     if (selectedTab.startsWith("Incident")) {
       const ref = selectedTab.split(" ")[1];
-      const fromSearch = tabs.includes("Search results");
+      const fromSearch = tabs.includes("Search results"  );
       return (
-        <>
-          <IncidentDetails
-            referenceNumber={ref}
-            fromSearch={fromSearch}
-            openTab={openTab}
-          />
-        </>
-      );
+  <>
+        <IncidentDetails
+          referenceNumber={ref}
+          fromSearch={fromSearch}
+          openTab={openTab}
+        />
+        );
     }
 
     if (selectedTab.startsWith("Service Request")) {
@@ -446,11 +447,7 @@ if (savedQuery) {
 
     if (selectedTab.startsWith("Change")) {
       const id = selectedTab.split(" ")[1];
-      return (
-        <>
-          <ChangeDetails id={id} />
-        </>
-      );
+      return <ChangeDetails id={id} />;
     }
 
     if (selectedTab.startsWith("Task")) {
@@ -458,46 +455,48 @@ if (savedQuery) {
       return <TaskDetails id={id} openTab={openTab} />;
     }
 
+
+
+
     if (selectedTab.startsWith("KB")) {
       const id = selectedTab.split(" ")[1];
-      const article = kbArticles.find(a => a.id === id);
+      const article = kbArticles.find((a) => a.id === id  );
       return (
-        <>
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4">{article?.title}</Typography>
-            <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
-              Category: {article?.category}
-            </Typography>
-            <Typography>{article?.content}</Typography>
-          </Box>
-        </>
-      );
+  <>
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">{article?.title}</Typography>
+          <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
+            Category: {article?.category}
+          </Typography>
+          <Typography>{article?.content}</Typography>
+        </Box>
+        );
     }
 
     if (selectedTab === "Knowledge Base") {
       return (
-        <>
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>Knowledge Base</Typography>
-            {kbArticles.map(article => (
-              <Paper
-                key={article.id}
-                sx={{ p: 2, mb: 2, cursor: "pointer" }}
-                onClick={() => {
-                  setSelectedKbArticle(article);
-                  setKbModalOpen(true);
-                }}
-              >
-                <Typography variant="h6">{article.title}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {article.category}
-                </Typography>
-              </Paper>
-            ))}
-          </Box>
-        </>
-      );
+  <>
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4" gutterBottom>Knowledge Base</Typography>
+          {kbArticles.map((article) => (
+            <Paper
+              key={article.id}
+              sx={{ p: 2, mb: 2, cursor: "pointer" }}
+              onClick={() => {
+                setSelectedKbArticle(article  );
+                setKbModalOpen(true  );
+              }}
+            >
+              <Typography variant="h6">{article.title}</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {article.category}
+              </Typography>
+            </Paper>
+          ))}
+        </Box>
+        );
     }
+
 
     return null;
   };
