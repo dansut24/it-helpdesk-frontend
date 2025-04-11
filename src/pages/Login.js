@@ -43,9 +43,19 @@ const Login = () => {
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/test`);
       const data = await res.json();
-      alert(data.message); // optional feedback
+      alert("Backend: " + data.message);
     } catch (err) {
-      alert("Test failed");
+      alert("Backend test failed");
+    }
+  };
+
+  const handleTestDb = async () => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/test-db`);
+      const data = await res.json();
+      alert("Database: " + data.time);
+    } catch (err) {
+      alert("Database test failed");
     }
   };
 
@@ -88,9 +98,16 @@ const Login = () => {
         <Button
           variant="outlined"
           onClick={handleTestBackend}
-          style={{ marginTop: "10px", marginLeft: "10px" }}
+          style={{ marginTop: "10px", marginRight: "10px" }}
         >
-          Test Backend Connection
+          Test Backend
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleTestDb}
+          style={{ marginTop: "10px" }}
+        >
+          Test Database
         </Button>
       </Paper>
     </Container>
