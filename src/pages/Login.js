@@ -39,6 +39,16 @@ const Login = () => {
     }
   };
 
+  const handleTestBackend = async () => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/test`);
+      const data = await res.json();
+      alert(data.message); // optional feedback
+    } catch (err) {
+      alert("Test failed");
+    }
+  };
+
   return (
     <Container maxWidth="sm" style={{ marginTop: "100px" }}>
       <Paper elevation={3} style={{ padding: "30px" }}>
@@ -74,6 +84,13 @@ const Login = () => {
           style={{ marginTop: "20px" }}
         >
           Login
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleTestBackend}
+          style={{ marginTop: "10px", marginLeft: "10px" }}
+        >
+          Test Backend Connection
         </Button>
       </Paper>
     </Container>
