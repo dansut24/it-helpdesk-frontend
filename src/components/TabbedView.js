@@ -351,6 +351,66 @@ if (savedQuery) {
   );
 })}
 
+  {isMobile && (
+    <>
+      <Tooltip title="Open Menu">
+        <IconButton
+          onClick={() => setShowMobileTabs(true)}
+          sx={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            zIndex: 1300,
+            bgcolor: "white",
+            boxShadow: 3,
+          }}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      </Tooltip>
+      {showMobileTabs && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: "white",
+            zIndex: 1400,
+            p: 2,
+            overflowY: "auto"
+          }}
+        >
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Navigation</Typography>
+            <IconButton onClick={() => setShowMobileTabs(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Divider sx={{ my: 2 }} />
+          <List>
+            {allowedTabs.map((navItem) => (
+              <ListItem key={navItem} button onClick={() => {
+                openTab(navItem);
+                setShowMobileTabs(false);
+              }}>
+                <ListItemText primary={navItem} />
+              </ListItem>
+            ))}
+            <Divider sx={{ my: 2 }} />
+            <ListItem button onClick={() => {
+              setShowLogoutConfirm(true);
+              setShowMobileTabs(false);
+            }}>
+              <LogoutIcon sx={{ mr: 1 }} />
+              <ListItemText primary="Logout" />
+            </ListItem>
+          </List>
+        </Box>
+      )}
+    </>
+  )}
             </>
           )}
         </React.Fragment>
@@ -866,45 +926,6 @@ if (savedQuery) {
           )}
 
 <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 1200 }}>
-  <BottomNavigation
-    value={selectedTab}
-    onChange={(event, newValue) => {
-      if (newValue === "More") {
-        handleMoreClick(event);
-      } else if (newValue === "Logout") {
-        setShowLogoutConfirm(true);
-      } else {
-        openTab(newValue);
-      }
-    }}
-    showLabels
-  >
-    <BottomNavigationAction label="Dashboard" value="Dashboard" icon={<HomeIcon />} />
-    <BottomNavigationAction
-  label="Incidents"
-  value="Incidents"
-  icon={<FolderIcon />}
-  onClick={(e) => handleMobileMenu(e, "Incidents")}
-/>
-
-<BottomNavigationAction
-  label="Requests"
-  value="Service Requests"
-  icon={<BuildIcon />}
-  onClick={(e) => handleMobileMenu(e, "Service Requests")}
-/>
-
-<BottomNavigationAction
-  label="Changes"
-  value="Changes"
-  icon={<BuildIcon />}
-  onClick={(e) => handleMobileMenu(e, "Changes")}
-/>
-
-    <BottomNavigationAction label="Profile" value="Profile" icon={<AccountCircleIcon />} />
-    <BottomNavigationAction label="More" value="More" icon={<MoreVertIcon />} />
-    <BottomNavigationAction label="Logout" value="Logout" icon={<LogoutIcon />} />
-  </BottomNavigation>
 </Paper>
 
 
@@ -994,6 +1015,66 @@ if (savedQuery) {
               </IconButton>
             </Tooltip>
           )}
+  {isMobile && (
+    <>
+      <Tooltip title="Open Menu">
+        <IconButton
+          onClick={() => setShowMobileTabs(true)}
+          sx={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            zIndex: 1300,
+            bgcolor: "white",
+            boxShadow: 3,
+          }}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      </Tooltip>
+      {showMobileTabs && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: "white",
+            zIndex: 1400,
+            p: 2,
+            overflowY: "auto"
+          }}
+        >
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Navigation</Typography>
+            <IconButton onClick={() => setShowMobileTabs(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Divider sx={{ my: 2 }} />
+          <List>
+            {allowedTabs.map((navItem) => (
+              <ListItem key={navItem} button onClick={() => {
+                openTab(navItem);
+                setShowMobileTabs(false);
+              }}>
+                <ListItemText primary={navItem} />
+              </ListItem>
+            ))}
+            <Divider sx={{ my: 2 }} />
+            <ListItem button onClick={() => {
+              setShowLogoutConfirm(true);
+              setShowMobileTabs(false);
+            }}>
+              <LogoutIcon sx={{ mr: 1 }} />
+              <ListItemText primary="Logout" />
+            </ListItem>
+          </List>
+        </Box>
+      )}
+    </>
+  )}
         </>
       )}
 
@@ -1072,6 +1153,66 @@ if (savedQuery) {
           Category: {selectedKbArticle.category}
         </Typography>
         <Typography>{selectedKbArticle.content}</Typography>
+  {isMobile && (
+    <>
+      <Tooltip title="Open Menu">
+        <IconButton
+          onClick={() => setShowMobileTabs(true)}
+          sx={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            zIndex: 1300,
+            bgcolor: "white",
+            boxShadow: 3,
+          }}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      </Tooltip>
+      {showMobileTabs && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: "white",
+            zIndex: 1400,
+            p: 2,
+            overflowY: "auto"
+          }}
+        >
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Navigation</Typography>
+            <IconButton onClick={() => setShowMobileTabs(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Divider sx={{ my: 2 }} />
+          <List>
+            {allowedTabs.map((navItem) => (
+              <ListItem key={navItem} button onClick={() => {
+                openTab(navItem);
+                setShowMobileTabs(false);
+              }}>
+                <ListItemText primary={navItem} />
+              </ListItem>
+            ))}
+            <Divider sx={{ my: 2 }} />
+            <ListItem button onClick={() => {
+              setShowLogoutConfirm(true);
+              setShowMobileTabs(false);
+            }}>
+              <LogoutIcon sx={{ mr: 1 }} />
+              <ListItemText primary="Logout" />
+            </ListItem>
+          </List>
+        </Box>
+      )}
+    </>
+  )}
       </>
     )}
   </Box>
@@ -1241,6 +1382,66 @@ if (savedQuery) {
 
 
 
+  {isMobile && (
+    <>
+      <Tooltip title="Open Menu">
+        <IconButton
+          onClick={() => setShowMobileTabs(true)}
+          sx={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            zIndex: 1300,
+            bgcolor: "white",
+            boxShadow: 3,
+          }}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      </Tooltip>
+      {showMobileTabs && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: "white",
+            zIndex: 1400,
+            p: 2,
+            overflowY: "auto"
+          }}
+        >
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Navigation</Typography>
+            <IconButton onClick={() => setShowMobileTabs(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Divider sx={{ my: 2 }} />
+          <List>
+            {allowedTabs.map((navItem) => (
+              <ListItem key={navItem} button onClick={() => {
+                openTab(navItem);
+                setShowMobileTabs(false);
+              }}>
+                <ListItemText primary={navItem} />
+              </ListItem>
+            ))}
+            <Divider sx={{ my: 2 }} />
+            <ListItem button onClick={() => {
+              setShowLogoutConfirm(true);
+              setShowMobileTabs(false);
+            }}>
+              <LogoutIcon sx={{ mr: 1 }} />
+              <ListItemText primary="Logout" />
+            </ListItem>
+          </List>
+        </Box>
+      )}
+    </>
+  )}
 </> 
 
   );
