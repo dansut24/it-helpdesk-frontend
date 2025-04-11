@@ -26,7 +26,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (user?.avatar_url) {
-      const fullUrl = `http://localhost:5000${user.avatar_url}`;
+      const fullUrl = `process.env.REACT_APP_API_BASE_URL${user.avatar_url}`;
       setAvatarPreview(fullUrl);
     }
   }, [user]);
@@ -51,7 +51,7 @@ const Profile = () => {
       if (!response.ok) throw new Error("Upload failed");
       const data = await response.json();
 
-      const fullUrl = `http://localhost:5000${data.avatar_url}?t=${Date.now()}`;
+      const fullUrl = `process.env.REACT_APP_API_BASE_URL${data.avatar_url}?t=${Date.now()}`;
       setAvatarPreview(fullUrl);
 
       const updatedUser = { ...user, avatar_url: data.avatar_url };
