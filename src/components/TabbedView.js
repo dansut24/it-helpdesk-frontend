@@ -305,6 +305,8 @@ if (savedQuery) {
           {items.length > 0 && (
             <>
   {/* Top Navbar */}
+  return (
+<>
   {isMobile && (
     <Box
       sx={{
@@ -323,15 +325,14 @@ if (savedQuery) {
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
       
-      <IconButton onClick={goBack}>
-        <Typography variant="body2">Back</Typography>
-      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
       </Typography>
     </Box>
   )}
+  </>
+  );
 
   {/* Overlay Menu */}
   {showMobileTabs && (
@@ -624,9 +625,6 @@ if (savedQuery) {
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
       
-      <IconButton onClick={goBack}>
-        <Typography variant="body2">Back</Typography>
-      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
@@ -980,9 +978,6 @@ if (savedQuery) {
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
       
-      <IconButton onClick={goBack}>
-        <Typography variant="body2">Back</Typography>
-      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
@@ -1318,9 +1313,6 @@ if (savedQuery) {
     >
       <IconButton onClick={() => setShowMobileTabs(true)}>
       
-      <IconButton onClick={goBack}>
-        <Typography variant="body2">Back</Typography>
-      </IconButton>
       </IconButton>
       <Typography variant="h6" sx={{ ml: 1 }}>
         Menu
