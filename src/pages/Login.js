@@ -53,7 +53,7 @@ const Login = () => {
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/test-db`);
       const data = await res.json();
-      alert("Database: " + data.time);
+      alert("Database time: " + data.timestamp.now);
     } catch (err) {
       alert("Database test failed");
     }
