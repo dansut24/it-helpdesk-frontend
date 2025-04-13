@@ -61,6 +61,14 @@ export const updateIncidentTeam = async (incidentId, teamId) => {
   return response.data;
 };
 
+// UPDATE INCIDENT ASSIGNEE
+export const updateIncidentAssignee = async (incidentId, userId) => {
+  const response = await axios.put(`${API_BASE_URL}/incidents/${incidentId}/assign-user`, { userId }, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SERVICE REQUEST APIs
 export const fetchServiceRequests = async () => {
   const response = await axios.get(SERVICE_REQUEST_API_BASE_URL, { headers: getAuthHeaders() });
