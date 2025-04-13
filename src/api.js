@@ -29,7 +29,7 @@ export const fetchIncidents = async () => {
   const selectedRole = sessionStorage.getItem("selectedRole");
 
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/incidents", {
+    const response = await fetch("${process.env.REACT_APP_API_URL}/api/incidents", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -423,7 +423,7 @@ export const saveSlaSettings = async (settings) => {
 
 export const fetchAuditLogs = async () => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/audit-logs", {
+    const response = await fetch("${process.env.REACT_APP_API_URL}/api/audit-logs", {
       method: "GET",
       headers: getAuthHeaders(),
     });
@@ -440,7 +440,7 @@ export const fetchAuditLogs = async () => {
 
 export const fetchSystemSettings = async () => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/system-settings", {
+    const response = await fetch("${process.env.REACT_APP_API_URL}/api/system-settings", {
       method: "GET",
       headers: getAuthHeaders(),
     });
@@ -455,7 +455,7 @@ export const fetchSystemSettings = async () => {
 
 export const saveSystemSettings = async (settings) => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/system-settings", {
+    const response = await fetch("${process.env.REACT_APP_API_URL}/api/system-settings", {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(settings),
@@ -474,7 +474,7 @@ export const saveSystemSettings = async (settings) => {
 //
 
 export const fetchRoles = async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/roles", {
+  const response = await fetch("${process.env.REACT_APP_API_URL}/api/roles", {
     method: "GET",
     headers: getAuthHeaders(),
   });
@@ -483,7 +483,7 @@ export const fetchRoles = async () => {
 };
 
 export const fetchPermissions = async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/permissions", {
+  const response = await fetch("${process.env.REACT_APP_API_URL}/api/permissions", {
     method: "GET",
     headers: getAuthHeaders(),
   });
@@ -511,7 +511,7 @@ export const updateRolePermissions = async (roleId, permissionIds) => {
 };
 
 export const fetchEmailTemplates = async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/email-templates", {
+  const response = await fetch("${process.env.REACT_APP_API_URL}/api/email-templates", {
     method: "GET",
     headers: getAuthHeaders(),
   });
@@ -520,7 +520,7 @@ export const fetchEmailTemplates = async () => {
 };
 
 export const saveEmailTemplate = async (template) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/email-templates", {
+  const response = await fetch("${process.env.REACT_APP_API_URL}/api/email-templates", {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(template),
@@ -540,7 +540,7 @@ export const deleteEmailTemplate = async (id) => {
 
 export const fetchTeams = async () => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/teams", {
+    const response = await fetch("${process.env.REACT_APP_API_URL}/api/teams", {
       headers: getAuthHeaders(),
     });
     if (!response.ok) throw new Error("Failed to fetch teams");
@@ -553,7 +553,7 @@ export const fetchTeams = async () => {
 
 export const createTeam = async (name) => {
   const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/teams", {
+  const response = await fetch("${process.env.REACT_APP_API_URL}/api/teams", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -589,7 +589,7 @@ export const assignUserToTeam = async (userId, teamId) => {
 export const createUser = async (userData) => {
   try {
     const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users", {
+    const response = await fetch("${process.env.REACT_APP_API_URL}/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
