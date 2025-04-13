@@ -152,4 +152,12 @@ export const fetchSlaSettings = async () => {
   return response.data;
 };
 
+// AUDIT LOG APIs
+export const fetchAuditLogs = async () => {
+  const response = await axios.get(`${API_BASE_URL}/audit-logs`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
