@@ -114,6 +114,14 @@ export const updateUserRole = async (id, roleData) => {
   return response.data;
 };
 
+// ASSIGN USER TO TEAM
+export const assignUserToTeam = async (userId, teamId) => {
+  const response = await axios.post(`${API_BASE_URL}/teams/assign-user`, { userId, teamId }, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // TEAM APIs
 export const fetchTeams = async () => {
   const response = await axios.get(TEAMS_API_BASE_URL, { headers: getAuthHeaders() });
