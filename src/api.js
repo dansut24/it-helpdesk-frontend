@@ -208,6 +208,14 @@ export const saveEmailTemplate = async (templateData) => {
   return response.data;
 };
 
+// DELETE EMAIL TEMPLATE
+export const deleteEmailTemplate = async (templateId) => {
+  const response = await axios.delete(`${API_BASE_URL}/email-templates/${templateId}`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SLA SETTINGS APIs
 export const fetchSlaSettings = async () => {
   const response = await axios.get(`${API_BASE_URL}/sla-settings`, {
