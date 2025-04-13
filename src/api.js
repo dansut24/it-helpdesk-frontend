@@ -96,3 +96,5 @@ export const resetUserPassword = async (id, passwordData) => {
   const response = await axios.post(`${USERS_API_BASE_URL}/${id}/reset-password`, passwordData, { headers: getAuthHeaders() });
   return response.data;
 };
+
+export { getAuthHeaders };
