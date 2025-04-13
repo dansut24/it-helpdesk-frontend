@@ -14,8 +14,8 @@ const RaiseIncidentForm = ({ onSubmit }) => {
   useEffect(() => {
     async function fetchRef() {
       const ref = await getNextIncidentRef();
-      if (ref) {
-        setReference(ref);
+      if (ref?.referenceNumber) {
+        setReference(ref.referenceNumber);
       } else {
         setError("Error fetching reference number");
       }
