@@ -168,4 +168,12 @@ export const fetchAuditLogs = async () => {
   return response.data;
 };
 
+// ROLE APIs
+export const fetchRoles = async () => {
+  const response = await axios.get(`${API_BASE_URL}/roles`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
