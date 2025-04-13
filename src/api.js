@@ -77,6 +77,14 @@ export const updateChange = async (id, updates) => {
   return response.data;
 };
 
+// FETCH SINGLE CHANGE BY ID
+export const fetchChangeById = async (id) => {
+  const response = await axios.get(`${API_BASE_URL}/changes/${id}`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // USER APIs
 export const fetchUsers = async () => {
   const response = await axios.get(USERS_API_BASE_URL, { headers: getAuthHeaders() });
