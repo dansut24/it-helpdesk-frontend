@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { createIncident, getNextIncidentRef } from "../api";
 
@@ -11,23 +12,23 @@ const RaiseIncidentForm = ({ onSubmit }) => {
   const [reference, setReference] = useState("");
   const [error, setError] = useState(null);
 
-useEffect(() => {
-  async function fetchRef() {
-    try {
-      const ref = await getNextIncidentRef();
-      console.log("➡️ ref response:", ref); // Log what comes back
-      if (ref?.referenceNumber) {
-        setReference(ref.referenceNumber);
-      } else {
+  useEffect(() => {
+    async function fetchRef() {
+      try {
+        const ref = await getNextIncidentRef();
+        console.log("➡️ ref response:", ref);
+        if (ref?.nextRef) {
+          setReference(ref.nextRef);
+        } else {
+          setError("Error fetching reference number");
+        }
+      } catch (err) {
+        console.error("❌ Failed to fetch reference number:", err);
         setError("Error fetching reference number");
       }
-    } catch (err) {
-      console.error("❌ Failed to fetch reference number:", err);
-      setError("Error fetching reference number");
     }
-  }
-  fetchRef();
-}, []);
+    fetchRef();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -48,7 +49,7 @@ useEffect(() => {
 
   return (
     <div>
-      <h2>{reference ? `New Incident - INC${reference}` : "New Incident - Error"}</h2>
+      <h2>{reference ? `New Incident - ${reference}` : "New Incident - Error"}</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input name="title" placeholder="Title" onChange={handleChange} required />
@@ -65,7 +66,7 @@ useEffect(() => {
           <option value="Software">Software</option>
           <option value="Network">Network</option>
         </select>
-        <button type="submit">Submit</button>
+        <button type="submit">Submit Incident</button>
       </form>
     </div>
   );
