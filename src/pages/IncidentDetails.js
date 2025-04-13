@@ -118,7 +118,28 @@ const IncidentDetails = ({ referenceNumber, openTab }) => {
     }
   };
 
-  return (
+  
+const handleStatusChange = async (newStatus) => {
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_API_URL}/api/incidents/${incident.id}/status`,
+      { status: newStatus },
+      { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } }
+    );
+
+    setIncident((prev) => ({
+      ...prev,
+      status: newStatus,
+    }));
+
+    setToast({ open: true, message: "✅ Status updated", severity: "success" });
+  } catch (err) {
+    console.error("❌ Failed to update status:", err);
+    setToast({ open: true, message: "❌ Failed to update status", severity: "error" });
+  }
+};
+
+return (
     <Box p={3}>
       {incident ? (
         <>
