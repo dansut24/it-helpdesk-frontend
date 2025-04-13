@@ -6,6 +6,7 @@ const INCIDENT_API_BASE_URL = `${API_BASE_URL}/incidents`;
 const SERVICE_REQUEST_API_BASE_URL = `${API_BASE_URL}/service-requests`;
 const CHANGE_API_BASE_URL = `${API_BASE_URL}/changes`;
 const USERS_API_BASE_URL = `${API_BASE_URL}/users`;
+const TEAMS_API_BASE_URL = `${API_BASE_URL}/teams`;
 
 const getAuthHeaders = () => {
   const token = sessionStorage.getItem("token") || localStorage.getItem("token");
@@ -94,6 +95,12 @@ export const updateUser = async (id, updates) => {
 
 export const resetUserPassword = async (id, passwordData) => {
   const response = await axios.post(`${USERS_API_BASE_URL}/${id}/reset-password`, passwordData, { headers: getAuthHeaders() });
+  return response.data;
+};
+
+// TEAM APIs
+export const fetchTeams = async () => {
+  const response = await axios.get(TEAMS_API_BASE_URL, { headers: getAuthHeaders() });
   return response.data;
 };
 
