@@ -104,4 +104,21 @@ export const fetchTeams = async () => {
   return response.data;
 };
 
+
+// TEAM APIs
+export const fetchTeams = async () => {
+  const response = await axios.get(`${API_BASE_URL}/teams`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
+// KNOWLEDGE BASE APIs
+export const fetchKbArticles = async () => {
+  const response = await axios.get(`${API_BASE_URL}/kb-articles`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
