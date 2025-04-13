@@ -44,21 +44,24 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
 
     try {
       
+      
       const result = await createIncident({
         reference_number: reference,
         ...formData,
       });
 
       const refNum = result?.referenceNumber || result?.reference_number;
+      const id = result?.id;
 
-      if (refNum) {
+      if (refNum && id) {
         alert("✅ Incident submitted successfully.");
         if (renameTabAfterSubmit) {
-          renameTabAfterSubmit("New Incident", refNum);
+          renameTabAfterSubmit("New Incident", `Incident ${refNum}`, id);
         }
       } else {
         throw new Error("Unexpected response from server");
       }
+
 
     } catch (err) {
       console.error("❌ Error submitting incident:", err);
