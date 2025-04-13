@@ -117,6 +117,14 @@ export const fetchChangeById = async (id) => {
   return response.data;
 };
 
+// SUBMIT A NEW CHANGE REQUEST
+export const submitChange = async (changeData) => {
+  const response = await axios.post(`${API_BASE_URL}/changes`, changeData, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // USER APIs
 export const fetchUsers = async () => {
   const response = await axios.get(USERS_API_BASE_URL, { headers: getAuthHeaders() });
