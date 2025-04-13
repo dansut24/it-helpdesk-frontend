@@ -120,6 +120,14 @@ export const fetchTeams = async () => {
   return response.data;
 };
 
+// TEAM CREATE
+export const createTeam = async (teamData) => {
+  const response = await axios.post(`${API_BASE_URL}/teams`, teamData, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // KNOWLEDGE BASE APIs
 export const fetchKbArticles = async () => {
   const response = await axios.get(`${API_BASE_URL}/kb-articles`, {
