@@ -77,6 +77,14 @@ export const assignIncidentToMe = async (incidentId) => {
   return response.data;
 };
 
+// GET NEXT INCIDENT REFERENCE NUMBER
+export const getNextIncidentRef = async () => {
+  const response = await axios.get(`${API_BASE_URL}/incidents/next-ref`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SERVICE REQUEST APIs
 export const fetchServiceRequests = async () => {
   const response = await axios.get(SERVICE_REQUEST_API_BASE_URL, { headers: getAuthHeaders() });
