@@ -136,4 +136,12 @@ export const saveSystemSettings = async (settings) => {
   return response.data;
 };
 
+// EMAIL SETTINGS APIs
+export const fetchEmailSettings = async () => {
+  const response = await axios.get(`${API_BASE_URL}/email-settings`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
