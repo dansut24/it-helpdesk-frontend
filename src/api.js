@@ -168,6 +168,14 @@ export const fetchEmailSettings = async () => {
   return response.data;
 };
 
+// EMAIL SETTINGS SAVE
+export const saveEmailSettings = async (settings) => {
+  const response = await axios.post(`${API_BASE_URL}/email-settings`, settings, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SLA SETTINGS APIs
 export const fetchSlaSettings = async () => {
   const response = await axios.get(`${API_BASE_URL}/sla-settings`, {
