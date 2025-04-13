@@ -106,6 +106,14 @@ export const updateUserStatus = async (id, status) => {
   return response.data;
 };
 
+// USER ROLE API
+export const updateUserRole = async (id, roleData) => {
+  const response = await axios.put(`${USERS_API_BASE_URL}/${id}/roles`, roleData, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // TEAM APIs
 export const fetchTeams = async () => {
   const response = await axios.get(TEAMS_API_BASE_URL, { headers: getAuthHeaders() });
