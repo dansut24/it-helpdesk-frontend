@@ -122,6 +122,14 @@ export const assignUserToTeam = async (userId, teamId) => {
   return response.data;
 };
 
+// CHECK IF USER EXISTS
+export const checkUserExists = async (username) => {
+  const response = await axios.post(`${API_BASE_URL}/users/check`, { username }, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // TEAM APIs
 export const fetchTeams = async () => {
   const response = await axios.get(TEAMS_API_BASE_URL, { headers: getAuthHeaders() });
