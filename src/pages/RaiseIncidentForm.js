@@ -42,7 +42,7 @@ const RaiseIncidentForm = ({ onSubmit }) => {
 
   return (
     <div>
-      <h2>{reference ? `New Incident - ${reference}` : "New Incident - Error"}</h2>
+      <h2>{reference ? `New Incident - INC${reference}` : "New Incident - Error"}</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input name="title" placeholder="Title" onChange={handleChange} required />
