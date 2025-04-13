@@ -1,4 +1,4 @@
-// IncidentDetails.js
+
 import React, { useEffect, useState } from "react";
 import {
   Box, Typography, Divider, Grid, TextField, Autocomplete, Button,
@@ -47,7 +47,7 @@ const IncidentDetails = ({ referenceNumber, openTab }) => {
       setSelectedTeamId(data.assigned_team_id || null);
 
       const token = sessionStorage.getItem("token");
-      const { data: teams } = await axios.get("${process.env.REACT_APP_API_URL}/api/teams", {
+      const { data: teams } = await axios.get(`${process.env.REACT_APP_API_URL}/api/teams`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAllTeams(teams);
@@ -55,7 +55,7 @@ const IncidentDetails = ({ referenceNumber, openTab }) => {
       if (data.assigned_team_id) fetchUsersForTeam(data.assigned_team_id);
 
       if (isEditable) {
-        const { data: users } = await axios.get("${process.env.REACT_APP_API_URL}/api/users", {
+        const { data: users } = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAllUsers(users);
@@ -118,52 +118,8 @@ const IncidentDetails = ({ referenceNumber, openTab }) => {
     }
   };
 
-  const handleStatusChange = async (newStatus) => {
-    try {
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/incidents/${incident.id}/status`,
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } }
-      );
-
-      setIncident(prev => {
-        const updated = { ...prev, status: newStatus };
-        calculateSlaTimeLeft(updated.sla_due, updated.total_paused_seconds || 0);
-        return updated;
-      });
-
-      setToast({ open: true, message: "✅ Status updated", severity: "success" });
-    } catch (err) {
-      console.error("❌ Failed to update status:", err);
-      setToast({ open: true, message: "❌ Failed to update status", severity: "error" });
-    }
-  };
-
-  const handleCustomerChange = async (userId) => {
-    try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/incidents/${incident.id}/update-customer`, {
-        newCustomerId: userId,
-      }, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      });
-
-      const updatedUser = allUsers.find(u => u.id === userId);
-      setIncident(prev => ({
-        ...prev,
-        created_by: userId,
-        created_by_user_name: `${updatedUser.first_name} ${updatedUser.last_name}`,
-      }));
-
-      setToast({ open: true, message: "✅ Customer updated", severity: "success" });
-    } catch (err) {
-      console.error("❌ Failed to update customer:", err);
-      setToast({ open: true, message: "❌ Failed to update customer", severity: "error" });
-    }
-  };
-
   return (
     <Box p={3}>
-      
       {incident ? (
         <>
           <Box sx={{ mb: 3, p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
@@ -173,34 +129,14 @@ const IncidentDetails = ({ referenceNumber, openTab }) => {
               Priority: {incident.priority} | SLA: {slaTimeLeft}
             </Typography>
 
-            <Box mt={2}>
-              <Typography variant="body2" fontWeight="bold">Customer:</Typography>
-              {isEditable ? (
-                <FormControl fullWidth size="small">
-                  <Select
-                    value={incident.created_by || ""}
-                    onChange={(e) => handleCustomerChange(e.target.value)}
-                  >
-                    {allUsers.map(user => (
-                      <MenuItem key={user.id} value={user.id}>
-                        {user.first_name} {user.last_name} ({user.username})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ) : (
-                <Typography>{incident.created_by_user_name || "Unknown"}</Typography>
-              )}
-            </Box>
-
-            <FormControl size="small" sx={{ mt: 2, minWidth: 200 }} disabled={!isEditable}>
+            <FormControl sx={{ mt: 2, minWidth: 200 }} size="small">
               <InputLabel>Status</InputLabel>
               <Select
-                value={incident.status || "Open"}
+                value={incident.status || ""}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 label="Status"
               >
-                {statusOptions.map(status => (
+                {statusOptions.map((status) => (
                   <MenuItem key={status} value={status}>{status}</MenuItem>
                 ))}
               </Select>
