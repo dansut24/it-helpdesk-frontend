@@ -101,6 +101,14 @@ export const updateServiceRequest = async (id, updates) => {
   return response.data;
 };
 
+// FETCH SERVICE REQUEST BY ID
+export const fetchServiceRequestById = async (id) => {
+  const response = await axios.get(`${API_BASE_URL}/service-requests/${id}`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // CHANGE APIs
 export const fetchChanges = async () => {
   const response = await axios.get(CHANGE_API_BASE_URL, { headers: getAuthHeaders() });
