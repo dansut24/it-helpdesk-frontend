@@ -45,6 +45,14 @@ export const updateIncident = async (id, updates) => {
   return response.data;
 };
 
+// FETCH INCIDENT BY REFERENCE NUMBER
+export const fetchIncidentByReference = async (referenceNumber) => {
+  const response = await axios.get(`${API_BASE_URL}/incidents/reference/${referenceNumber}`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SERVICE REQUEST APIs
 export const fetchServiceRequests = async () => {
   const response = await axios.get(SERVICE_REQUEST_API_BASE_URL, { headers: getAuthHeaders() });
