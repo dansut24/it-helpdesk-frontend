@@ -53,6 +53,14 @@ export const fetchIncidentByReference = async (referenceNumber) => {
   return response.data;
 };
 
+// UPDATE INCIDENT TEAM
+export const updateIncidentTeam = async (incidentId, teamId) => {
+  const response = await axios.put(`${API_BASE_URL}/incidents/${incidentId}/assign-team`, { teamId }, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SERVICE REQUEST APIs
 export const fetchServiceRequests = async () => {
   const response = await axios.get(SERVICE_REQUEST_API_BASE_URL, { headers: getAuthHeaders() });
