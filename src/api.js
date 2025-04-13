@@ -184,6 +184,14 @@ export const fetchSlaSettings = async () => {
   return response.data;
 };
 
+// SLA SETTINGS SAVE
+export const saveSlaSettings = async (settings) => {
+  const response = await axios.post(`${API_BASE_URL}/sla-settings`, settings, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // AUDIT LOG APIs
 export const fetchAuditLogs = async () => {
   const response = await axios.get(`${API_BASE_URL}/audit-logs`, {
