@@ -35,9 +35,22 @@ const Incidents = ({ openTab }) => {
   const selectedRole = sessionStorage.getItem("selectedRole");
 
   useEffect(() => {
-    const getIncidents = async () => {
+    
+const camelizeIncident = (i) => ({
+  ...i,
+  referenceNumber: i.reference_number,
+  assignedTeamId: i.assigned_team_id,
+  assignedUserId: i.assigned_user_id,
+  assigned_team_name: i.assigned_team_name || "Unassigned",
+  assigned_user_name: i.assigned_user_name || "Unassigned",
+  created_by_user_name: i.created_by_user_name || `${i.created_by_first || ""} ${i.created_by_last || ""}`.trim(),
+});
+
+  const getIncidents = async () => {
       try {
         const data = await fetchIncidents();
+
+      const normalizeList = (list) => (list || []).map(camelizeIncident);
 
         if (selectedRole === "admin") {
           setAdminIncidents(data.all || []);
