@@ -200,6 +200,14 @@ export const saveEmailSettings = async (settings) => {
   return response.data;
 };
 
+// EMAIL TEMPLATE SAVE
+export const saveEmailTemplate = async (templateData) => {
+  const response = await axios.post(`${API_BASE_URL}/email-templates`, templateData, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SLA SETTINGS APIs
 export const fetchSlaSettings = async () => {
   const response = await axios.get(`${API_BASE_URL}/sla-settings`, {
