@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { createIncident, getNextIncidentRef } from "../api";
 
-const RaiseIncidentForm = ({ onSubmit }) => {
+const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -11,12 +11,12 @@ const RaiseIncidentForm = ({ onSubmit }) => {
   });
   const [reference, setReference] = useState("");
   const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchRef() {
       try {
         const ref = await getNextIncidentRef();
-        console.log("➡️ ref response:", ref);
         if (ref?.nextRef) {
           setReference(ref.nextRef);
         } else {
@@ -39,11 +39,28 @@ const RaiseIncidentForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
     try {
-      const result = await createIncident({ reference_number: reference, ...formData });
-      if (onSubmit) onSubmit(result);
+      const result = await createIncident({
+        reference_number: reference,
+        ...formData,
+      });
+
+      if (result?.referenceNumber) {
+        alert("✅ Incident submitted successfully.");
+        if (renameTabAfterSubmit) {
+          renameTabAfterSubmit("New Incident", result.referenceNumber);
+        }
+      } else {
+        throw new Error("Unexpected response from server");
+      }
     } catch (err) {
-      setError("Error submitting incident");
+      console.error("❌ Error submitting incident:", err);
+      setError("Failed to submit incident. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -66,7 +83,9 @@ const RaiseIncidentForm = ({ onSubmit }) => {
           <option value="Software">Software</option>
           <option value="Network">Network</option>
         </select>
-        <button type="submit">Submit Incident</button>
+        <button type="submit" disabled={submitting}>
+          {submitting ? "Submitting..." : "Submit Incident"}
+        </button>
       </form>
     </div>
   );
