@@ -69,6 +69,14 @@ export const updateIncidentAssignee = async (incidentId, userId) => {
   return response.data;
 };
 
+// ASSIGN INCIDENT TO CURRENT USER
+export const assignIncidentToMe = async (incidentId) => {
+  const response = await axios.post(`${API_BASE_URL}/incidents/${incidentId}/assign-to-me`, {}, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SERVICE REQUEST APIs
 export const fetchServiceRequests = async () => {
   const response = await axios.get(SERVICE_REQUEST_API_BASE_URL, { headers: getAuthHeaders() });
