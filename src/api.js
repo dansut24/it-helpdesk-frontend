@@ -128,6 +128,14 @@ export const fetchKbArticles = async () => {
   return response.data;
 };
 
+// KNOWLEDGE BASE ARTICLE SAVE
+export const saveKbArticle = async (articleData) => {
+  const response = await axios.post(`${API_BASE_URL}/kb-articles`, articleData, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SYSTEM SETTINGS APIs
 // SYSTEM SETTINGS API
 export const fetchSystemSettings = async () => {
