@@ -176,4 +176,12 @@ export const fetchRoles = async () => {
   return response.data;
 };
 
+// PERMISSIONS API
+export const fetchPermissions = async () => {
+  const response = await axios.get(`${API_BASE_URL}/permissions`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
