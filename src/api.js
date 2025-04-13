@@ -144,4 +144,12 @@ export const fetchEmailSettings = async () => {
   return response.data;
 };
 
+// SLA SETTINGS APIs
+export const fetchSlaSettings = async () => {
+  const response = await axios.get(`${API_BASE_URL}/sla-settings`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
