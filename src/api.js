@@ -98,6 +98,14 @@ export const resetUserPassword = async (id, passwordData) => {
   return response.data;
 };
 
+// USER STATUS API
+export const updateUserStatus = async (id, status) => {
+  const response = await axios.put(`${USERS_API_BASE_URL}/${id}/status`, status, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // TEAM APIs
 export const fetchTeams = async () => {
   const response = await axios.get(TEAMS_API_BASE_URL, { headers: getAuthHeaders() });
