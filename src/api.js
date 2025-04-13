@@ -136,6 +136,14 @@ export const saveKbArticle = async (articleData) => {
   return response.data;
 };
 
+// KNOWLEDGE BASE ARTICLE DELETE
+export const deleteKbArticle = async (id) => {
+  const response = await axios.delete(`${API_BASE_URL}/kb-articles/${id}`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 // SYSTEM SETTINGS APIs
 // SYSTEM SETTINGS API
 export const fetchSystemSettings = async () => {
