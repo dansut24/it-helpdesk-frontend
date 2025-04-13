@@ -695,3 +695,24 @@ export const assignIncidentToMe = async (incidentId) => {
 
 
 export { getAuthHeaders };
+
+export function getAuthHeaders() {
+  const token = sessionStorage.getItem("token");
+  const selectedRole = sessionStorage.getItem("selectedRole");
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+    "x-selected-role": selectedRole,
+  };
+}
+
+export async function getNextIncidentRef() {
+  const response = await fetch("http://localhost:8080/api/incidents/next-ref", {
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to get next incident reference");
+  }
+  const data = await response.json();
+  return data.nextRef;
+}
