@@ -21,7 +21,8 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
     const getNextReference = async () => {
       try {
         const nextRef = await fetchNextIncidentRef();
-        setReferenceNumber(nextRef.nextRef);
+        setReferenceNumber(nextRef.reference_number || "Error");
+    console.log("Next incident reference response:", nextRef);
       } catch (error) {
         console.error("❌ Error fetching next incident reference:", error);
         setReferenceNumber("Error");
