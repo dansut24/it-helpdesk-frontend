@@ -192,4 +192,12 @@ export const fetchEmailTemplates = async () => {
   return response.data;
 };
 
+// ROLE PERMISSIONS API
+export const fetchRolePermissions = async (roleId) => {
+  const response = await axios.get(`${API_BASE_URL}/roles/${roleId}/permissions`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
