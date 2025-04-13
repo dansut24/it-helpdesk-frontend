@@ -11,17 +11,23 @@ const RaiseIncidentForm = ({ onSubmit }) => {
   const [reference, setReference] = useState("");
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function fetchRef() {
+useEffect(() => {
+  async function fetchRef() {
+    try {
       const ref = await getNextIncidentRef();
+      console.log("➡️ ref response:", ref); // Log what comes back
       if (ref?.referenceNumber) {
         setReference(ref.referenceNumber);
       } else {
         setError("Error fetching reference number");
       }
+    } catch (err) {
+      console.error("❌ Failed to fetch reference number:", err);
+      setError("Error fetching reference number");
     }
-    fetchRef();
-  }, []);
+  }
+  fetchRef();
+}, []);
 
   const handleChange = (e) => {
     setFormData({
