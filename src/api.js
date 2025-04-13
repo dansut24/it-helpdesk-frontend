@@ -184,4 +184,12 @@ export const fetchPermissions = async () => {
   return response.data;
 };
 
+// EMAIL TEMPLATES API
+export const fetchEmailTemplates = async () => {
+  const response = await axios.get(`${API_BASE_URL}/email-templates`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
