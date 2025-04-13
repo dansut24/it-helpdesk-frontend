@@ -256,4 +256,12 @@ export const fetchRolePermissions = async (roleId) => {
   return response.data;
 };
 
+// UPDATE ROLE PERMISSIONS
+export const updateRolePermissions = async (roleId, permissions) => {
+  const response = await axios.post(`${API_BASE_URL}/roles/${roleId}/permissions`, { permissions }, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
