@@ -112,4 +112,12 @@ export const fetchKbArticles = async () => {
   return response.data;
 };
 
+// SYSTEM SETTINGS APIs
+export const saveSystemSettings = async (settings) => {
+  const response = await axios.post(`${API_BASE_URL}/system-settings`, settings, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
 export { getAuthHeaders };
