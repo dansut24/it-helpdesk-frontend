@@ -6,6 +6,11 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import TabbedView from "./components/TabbedView";
 import Login from "./pages/Login";
 import RoleSelector from "./pages/RoleSelector";
+import HomePage from "./pages/HomePage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import ServicesPage from "./pages/ServicesPage";
+import ItsmLanding from "./pages/ItsmLanding";
 import Signup from "./pages/Signup";
 
 const theme = createTheme();
@@ -57,6 +62,13 @@ const AppContent = () => {
   return (
     <Router>
       <Routes>
+<Route path="/" element={<HomePage />} />
+  <Route path="/about" element={<AboutPage />} />
+  <Route path="/contact" element={<ContactPage />} />
+  <Route path="/services" element={<ServicesPage />} />
+  <Route path="/services/itsm" element={<ItsmLanding />} />
+  <Route path="/services/itsm/signup" element={<Signup />} />
+  <Route path="/services/itsm/demo" element={<Navigate to="https://demo-itsm.hi5tech.co.uk" replace />} />
   <Route path="/signup" element={<Signup />} />
         <Route
           path="/login"
