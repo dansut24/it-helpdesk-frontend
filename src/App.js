@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import TabbedView from "./components/TabbedView";
 import Login from "./pages/Login";
 import RoleSelector from "./pages/RoleSelector";
+import Signup from "./pages/Signup";
 
 const theme = createTheme();
 
@@ -56,6 +57,7 @@ const AppContent = () => {
   return (
     <Router>
       <Routes>
+  <Route path="/signup" element={<Signup />} />
         <Route
           path="/login"
           element={
