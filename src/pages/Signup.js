@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import './Signup.css';
+import '../Signup.css';
 
 const Signup = () => {
   const [company, setCompany] = useState('');
