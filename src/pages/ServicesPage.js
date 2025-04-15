@@ -1,9 +1,12 @@
-import React from 'react';
+import React from "react";
 
-const ServicesPage = () => (
-  <div style={ padding: '2rem' }>
-    <h1>Services Page</h1>
-    <p>Welcome to the services section of Hi5Tek.</p>
-  </div>
-);
+const ServicesPage = () => {
+  return (
+    <div style={ padding: "2rem" }>
+      <h1>Our Services</h1>
+      <p>This page is under construction.</p>
+    </div>
+  );
+};
+
 export default ServicesPage;

@@ -1,12 +1,12 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-const ItsmLanding = () => (
-  <div style={ padding: '2rem' }>
-    <h1>ITSM Page</h1>
-    <p>Welcome to the ITSM section of Hi5Tek.</p>
-    <Link to="/services/itsm/signup">Get Started Free</Link>
-    <br />
-    <Link to="/services/itsm/demo">View Demo</Link>
-  </div>
-);
+import React from "react";
+
+const ItsmLanding = () => {
+  return (
+    <div style={ padding: "2rem" }>
+      <h1>ITSM Platform Overview</h1>
+      <p>This page is under construction.</p>
+    </div>
+  );
+};
+
 export default ItsmLanding;

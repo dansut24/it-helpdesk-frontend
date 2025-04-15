@@ -1,9 +1,12 @@
-import React from 'react';
+import React from "react";
 
-const HomePage = () => (
-  <div style={ padding: '2rem' }>
-    <h1>Home Page</h1>
-    <p>Welcome to the home section of Hi5Tek.</p>
-  </div>
-);
+const HomePage = () => {
+  return (
+    <div style={ padding: "2rem" }>
+      <h1>Welcome to Hi5Tech</h1>
+      <p>This page is under construction.</p>
+    </div>
+  );
+};
+
 export default HomePage;
