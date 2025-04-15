@@ -1,22 +1,21 @@
+
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-const DemoPage = () => (
-  <>
-    <Header />
-    <div style={{ paddingTop: "5rem", minHeight: "80vh" }}>
-      <h2 style={{ textAlign: 'center' }}>
-        {
-          "ContactPage": "Have questions? Reach out to us.",
-          "DemoPage": "Explore a demo of our ITSM system.",
-          "ServicesPage": "Our ITSM and support services are here to help your business run smoothly.",
-          "SignupPage": "Create your account and start using Hi5Tek today."
-        }["DemoPage"]
-      </h2>
-    </div>
-    <Footer />
-  </>
-);
+const DemoPage = () => {
+  return (
+    <>
+      <Header />
+      <main className="content">
+        <section className="page-section">
+          <h1>Live Demo</h1>
+          <p>Experience the Hi5Tek ITSM system in real time.</p>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+};
 
 export default DemoPage;
