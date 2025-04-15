@@ -1,3 +1,4 @@
+// src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -7,7 +8,10 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-const isTenant = window.location.hostname.includes('-itsm.');
+
+// Improved tenant subdomain check (e.g., demo-itsm.hi5tech.co.uk or acme-itsm.hi5tech.co.uk)
+const hostname = window.location.hostname;
+const isTenant = hostname.includes('-itsm.') || hostname.startsWith('demo-itsm') || hostname.endsWith('.vercel.app'); // for preview testing
 
 if (isTenant) {
   root.render(
