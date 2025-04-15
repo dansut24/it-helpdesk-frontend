@@ -3,8 +3,19 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => {
+    if (menuOpen) {
+      setClosing(true);
+      setTimeout(() => {
+        setMenuOpen(false);
+        setClosing(false);
+      }, 300);
+    } else {
+      setMenuOpen(true);
+    }
+  };
 
   return (
     <header style={{
@@ -23,85 +34,94 @@ const Header = () => {
       <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
         <Link to="/" style={{ color: "white", textDecoration: "none" }}>Hi5Tek</Link>
       </div>
-      <div className="hamburger" onClick={toggleMenu} style={{ cursor: "pointer" }}>
-        <div style={{
-          width: "25px",
-          height: "3px",
-          backgroundColor: "white",
-          margin: "4px 0"
-        }} />
-        <div style={{
-          width: "25px",
-          height: "3px",
-          backgroundColor: "white",
-          margin: "4px 0"
-        }} />
-        <div style={{
-          width: "25px",
-          height: "3px",
-          backgroundColor: "white",
-          margin: "4px 0"
-        }} />
+
+      <div className={`hamburger ${menuOpen ? "open" : ""}`} onClick={toggleMenu} style={{ cursor: "pointer" }}>
+        <div className="bar" />
+        <div className="bar" />
+        <div className="bar" />
       </div>
 
-      {menuOpen && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100vh",
-          background: "rgba(0, 0, 0, 0.7)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          animation: "fadeIn 0.4s ease-in-out",
-          zIndex: 999
-        }}>
-          <button onClick={toggleMenu} style={{
-            position: "absolute",
-            top: "20px",
-            right: "30px",
-            fontSize: "2rem",
-            background: "none",
-            border: "none",
-            color: "white",
-            cursor: "pointer"
-          }}>&times;</button>
-          <nav style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "2rem",
-            fontSize: "1.8rem",
-            marginTop: "-10vh"
-          }}>
-            <Link to="/" onClick={toggleMenu} style={linkStyle}>Home</Link>
-            <Link to="/services" onClick={toggleMenu} style={linkStyle}>Services</Link>
-            <Link to="/signup" onClick={toggleMenu} style={linkStyle}>Sign Up</Link>
-            <Link to="/demo" onClick={toggleMenu} style={linkStyle}>Demo</Link>
-            <Link to="/contact" onClick={toggleMenu} style={linkStyle}>Contact</Link>
+      {(menuOpen || closing) && (
+        <div className={`overlay ${closing ? "fade-out" : "fade-in"}`}>
+          <nav className="nav-links">
+            <Link to="/" onClick={toggleMenu}>Home</Link>
+            <Link to="/services" onClick={toggleMenu}>Services</Link>
+            <Link to="/signup" onClick={toggleMenu}>Sign Up</Link>
+            <Link to="/demo" onClick={toggleMenu}>Demo</Link>
+            <Link to="/contact" onClick={toggleMenu}>Contact</Link>
           </nav>
         </div>
       )}
 
       <style>{`
+        .bar {
+          width: 25px;
+          height: 3px;
+          background-color: white;
+          margin: 4px 0;
+          transition: 0.4s;
+        }
+
+        .hamburger.open .bar:nth-child(1) {
+          transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        .hamburger.open .bar:nth-child(2) {
+          opacity: 0;
+        }
+        .hamburger.open .bar:nth-child(3) {
+          transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(12px);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          z-index: 999;
+        }
+
+        .fade-in {
+          animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .fade-out {
+          animation: fadeOut 0.3s ease-in-out forwards;
+        }
+
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
+
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+
+        .nav-links {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          font-size: 1.8rem;
+          margin-top: -10vh;
+        }
+
+        .nav-links a {
+          color: white;
+          text-decoration: none;
+          transition: color 0.3s ease;
+          text-align: center;
+        }
       `}</style>
     </header>
   );
-};
-
-const linkStyle = {
-  color: "white",
-  textDecoration: "none",
-  transition: "color 0.3s ease",
-  textAlign: "center"
 };
 
 export default Header;
