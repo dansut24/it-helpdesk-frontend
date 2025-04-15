@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import LandingPage from './pages/LandingPage';
 import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -19,7 +20,9 @@ if (isTenant) {
 } else {
   root.render(
     <React.StrictMode>
-      <LandingPage />
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
     </React.StrictMode>
   );
 }
