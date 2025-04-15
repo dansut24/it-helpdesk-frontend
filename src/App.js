@@ -13,6 +13,7 @@ import ContactPage from "./pages/ContactPage";
 import ServicesPage from "./pages/ServicesPage";
 import ItsmLanding from "./pages/ItsmLanding";
 import Signup from "./pages/Signup";
+import SetupWizard from "./pages/setup/SetupWizard"; // NEW
 
 const theme = createTheme();
 
@@ -78,6 +79,7 @@ const AppContent = () => {
                 />
               }
             />
+            <Route path="/setup" element={<SetupWizard />} />
             <Route
               path="/*"
               element={
@@ -113,15 +115,13 @@ const AppContent = () => {
   );
 };
 
-const App = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </ThemeProvider>
-  );
-};
+const App = () => (
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  </ThemeProvider>
+);
 
 export default App;
