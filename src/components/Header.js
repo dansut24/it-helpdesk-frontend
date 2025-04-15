@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleMenu = () => {
     if (menuOpen) {
@@ -24,12 +33,13 @@ const Header = () => {
       left: 0,
       right: 0,
       zIndex: 1000,
-      background: "transparent",
+      background: scrolled ? "#1f2d40" : "transparent",
       color: "white",
       padding: "1rem 2rem",
       display: "flex",
       justifyContent: "space-between",
-      alignItems: "center"
+      alignItems: "center",
+      transition: "background 0.3s ease"
     }}>
       <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
         <Link to="/" style={{ color: "white", textDecoration: "none" }}>Hi5Tek</Link>
@@ -43,6 +53,7 @@ const Header = () => {
 
       {(menuOpen || closing) && (
         <div className={`overlay ${closing ? "fade-out" : "fade-in"}`}>
+          <button onClick={toggleMenu} className="close-btn">&times;</button>
           <nav className="nav-links">
             <Link to="/" onClick={toggleMenu}>Home</Link>
             <Link to="/services" onClick={toggleMenu}>Services</Link>
@@ -93,6 +104,17 @@ const Header = () => {
 
         .fade-out {
           animation: fadeOut 0.3s ease-in-out forwards;
+        }
+
+        .close-btn {
+          position: absolute;
+          top: 1rem;
+          right: 1.5rem;
+          font-size: 2.5rem;
+          background: none;
+          border: none;
+          color: white;
+          cursor: pointer;
         }
 
         @keyframes fadeIn {
