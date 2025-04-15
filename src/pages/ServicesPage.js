@@ -1,12 +1,15 @@
-import React from "react";
+import React from 'react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
-const ServicesPage = () => {
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Our Services</h1>
-      <p>This page is under construction.</p>
+const ServicesPage = () => (
+  <>
+    <Header />
+    <div style={ paddingTop: "5rem", minHeight: "80vh" }>
+      <h2>Our ITSM and support services are here to help your business run smoothly.</h2>
     </div>
-  );
-};
+    <Footer />
+  </>
+);
 
 export default ServicesPage;

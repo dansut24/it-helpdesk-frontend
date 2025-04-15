@@ -1,12 +1,15 @@
-import React from "react";
+import React from 'react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
-const ContactPage = () => {
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Contact Us</h1>
-      <p>This page is under construction.</p>
+const ContactPage = () => (
+  <>
+    <Header />
+    <div style={ paddingTop: "5rem", minHeight: "80vh" }>
+      <h2>Have questions? Reach out to us.</h2>
     </div>
-  );
-};
+    <Footer />
+  </>
+);
 
 export default ContactPage;
