@@ -6,6 +6,7 @@ import Features from "../components/Features";
 import Footer from "../components/Footer";
 import SignupPage from "./SignupPage";
 import DemoPage from "./DemoPage";
+import ContactPage from "./ContactPage"; // ADD THIS
 
 const Home = () => (
   <>
@@ -22,6 +23,7 @@ const LandingPage = () => {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/demo" element={<DemoPage />} />
+        <Route path="/contact" element={<ContactPage />} /> {/* ADD THIS */}
       </Routes>
       <Footer />
     </>
