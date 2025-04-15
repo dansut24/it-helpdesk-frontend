@@ -18,4 +18,6 @@ const SignupPage = () => {
   );
 };
 
+<h2>Create Your Account</h2><p>Join Hi5Tech and set up your workspace in minutes.</p>
+
 export default SignupPage;

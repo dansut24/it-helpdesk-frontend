@@ -18,4 +18,6 @@ const DemoPage = () => {
   );
 };
 
+<h2>Live Demo</h2><p>Explore our ITSM platform with a live demo environment.</p>
+
 export default DemoPage;

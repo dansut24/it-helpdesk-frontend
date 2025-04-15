@@ -18,4 +18,6 @@ const ContactPage = () => {
   );
 };
 
+<h2>Contact Us</h2><p>If you have any questions, reach out to us at support@hi5tech.co.uk.</p>
+
 export default ContactPage;

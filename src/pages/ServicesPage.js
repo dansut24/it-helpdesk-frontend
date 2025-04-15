@@ -18,4 +18,6 @@ const ServicesPage = () => {
   );
 };
 
+<h2>Our Services</h2><p>We offer Incident Management, Automation Tools, and Self-Service portals.</p>
+
 export default ServicesPage;
