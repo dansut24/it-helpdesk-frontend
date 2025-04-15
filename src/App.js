@@ -13,7 +13,7 @@ import ContactPage from "./pages/ContactPage";
 import ServicesPage from "./pages/ServicesPage";
 import ItsmLanding from "./pages/ItsmLanding";
 import Signup from "./pages/SignupPage";
-import SetupWizard from "./pages/setup/SetupWizard"; // NEW
+import SetupWizard from "./pages/SetupWizard"; // NEW
 
 const theme = createTheme();
 
