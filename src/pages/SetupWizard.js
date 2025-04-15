@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import CompanyStep from "./pages/CompanyStep";
-import TeamsStep from "./pages/TeamsStep";
-import UsersStep from "./pages/UsersStep";
-import PreferencesStep from "./pages/PreferencesStep";
-import FinishStep from "./pages/FinishStep";
+import CompanyStep from "./CompanyStep";
+import TeamsStep from "./TeamsStep";
+import UsersStep from "./UsersStep";
+import PreferencesStep from "./PreferencesStep";
+import FinishStep from "./FinishStep";
 
 const SetupWizard = () => {
   const [step, setStep] = useState(1);
