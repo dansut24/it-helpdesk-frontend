@@ -12,7 +12,7 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ServicesPage from "./pages/ServicesPage";
 import ItsmLanding from "./pages/ItsmLanding";
-import Signup from "./pages/Signup";
+import Signup from "./pages/SignupPage";
 import SetupWizard from "./pages/setup/SetupWizard"; // NEW
 
 const theme = createTheme();
