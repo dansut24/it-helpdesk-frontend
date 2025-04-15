@@ -51,13 +51,15 @@ const Header = () => {
           left: 0,
           width: "100%",
           height: "100vh",
-          background: "#1f2d40",
+          background: "rgba(0, 0, 0, 0.7)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          zIndex: 999,
-          transition: "all 0.3s ease"
+          animation: "fadeIn 0.4s ease-in-out",
+          zIndex: 999
         }}>
           <button onClick={toggleMenu} style={{
             position: "absolute",
@@ -69,7 +71,13 @@ const Header = () => {
             color: "white",
             cursor: "pointer"
           }}>&times;</button>
-          <nav style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "1.5rem" }}>
+          <nav style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "2rem",
+            fontSize: "1.8rem",
+            marginTop: "-10vh"
+          }}>
             <Link to="/" onClick={toggleMenu} style={linkStyle}>Home</Link>
             <Link to="/services" onClick={toggleMenu} style={linkStyle}>Services</Link>
             <Link to="/signup" onClick={toggleMenu} style={linkStyle}>Sign Up</Link>
@@ -78,13 +86,22 @@ const Header = () => {
           </nav>
         </div>
       )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
     </header>
   );
 };
 
 const linkStyle = {
   color: "white",
-  textDecoration: "none"
+  textDecoration: "none",
+  transition: "color 0.3s ease",
+  textAlign: "center"
 };
 
 export default Header;
