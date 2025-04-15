@@ -2,13 +2,17 @@ import React from "react";
 
 const Footer = () => (
   <footer style={{
-    backgroundColor: "#f5f5f5",
-    padding: "1rem 2rem",
     textAlign: "center",
-    fontSize: "0.9rem",
-    marginTop: "2rem"
+    padding: "20px",
+    backgroundColor: "#eee",
+    fontSize: "0.9em"
   }}>
-    <p>© {new Date().getFullYear()} Hi5Tech. All rights reserved.</p>
+    <p>
+      &copy; {new Date().getFullYear()} Hi5Tek. All rights reserved. |
+      <a href="#" style={{ marginLeft: "10px", marginRight: "10px" }}>Privacy</a> |
+      <a href="#">Terms</a> |
+      Contact: support@hi5tek.io
+    </p>
   </footer>
 );
 
