@@ -1,5 +1,6 @@
+// src/App.js
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -12,20 +13,17 @@ import ContactPage from "./pages/ContactPage";
 import ServicesPage from "./pages/ServicesPage";
 import ItsmLanding from "./pages/ItsmLanding";
 import Signup from "./pages/Signup";
-import { Navigate } from 'react-router-dom';
 
 const theme = createTheme();
 
 const AppContent = () => {
   const { user, logout } = useAuth();
-  const [tabs, setTabs] = useState(() => {
-    return JSON.parse(sessionStorage.getItem("openTabs")) || ["Dashboard"];
-  });
-  const [selectedTab, setSelectedTab] = useState(() => {
-    return sessionStorage.getItem("selectedTab") || "Dashboard";
-  });
+  const [tabs, setTabs] = useState(() => JSON.parse(sessionStorage.getItem("openTabs")) || ["Dashboard"]);
+  const [selectedTab, setSelectedTab] = useState(() => sessionStorage.getItem("selectedTab") || "Dashboard");
   const [userRole, setUserRole] = useState(() => sessionStorage.getItem("role") || "");
   const [token, setToken] = useState(() => sessionStorage.getItem("token") || "");
+
+  const isTenant = window.location.hostname.includes("-itsm.");
 
   useEffect(() => {
     sessionStorage.setItem("openTabs", JSON.stringify(tabs));
@@ -63,56 +61,53 @@ const AppContent = () => {
   return (
     <Router>
       <Routes>
-<Route path="/" element={<HomePage />} />
-  <Route path="/about" element={<AboutPage />} />
-  <Route path="/contact" element={<ContactPage />} />
-  <Route path="/services" element={<ServicesPage />} />
-  <Route path="/services/itsm" element={<ItsmLanding />} />
-  <Route path="/services/itsm/signup" element={<Signup />} />
-  <Route path="/services/itsm/demo" element={<Navigate to="https://demo-itsm.hi5tech.co.uk" replace />} />
-  <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/login"
-          element={
-            <Login
-              setUserRole={(role) => {
-                setUserRole(role);
-                sessionStorage.setItem("role", role);
-              }}
-              setToken={(t) => {
-                setToken(t);
-                sessionStorage.setItem("token", t);
-              }}
+        {isTenant ? (
+          <>
+            <Route
+              path="/login"
+              element={
+                <Login
+                  setUserRole={(role) => {
+                    setUserRole(role);
+                    sessionStorage.setItem("role", role);
+                  }}
+                  setToken={(t) => {
+                    setToken(t);
+                    sessionStorage.setItem("token", t);
+                  }}
+                />
+              }
             />
-          }
-        />
-        <Route path="/select-role" element={<RoleSelector setUserRole={setUserRole} />} />
-        <Route
-          path="/*"
-          element={
-            token ? (
-              <TabbedView
-                tabs={tabs}
-                setTabs={setTabs}
-                selectedTab={selectedTab}
-                setSelectedTab={setSelectedTab}
-                openTab={openTab}
-                allowedTabs={allowedTabs}
-              />
-            ) : (
-              <Login
-                setUserRole={(role) => {
-                  setUserRole(role);
-                  sessionStorage.setItem("role", role);
-                }}
-                setToken={(t) => {
-                  setToken(t);
-                  sessionStorage.setItem("token", t);
-                }}
-              />
-            )
-          }
-        />
+            <Route
+              path="/*"
+              element={
+                token ? (
+                  <TabbedView
+                    tabs={tabs}
+                    setTabs={setTabs}
+                    selectedTab={selectedTab}
+                    setSelectedTab={setSelectedTab}
+                    openTab={openTab}
+                    allowedTabs={allowedTabs}
+                  />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+          </>
+        ) : (
+          <>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/services/itsm" element={<ItsmLanding />} />
+            <Route path="/services/itsm/signup" element={<Signup />} />
+            <Route path="/services/itsm/demo" element={<Navigate to="https://demo-itsm.hi5tech.co.uk" replace />} />
+            <Route path="/signup" element={<Signup />} />
+          </>
+        )}
       </Routes>
     </Router>
   );
@@ -123,7 +118,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-          <AppContent />
+        <AppContent />
       </AuthProvider>
     </ThemeProvider>
   );
