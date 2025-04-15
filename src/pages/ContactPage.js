@@ -6,7 +6,7 @@ const ContactPage = () => (
   <>
     <Header />
     <div style={ paddingTop: "5rem", minHeight: "80vh" }>
-      <h2>Have questions? Reach out to us.</h2>
+      <h2 style={{ textAlign: 'center' }}>Have questions? Reach out to us.</h2>
     </div>
     <Footer />
   </>

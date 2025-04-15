@@ -6,7 +6,7 @@ const SignupPage = () => (
   <>
     <Header />
     <div style={ paddingTop: "5rem", minHeight: "80vh" }>
-      <h2>Create your account and start using Hi5Tek today.</h2>
+      <h2 style={{ textAlign: 'center' }}>Create your account and start using Hi5Tek today.</h2>
     </div>
     <Footer />
   </>
