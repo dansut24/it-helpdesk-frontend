@@ -1,18 +1,19 @@
-import React from 'react';
+import React
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+ from 'react';
+import '../styles/PageStyles.css';
 
-const ServicesPage = () => {
-  return (
-    <>
-      <Header />
-      <main className="page-content">
-        <h1>Our Services</h1>
-        <p>Discover our modern ITSM platform, automation tools, and self-service solutions tailored for teams.</p>
-      </main>
-      <Footer />
-    </>
-  );
-};
+const ServicesPage = () => (
+  <div className="page animated fadeIn">
+    <h1>Our Services</h1>
+    <ul>
+      <li>Incident Management</li>
+      <li>Service Request Automation</li>
+      <li>Change Management</li>
+    </ul>
+    <img src="https://via.placeholder.com/600x300" alt="Services Overview" className="image-fade" />
+  </div>
+);
 
 export default ServicesPage;
