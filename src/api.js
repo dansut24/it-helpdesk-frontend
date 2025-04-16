@@ -1,7 +1,8 @@
-
 import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL + "/api";
+// Define fallback base URL for non-fetch API calls
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${API_BASE}`;
 const INCIDENT_API_BASE_URL = `${API_BASE_URL}/incidents`;
 const SERVICE_REQUEST_API_BASE_URL = `${API_BASE_URL}/service-requests`;
 const CHANGE_API_BASE_URL = `${API_BASE_URL}/changes`;
@@ -345,8 +346,7 @@ export const updateRolePermissions = async (roleId, permissions) => {
 };
 
 
-//Setup Wizard
-
+// Setup Wizard
 export const createTenant = async (companyData) =>
   fetch(`${API_BASE}/setup/company`, {
     method: 'POST',
@@ -374,4 +374,5 @@ export const completeSetup = async (tenantId) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ tenantId }),
   }).then(res => res.json());
+
 export { getAuthHeaders };
