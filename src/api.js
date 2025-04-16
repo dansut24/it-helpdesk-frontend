@@ -375,17 +375,35 @@ export const completeSetup = async (tenantId) =>
     body: JSON.stringify({ tenantId }),
   }).then(res => res.json());
 
+// Updated helper using API base URL
 export async function reserveIncident() {
   const token = sessionStorage.getItem("token");
-  const res = await fetch("http://localhost:5000/api/incidents/reserve", {
+
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/api/incidents/reserve`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
-  return await res.json();
+
+  console.log("Status:", res.status);
+  console.log("Headers:", [...res.headers.entries()]);
+
+  const text = await res.text();
+  console.log("Raw response:", text);
+
+  if (!res.ok) {
+    throw new Error(`Failed to reserve incident. Server responded with ${res.status}: ${text}`);
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    throw new Error("Failed to parse JSON: " + text);
+  }
 }
+
 
 
 export { getAuthHeaders };
