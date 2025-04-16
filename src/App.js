@@ -4,16 +4,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+
 import TabbedView from "./components/TabbedView";
 import Login from "./pages/Login";
 import RoleSelector from "./pages/RoleSelector";
+import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ServicesPage from "./pages/ServicesPage";
 import ItsmLanding from "./pages/ItsmLanding";
 import Signup from "./pages/SignupPage";
 import SetupWizard from "./pages/SetupWizard";
-import LandingPage from "./pages/LandingPage";
 
 const theme = createTheme();
 
