@@ -1,12 +1,34 @@
-import React from "react";
+import React, { useState } from 'react';
 
-const CompanyStep = ({ next, prev }) => (
-  <div>
-    <h3>Company Info</h3>
-    <p>Placeholder for company info form.</p>
-    
-    next && <button onClick={next}>Next</button>
-  </div>
-);
+const CompanyStep = ({ onNext }) => {
+  const [companyName, setCompanyName] = useState('');
+
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch('/api/setup/company', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: companyName }),
+      });
+      const data = await res.json();
+      if (res.ok) onNext(data.companyId);
+    } catch (err) {
+      console.error('Error submitting company:', err);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Step 1: Company Info</h2>
+      <input
+        type="text"
+        placeholder="Company Name"
+        value={companyName}
+        onChange={(e) => setCompanyName(e.target.value)}
+      />
+      <button onClick={handleSubmit}>Next</button>
+    </div>
+  );
+};
 
 export default CompanyStep;
