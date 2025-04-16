@@ -375,4 +375,17 @@ export const completeSetup = async (tenantId) =>
     body: JSON.stringify({ tenantId }),
   }).then(res => res.json());
 
+export async function reserveIncident() {
+  const token = sessionStorage.getItem("token");
+  const res = await fetch("http://localhost:5000/api/incidents/reserve", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return await res.json();
+}
+
+
 export { getAuthHeaders };
