@@ -1,60 +1,98 @@
-// src/pages/CompanyStep.js
-import React, { useState } from "react";
-import { createTenant } from "../api";
+import React, { useState } from 'react';
+import { Box, Button, TextField, Typography, InputAdornment } from '@mui/material';
 
 const CompanyStep = ({ onNext }) => {
-  const [companyName, setCompanyName] = useState("");
-  const [subdomain, setSubdomain] = useState("");
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    companyName: '',
+    subdomain: '',
+    industry: '',
+    size: ''
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setLoading(true);
+    setError(null);
 
     try {
-      const response = await createTenant({ companyName, subdomain });
-
-      // Check for fetch failure or missing expected response
-      if (!response || response.error || !response.tenantId) {
-        console.error("❌ Response error or missing tenantId:", response);
-        setError("Failed to create tenant. Check console for details.");
-        return;
-      }
-
-      console.log("✅ Tenant created:", response);
-      onNext(response.tenantId); // Proceed to Step 2
+      // Placeholder for actual backend API call
+      console.log('Submitting company data:', formData);
+      // Simulate successful response with dummy tenant ID
+      setTimeout(() => {
+        setLoading(false);
+        onNext({ tenantId: 123, ...formData });
+      }, 1000);
     } catch (err) {
-      console.error("❌ Exception during company submission:", err);
-      setError(`Unexpected error: ${err.message || "Check console"}`);
+      console.error('❌ Exception during company submission:', err);
+      setError('Unexpected error: ' + (err?.message || 'Something went wrong.'));
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: "500px", margin: "0 auto" }}>
-      <h2>Step 1: Company Info</h2>
-      <label>
-        Company Name:
-        <input
-          type="text"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      <label>
-        Desired Subdomain:
-        <input
-          type="text"
-          value={subdomain}
-          onChange={(e) => setSubdomain(e.target.value)}
-          required
-        />
-      </label>
-      <br />
-      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
-      <button type="submit">Next</button>
-    </form>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+      <Typography variant="h5" gutterBottom>
+        Company Details
+      </Typography>
+
+      <TextField
+        label="Company Name"
+        fullWidth
+        required
+        margin="normal"
+        value={formData.companyName}
+        onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+      />
+
+      <TextField
+        label="Subdomain"
+        fullWidth
+        variant="outlined"
+        margin="normal"
+        value={formData.subdomain}
+        onChange={(e) =>
+          setFormData({ ...formData, subdomain: e.target.value.replace(/[^a-zA-Z0-9-]/g, '') })
+        }
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              -itsm.hi5tech.co.uk
+            </InputAdornment>
+          ),
+        }}
+        helperText="This will be your unique ITSM URL."
+        required
+      />
+
+      <TextField
+        label="Industry"
+        fullWidth
+        margin="normal"
+        value={formData.industry}
+        onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+      />
+
+      <TextField
+        label="Company Size"
+        fullWidth
+        margin="normal"
+        value={formData.size}
+        onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+      />
+
+      {error && (
+        <Typography color="error" sx={{ mt: 1 }}>
+          {error}
+        </Typography>
+      )}
+
+      <Button type="submit" variant="contained" sx={{ mt: 3 }} disabled={loading}>
+        {loading ? 'Submitting...' : 'Next'}
+      </Button>
+    </Box>
   );
 };
 
