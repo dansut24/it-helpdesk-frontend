@@ -56,6 +56,7 @@ const Header = () => {
           <button onClick={toggleMenu} className="close-btn">&times;</button>
           <nav className="nav-links">
             <Link to="/" onClick={toggleMenu}>Home</Link>
+            <Link to="/about" onClick={toggleMenu}>About</Link>
             <Link to="/services" onClick={toggleMenu}>Services</Link>
             <Link to="/signup" onClick={toggleMenu}>Sign Up</Link>
             <Link to="/demo" onClick={toggleMenu}>Demo</Link>
