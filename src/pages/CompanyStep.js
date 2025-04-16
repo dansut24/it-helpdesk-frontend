@@ -1,6 +1,6 @@
 // src/pages/CompanyStep.js
 import React, { useState } from "react";
-import { createTenant } from "../../api";
+import { createTenant } from "../api";
 
 const CompanyStep = ({ onNext }) => {
   const [companyName, setCompanyName] = useState("");
