@@ -12,12 +12,12 @@ const SetupWizard = () => {
   const prev = () => setStep((prev) => prev - 1);
 
   const steps = {
-    1: <CompanyStep next={next} />,
-    2: <TeamsStep next={next} prev={prev} />,
-    3: <UsersStep next={next} prev={prev} />,
-    4: <PreferencesStep next={next} prev={prev} />,
-    5: <FinishStep />
-  };
+  1: <CompanyStep onNext={next} />,  // ✅ corrected prop name
+  2: <TeamsStep next={next} prev={prev} />,
+  3: <UsersStep next={next} prev={prev} />,
+  4: <PreferencesStep next={next} prev={prev} />,
+  5: <FinishStep />
+};
 
   return (
     <div className="setup-wizard">
