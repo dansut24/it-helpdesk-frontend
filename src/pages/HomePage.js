@@ -1,15 +1,16 @@
-import React
+import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
- from 'react';
-import '../styles/PageStyles.css';
 
 const HomePage = () => (
-  <div className="page animated fadeIn">
-    <h1>Hi5Tech Platform</h1>
-    <p>Modern, scalable, and intuitive ITSM designed for teams who move fast.</p>
-    <img src="https://via.placeholder.com/600x300" alt="Home Visual" className="image-fade" />
-  </div>
+  <>
+    <Header />
+    <main className="page-content">
+      <h1>Welcome to Hi5Tech</h1>
+      <p>Your centralized platform for powerful ITSM tools, streamlined workflows, and enhanced team productivity.</p>
+    </main>
+    <Footer />
+  </>
 );
 
 export default HomePage;
