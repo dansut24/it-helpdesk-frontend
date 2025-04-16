@@ -346,8 +346,6 @@ export const updateRolePermissions = async (roleId, permissions) => {
 };
 
 
-import axios from "axios";
-
 // Define fallback base URL for non-fetch API calls
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const API_BASE_URL = `${API_BASE}`;
