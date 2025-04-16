@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { createIncident, getNextIncidentRef } from "../api";
+import { createIncident, reserveIncident } from "../api";
 
 const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
   const [formData, setFormData] = useState({
@@ -10,24 +10,26 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
     category: "",
   });
   const [reference, setReference] = useState("");
+  const [incidentId, setIncidentId] = useState(null);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    async function fetchRef() {
+    async function reserveRef() {
       try {
-        const ref = await getNextIncidentRef();
-        if (ref?.nextRef) {
-          setReference(ref.nextRef);
+        const res = await reserveIncident();
+        if (res?.referenceNumber && res?.incidentId) {
+          setReference(res.referenceNumber);
+          setIncidentId(res.incidentId);
         } else {
-          setError("Error fetching reference number");
+          throw new Error("Invalid response from server");
         }
       } catch (err) {
-        console.error("❌ Failed to fetch reference number:", err);
-        setError("Error fetching reference number");
+        console.error("❌ Failed to reserve incident:", err);
+        setError("Error reserving incident number");
       }
     }
-    fetchRef();
+    reserveRef();
   }, []);
 
   const handleChange = (e) => {
@@ -43,16 +45,14 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
     setError(null);
 
     try {
-      
-      
-      
       const result = await createIncident({
+        id: incidentId,
         reference_number: reference,
         ...formData,
       });
 
-      const refNum = result?.referenceNumber || result?.reference_number;
-      const id = result?.id;
+      const refNum = result?.referenceNumber || reference;
+      const id = result?.id || incidentId;
 
       if (refNum && id) {
         alert("✅ Incident submitted successfully.");
@@ -62,9 +62,6 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
       } else {
         throw new Error("Unexpected response from server");
       }
-
-
-
     } catch (err) {
       console.error("❌ Error submitting incident:", err);
       setError("Failed to submit incident. Please try again.");
