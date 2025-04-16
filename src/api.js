@@ -374,3 +374,5 @@ export const completeSetup = async (tenantId) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ tenantId }),
   }).then(res => res.json());
+
+export { getAuthHeaders };
