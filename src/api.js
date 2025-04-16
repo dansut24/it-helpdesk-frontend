@@ -348,31 +348,29 @@ export const updateRolePermissions = async (roleId, permissions) => {
 
 // Setup Wizard
 export const createTenant = async (companyData) =>
-  fetch(`${API_BASE}/setup/company`, {
+  fetch(`${API_BASE_URL}/setup/company`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(companyData),
   }).then(res => res.json());
 
 export const createTeams = async (teams) =>
-  fetch(`${API_BASE}/setup/teams`, {
+  fetch(`${API_BASE_URL}/setup/teams`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ teams }),
   }).then(res => res.json());
 
 export const createUsers = async (users) =>
-  fetch(`${API_BASE}/setup/users`, {
+  fetch(`${API_BASE_URL}/setup/users`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ users }),
   }).then(res => res.json());
 
 export const completeSetup = async (tenantId) =>
-  fetch(`${API_BASE}/setup/complete`, {
+  fetch(`${API_BASE_URL}/setup/complete`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ tenantId }),
   }).then(res => res.json());
-
-export { getAuthHeaders };
