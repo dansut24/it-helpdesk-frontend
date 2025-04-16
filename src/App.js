@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -8,13 +8,14 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import TabbedView from "./components/TabbedView";
 import Login from "./pages/Login";
 import RoleSelector from "./pages/RoleSelector";
-import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ServicesPage from "./pages/ServicesPage";
 import ItsmLanding from "./pages/ItsmLanding";
-import Signup from "./pages/SignupPage";
+import SignupPage from "./pages/SignupPage";
 import SetupWizard from "./pages/SetupWizard";
+import DemoPage from "./pages/DemoPage";
+import LandingPage from "./pages/LandingPage";
 
 const theme = createTheme();
 
@@ -52,67 +53,57 @@ const AppContent = () => {
     setSelectedTab(tab);
   };
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    logout();
-    setUserRole(null);
-    setToken(null);
-    window.location.reload();
-  };
-
   return (
-    <Router>
-      <Routes>
-        {isTenant ? (
-          <>
-            <Route
-              path="/login"
-              element={
-                <Login
-                  setUserRole={(role) => {
-                    setUserRole(role);
-                    sessionStorage.setItem("role", role);
-                  }}
-                  setToken={(t) => {
-                    setToken(t);
-                    sessionStorage.setItem("token", t);
-                  }}
+    <Routes>
+      {isTenant ? (
+        <>
+          <Route
+            path="/login"
+            element={
+              <Login
+                setUserRole={(role) => {
+                  setUserRole(role);
+                  sessionStorage.setItem("role", role);
+                }}
+                setToken={(t) => {
+                  setToken(t);
+                  sessionStorage.setItem("token", t);
+                }}
+              />
+            }
+          />
+          <Route path="/setup" element={<SetupWizard />} />
+          <Route
+            path="/*"
+            element={
+              token ? (
+                <TabbedView
+                  tabs={tabs}
+                  setTabs={setTabs}
+                  selectedTab={selectedTab}
+                  setSelectedTab={setSelectedTab}
+                  openTab={openTab}
+                  allowedTabs={allowedTabs}
                 />
-              }
-            />
-            <Route path="/setup" element={<SetupWizard />} />
-            <Route
-              path="/*"
-              element={
-                token ? (
-                  <TabbedView
-                    tabs={tabs}
-                    setTabs={setTabs}
-                    selectedTab={selectedTab}
-                    setSelectedTab={setSelectedTab}
-                    openTab={openTab}
-                    allowedTabs={allowedTabs}
-                  />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-          </>
-        ) : (
-          <>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/services/itsm" element={<ItsmLanding />} />
-            <Route path="/services/itsm/signup" element={<Signup />} />
-            <Route path="/services/itsm/demo" element={<Navigate to="https://demo-itsm.hi5tech.co.uk" replace />} />
-            <Route path="/signup" element={<Signup />} />
-          </>
-        )}
-      </Routes>
-    </Router>
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+        </>
+      ) : (
+        <>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/itsm" element={<ItsmLanding />} />
+          <Route path="/services/itsm/signup" element={<SignupPage />} />
+          <Route path="/services/itsm/demo" element={<DemoPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+        </>
+      )}
+    </Routes>
   );
 };
 
