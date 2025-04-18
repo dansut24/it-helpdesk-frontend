@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
 import '../styles/PageStyles.css';
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    company: '',
+    email: '',
+    password: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // TODO: Add backend POST here if needed
+    console.log('Signing up with:', formData);
+
+    // Navigate to setup wizard
+    navigate('/setup');
+  };
+
   return (
     <>
       <Header />
@@ -31,28 +53,37 @@ const SignupPage = () => {
               Start your 14-day free trial. No credit card required.
             </Typography>
 
-            <form>
+            <form onSubmit={handleSubmit}>
               <TextField
                 fullWidth
                 label="Company Name"
+                name="company"
                 variant="outlined"
                 margin="normal"
+                value={formData.company}
+                onChange={handleChange}
                 required
               />
               <TextField
                 fullWidth
                 label="Email Address"
+                name="email"
                 type="email"
                 variant="outlined"
                 margin="normal"
+                value={formData.email}
+                onChange={handleChange}
                 required
               />
               <TextField
                 fullWidth
                 label="Password"
+                name="password"
                 type="password"
                 variant="outlined"
                 margin="normal"
+                value={formData.password}
+                onChange={handleChange}
                 required
               />
 
