@@ -1,69 +1,75 @@
 import React, { useState } from 'react';
-import {
-  Container, Typography, TextField, Button, Box, CircularProgress, Alert
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { Box, Button, TextField, Typography, InputAdornment } from '@mui/material';
 
 const SignupPage = () => {
   const [companyName, setCompanyName] = useState('');
-  const [tenantDomain, setTenantDomain] = useState('');
-  const [availability, setAvailability] = useState(null);
-  const [checking, setChecking] = useState(false);
+  const [subdomain, setSubdomain] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [success, setSuccess] = useState('');
+  const [checking, setChecking] = useState(false);
+  const [available, setAvailable] = useState(null);
 
-  const checkSubdomain = async (slug) => {
+  const checkAvailability = async (slug) => {
+    if (!slug) return;
     setChecking(true);
-    setAvailability(null);
+    setAvailable(null);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/check-subdomain/${slug}`);
-      const result = await res.json();
-      setAvailability(result.available);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/check-domain?slug=${slug}`);
+      const data = await res.json();
+      setAvailable(data.available);
     } catch (err) {
-      console.error('Error checking availability:', err);
-    } finally {
-      setChecking(false);
+      console.error('Domain check failed:', err);
     }
+    setChecking(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
+
+    const tenant_domain = subdomain.toLowerCase().replace(/[^a-z0-9\-]/g, '');
+    const payload = {
+      company_name: companyName,
+      tenant_domain,
+      logo_url: ''
+    };
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/company`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          company_name: companyName,
-          tenant_domain: tenantDomain,
-          logo_url: ''
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
-      if (data.id) {
-        navigate(`https://${tenantDomain}-itsm.hi5tech.co.uk/setup`);
-      } else {
-        setError(data.error || 'Signup failed');
+      if (!response.ok) {
+        throw new Error(data.error || 'Signup failed');
       }
+
+      setSuccess('Workspace created! Redirecting to setup...');
+      setTimeout(() => {
+        window.location.href = `https://${tenant_domain}-itsm.hi5tech.co.uk/setup`;
+      }, 2500);
     } catch (err) {
       console.error('❌ Signup error:', err);
-      setError('An error occurred during signup.');
+      setError(err.message || 'Signup failed');
     }
   };
 
   return (
     <>
       <Header />
-      <Container maxWidth="sm" sx={{ mt: 6, mb: 6 }}>
+      <Box sx={{ maxWidth: 500, mx: 'auto', mt: 10, p: 3 }}>
         <Typography variant="h4" gutterBottom>
           Create Your Workspace
         </Typography>
-
-        <Box component="form" onSubmit={handleSubmit}>
+        <Typography sx={{ mb: 3 }}>
+          Sign up to create your own Hi5Tech instance.
+        </Typography>
+        <form onSubmit={handleSubmit}>
           <TextField
             label="Company Name"
             fullWidth
@@ -72,48 +78,90 @@ const SignupPage = () => {
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
           />
-
           <TextField
             label="Subdomain"
             fullWidth
             required
             margin="normal"
-            value={tenantDomain}
+            value={subdomain}
             onChange={(e) => {
-              const slug = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '');
-              setTenantDomain(slug);
-              checkSubdomain(slug);
+              const val = e.target.value.replace(/[^a-zA-Z0-9-]/g, '');
+              setSubdomain(val);
+              checkAvailability(val);
             }}
             InputProps={{
-              endAdornment: <span style={{ marginLeft: 8 }}>.hi5tech.co.uk</span>,
+              endAdornment: (
+                <InputAdornment position="end">-itsm.hi5tech.co.uk</InputAdornment>
+              )
             }}
             helperText={
               checking
                 ? 'Checking availability...'
-                : availability === true
-                ? 'Subdomain is available'
-                : availability === false
+                : available === false
                 ? 'Subdomain is already taken'
-                : ''
+                : available === true
+                ? 'Subdomain is available'
+                : ' '
             }
-            error={availability === false}
+            error={available === false}
           />
-
-          {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-
+          {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
+            </Typography>
+          )}
           <Button
             type="submit"
             variant="contained"
             color="primary"
             fullWidth
-            disabled={checking || availability === false}
             sx={{ mt: 3 }}
+            disabled={checking || available === false}
           >
-            {checking ? <CircularProgress size={24} /> : 'Create Workspace'}
+            Create Workspace
           </Button>
+        </form>
+      </Box>
+
+      {success && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0, left: 0, width: '100%', height: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h6" sx={{ color: 'green', mb: 2 }}>
+            {success}
+          </Typography>
+          <Box
+            sx={{
+              width: 80,
+              height: 80,
+              border: '6px solid #4caf50',
+              borderTop: '6px solid transparent',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}
+          />
         </Box>
-      </Container>
+      )}
+
       <Footer />
+
+      <style>
+        {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}
+      </style>
     </>
   );
 };
