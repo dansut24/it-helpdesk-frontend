@@ -22,23 +22,26 @@ const SignupPage = () => {
   }, [subdomain]);
 
   const checkAvailability = async (value) => {
-    setChecking(true);
-    try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/check-subdomain`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subdomain: value }),
-      });
-      const data = await res.json();
-      setSubdomainValid(data.available);
-    } catch (err) {
-      console.error('Error checking availability:', err);
-      setSubdomainValid(false);
-    } finally {
-      setChecking(false);
-    }
-  };
+  setChecking(true);
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/check-subdomain`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subdomain: value }),
+    });
 
+    if (!res.ok) throw new Error("Bad response");
+
+    const data = await res.json();
+    console.log("Availability check response:", data);
+    setSubdomainValid(data.available);
+  } catch (err) {
+    console.error("Error checking availability:", err);
+    setSubdomainValid(false); // fallback
+  } finally {
+    setChecking(false);
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
