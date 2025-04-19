@@ -1,152 +1,115 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Button,
-  Container,
-  TextField,
-  Typography,
-  MenuItem,
-  CircularProgress
+  Container, Typography, TextField, Button, Box, CircularProgress, Alert
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const SignupPage = () => {
-  const [formData, setFormData] = useState({
-    company_name: '',
-    slug: '',
-    industry: '',
-    size: '',
-    timezone: 'Europe/London',
-    date_format: 'DD/MM/YYYY',
-    maintenance_mode: false
-  });
-
-  const [loading, setLoading] = useState(false);
+  const [companyName, setCompanyName] = useState('');
+  const [tenantDomain, setTenantDomain] = useState('');
+  const [availability, setAvailability] = useState(null);
+  const [checking, setChecking] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const checkSubdomain = async (slug) => {
+    setChecking(true);
+    setAvailability(null);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/check-subdomain/${slug}`);
+      const result = await res.json();
+      setAvailability(result.available);
+    } catch (err) {
+      console.error('Error checking availability:', err);
+    } finally {
+      setChecking(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
-    setSuccess(false);
 
     try {
-      console.log('Submitting signup payload:', formData);
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/company`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          company_name: companyName,
+          tenant_domain: tenantDomain,
+          logo_url: ''
+        }),
       });
 
-      console.log('Raw signup response:', response);
-
-      if (!response.ok) throw new Error('Signup failed');
-
       const data = await response.json();
-      console.log('Signup successful:', data);
-      setSuccess(true);
-
-      // Redirect to the subdomain setup wizard
-      window.location.href = `https://${formData.slug}-itsm.hi5tech.co.uk/setup`;
+      if (data.id) {
+        navigate(`https://${tenantDomain}-itsm.hi5tech.co.uk/setup`);
+      } else {
+        setError(data.error || 'Signup failed');
+      }
     } catch (err) {
       console.error('❌ Signup error:', err);
-      setError('Signup failed. Please try again.');
-    } finally {
-      setLoading(false);
+      setError('An error occurred during signup.');
     }
   };
 
   return (
     <>
       <Header />
-      <Container maxWidth="sm" sx={{ mt: 8, mb: 6 }}>
-        <Typography variant="h4" gutterBottom align="center">
+      <Container maxWidth="sm" sx={{ mt: 6, mb: 6 }}>
+        <Typography variant="h4" gutterBottom>
           Create Your Workspace
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={handleSubmit}>
           <TextField
             label="Company Name"
-            name="company_name"
-            value={formData.company_name}
-            onChange={handleChange}
             fullWidth
             required
             margin="normal"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
           />
 
           <TextField
-            label="Desired Subdomain"
-            name="slug"
-            value={formData.slug}
-            onChange={handleChange}
+            label="Subdomain"
             fullWidth
             required
             margin="normal"
-            InputProps={{
-              endAdornment: <span>.hi5tech.co.uk</span>
+            value={tenantDomain}
+            onChange={(e) => {
+              const slug = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '');
+              setTenantDomain(slug);
+              checkSubdomain(slug);
             }}
-            helperText="Your workspace will be available at https://yourdomain-itsm.hi5tech.co.uk"
+            InputProps={{
+              endAdornment: <span style={{ marginLeft: 8 }}>.hi5tech.co.uk</span>,
+            }}
+            helperText={
+              checking
+                ? 'Checking availability...'
+                : availability === true
+                ? 'Subdomain is available'
+                : availability === false
+                ? 'Subdomain is already taken'
+                : ''
+            }
+            error={availability === false}
           />
 
-          <TextField
-            select
-            label="Industry"
-            name="industry"
-            value={formData.industry}
-            onChange={handleChange}
-            fullWidth
-            required
-            margin="normal"
-          >
-            {['Tech', 'Education', 'Healthcare', 'Finance', 'Other'].map((option) => (
-              <MenuItem key={option} value={option}>{option}</MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            select
-            label="Company Size"
-            name="size"
-            value={formData.size}
-            onChange={handleChange}
-            fullWidth
-            required
-            margin="normal"
-          >
-            {['1-10', '11-50', '51-200', '201-500', '500+'].map((size) => (
-              <MenuItem key={size} value={size}>{size} employees</MenuItem>
-            ))}
-          </TextField>
-
-          {error && (
-            <Typography color="error" sx={{ mt: 2 }}>
-              {error}
-            </Typography>
-          )}
-
-          {success && (
-            <Typography color="primary" sx={{ mt: 2 }}>
-              Signup successful! Redirecting...
-            </Typography>
-          )}
+          {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
 
           <Button
             type="submit"
-            fullWidth
             variant="contained"
             color="primary"
+            fullWidth
+            disabled={checking || availability === false}
             sx={{ mt: 3 }}
-            disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Workspace'}
+            {checking ? <CircularProgress size={24} /> : 'Create Workspace'}
           </Button>
         </Box>
       </Container>
