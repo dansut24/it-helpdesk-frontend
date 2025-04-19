@@ -1,31 +1,39 @@
-import React, { useState } from 'react';
-import {
-  Box, Button, TextField, Typography, InputAdornment, CircularProgress, Alert
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+// src/pages/SignupPage.js
+import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, Typography, InputAdornment, CircularProgress, Alert, Fade } from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const SignupPage = () => {
   const [companyName, setCompanyName] = useState('');
-  const [tenantDomain, setTenantDomain] = useState('');
+  const [subdomain, setSubdomain] = useState('');
+  const [subdomainValid, setSubdomainValid] = useState(null);
   const [checking, setChecking] = useState(false);
-  const [available, setAvailable] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [redirecting, setRedirecting] = useState(false);
 
-  const navigate = useNavigate();
+  // Debounced subdomain check
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (subdomain) checkAvailability(subdomain);
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [subdomain]);
 
-  const checkAvailability = async () => {
-    if (!tenantDomain) return;
+  const checkAvailability = async (value) => {
     setChecking(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/check-subdomain?slug=${tenantDomain}`);
-      const result = await res.json();
-      setAvailable(result.available);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/check-subdomain`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subdomain: value }),
+      });
+      const data = await res.json();
+      setSubdomainValid(data.available);
     } catch (err) {
-      setAvailable(null);
+      console.error('Error checking availability:', err);
+      setSubdomainValid(false);
     } finally {
       setChecking(false);
     }
@@ -33,86 +41,79 @@ const SignupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-
+    setErrorMsg('');
+    setSubmitted(false);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/company`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/company`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           company_name: companyName,
-          tenant_domain: tenantDomain,
+          tenant_domain: subdomain,
+          logo_url: ''
         }),
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Signup failed');
-      }
-
-      setSuccess(true);
-
+      if (!res.ok) throw new Error('Signup failed');
+      setSubmitted(true);
+      setRedirecting(true);
       setTimeout(() => {
-        window.location.href = `https://${tenantDomain}-itsm.hi5tech.co.uk/setup`;
-      }, 2800);
+        window.location.href = `https://${subdomain}-itsm.hi5tech.co.uk/setup`;
+      }, 2600);
     } catch (err) {
-      setError(err.message);
-      setSubmitting(false);
+      console.error('Signup error:', err);
+      setErrorMsg('Signup failed. Please try again.');
     }
   };
+
+  const isFormValid = companyName && subdomain && subdomainValid;
 
   return (
     <>
       <Header />
-      <Box
-        sx={{
-          mt: 10, mb: 8, mx: 'auto', maxWidth: 500, px: 3, py: 4,
-          backgroundColor: '#fff', borderRadius: 3, boxShadow: 3
-        }}
-      >
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Create your workspace
+      <main style={{ padding: '2rem', maxWidth: 600, margin: '0 auto' }}>
+        <Typography variant="h4" gutterBottom>
+          Create Your Workspace
         </Typography>
-        <Typography variant="subtitle1" mb={3}>
-          Start your free trial and set up your Hi5Tech ITSM in seconds.
+        <Typography variant="body1" gutterBottom>
+          Get started with Hi5Tech by creating your organization’s workspace.
         </Typography>
 
-        <form onSubmit={handleSubmit}>
+        <Box component="form" onSubmit={handleSubmit} mt={3}>
           <TextField
             label="Company Name"
+            fullWidth
+            required
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            fullWidth
-            required
-            sx={{ mb: 2 }}
+            margin="normal"
           />
           <TextField
-            label="Subdomain"
-            value={tenantDomain}
-            onChange={(e) => {
-              setTenantDomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''));
-              setAvailable(null);
-            }}
-            onBlur={checkAvailability}
+            label="Choose Subdomain"
             fullWidth
             required
+            margin="normal"
+            value={subdomain}
+            onChange={(e) =>
+              setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))
+            }
             InputProps={{
               endAdornment: <InputAdornment position="end">-itsm.hi5tech.co.uk</InputAdornment>,
             }}
-            sx={{ mb: 1 }}
+            helperText={
+              checking
+                ? 'Checking availability...'
+                : subdomainValid === false
+                ? 'Subdomain not available'
+                : subdomainValid === true
+                ? 'Subdomain is available'
+                : ''
+            }
+            error={subdomain && subdomainValid === false}
           />
-          {checking && <Typography variant="caption" color="text.secondary">Checking availability...</Typography>}
-          {available === true && (
-            <Alert severity="success" sx={{ mb: 2 }}>Subdomain is available!</Alert>
-          )}
-          {available === false && (
-            <Alert severity="error" sx={{ mb: 2 }}>Subdomain is already taken.</Alert>
-          )}
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-          {success && (
-            <Alert severity="success" sx={{ mb: 2, animation: 'fadeIn 1s ease-in-out' }}>
-              Signup successful! Redirecting to setup wizard...
+
+          {errorMsg && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {errorMsg}
             </Alert>
           )}
 
@@ -120,14 +121,49 @@ const SignupPage = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={!available || submitting}
-            fullWidth
+            disabled={!isFormValid || checking}
+            sx={{ mt: 3 }}
           >
-            {submitting ? <CircularProgress size={24} color="inherit" /> : 'Create Workspace'}
+            {checking ? <CircularProgress size={24} /> : 'Create Workspace'}
           </Button>
-        </form>
-      </Box>
+
+          <Fade in={redirecting}>
+            <Box sx={{ mt: 4, textAlign: 'center' }}>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Workspace created successfully!
+              </Typography>
+              <div className="redirect-pulse" />
+            </Box>
+          </Fade>
+        </Box>
+      </main>
       <Footer />
+
+      <style>{`
+        .redirect-pulse {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #1976d2;
+          margin: 0 auto;
+          animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 0.6;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </>
   );
 };
