@@ -1,49 +1,44 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Container,
-  TextField,
-  Typography,
-  Paper,
-  InputAdornment,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import React, { useState } from "react";
+import { Box, Button, TextField, Typography, Container, Paper } from "@mui/material";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const SignupPage = () => {
-  const [companyName, setCompanyName] = useState('');
-  const [subdomain, setSubdomain] = useState('');
-  const [error, setError] = useState('');
+  const [companyName, setCompanyName] = useState("");
+  const [tenantDomain, setTenantDomain] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
-
-    const tenant_domain = `${subdomain}-itsm.hi5tech.co.uk`;
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/company`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           company_name: companyName,
-          tenant_domain,
-          logo_url: '',
+          tenant_domain: tenantDomain,
+          logo_url: "",
         }),
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Signup failed');
+      console.log("Raw signup response", response);
 
-      window.location.href = `https://${subdomain}-itsm.hi5tech.co.uk/setup`;
+      const data = await response.json();
+      console.log("Parsed signup response:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || "Signup failed");
+      }
+
+      // Redirect to the setup wizard on the new subdomain
+      window.location.href = `https://${tenantDomain}/setup`;
     } catch (err) {
-      console.error('❌ Signup error:', err);
-      setError(err.message || 'Signup failed');
+      console.error("❌ Signup error:", err);
+      setError(err.message || "Signup failed");
     } finally {
       setLoading(false);
     }
@@ -52,19 +47,18 @@ const SignupPage = () => {
   return (
     <>
       <Header />
-      <Container maxWidth="sm" sx={{ mt: 8, mb: 6 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" gutterBottom align="center">
-            Create Your ITSM Workspace
+      <Container maxWidth="sm" sx={{ mt: 10, mb: 6 }}>
+        <Paper elevation={4} sx={{ p: 4 }}>
+          <Typography variant="h4" gutterBottom>
+            Create Your Workspace
           </Typography>
-          <Typography variant="body1" align="center" gutterBottom>
-            Start your free trial by creating a dedicated workspace for your organization.
+          <Typography variant="body1" sx={{ mb: 3 }}>
+            Start your 14-day free trial with Hi5Tech. Set up your company workspace now.
           </Typography>
-
-          <Box component="form" onSubmit={handleSignup} sx={{ mt: 3 }}>
+          <Box component="form" onSubmit={handleSubmit}>
             <TextField
-              fullWidth
               label="Company Name"
+              fullWidth
               required
               margin="normal"
               value={companyName}
@@ -72,35 +66,32 @@ const SignupPage = () => {
             />
 
             <TextField
+              label="Subdomain"
               fullWidth
-              label="Choose Subdomain"
               required
               margin="normal"
-              value={subdomain}
+              value={tenantDomain}
               onChange={(e) =>
-                setSubdomain(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase())
+                setTenantDomain(e.target.value.replace(/[^a-zA-Z0-9-]/g, ""))
               }
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">-itsm.hi5tech.co.uk</InputAdornment>
-                ),
-              }}
+              helperText="Your workspace will be created at https://[subdomain]-itsm.hi5tech.co.uk"
             />
 
             {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
+              <Typography color="error" sx={{ mt: 1 }}>
                 {error}
-              </Alert>
+              </Typography>
             )}
 
             <Button
               type="submit"
-              fullWidth
               variant="contained"
+              color="primary"
+              fullWidth
               sx={{ mt: 3 }}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Create Workspace'}
+              {loading ? "Creating..." : "Create Workspace"}
             </Button>
           </Box>
         </Paper>
