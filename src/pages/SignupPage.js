@@ -1,110 +1,64 @@
-// src/pages/SignupPage.js
 import React, { useState } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import '../styles/PageStyles.css';
+import { useNavigate } from 'react-router-dom';
+import './SignupPage.css'; // assuming styles are defined
 
 const SignupPage = () => {
-  const [companyName, setCompanyName] = useState('');
-  const [subdomain, setSubdomain] = useState('');
-  const [error, setError] = useState('');
+  const [form, setForm] = useState({
+    companyName: '',
+    subdomain: '',
+    industry: '',
+    size: '',
+  });
+
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    setError('');
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/tenants`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://api.hi5tech.co.uk'}/api/tenants`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ companyName, subdomain }),
+        body: JSON.stringify(form),
       });
 
-      if (!response.ok) throw new Error('Failed to create tenant');
-      const { tenant } = await response.json();
+      const data = await response.json();
 
-      window.location.href = `https://${tenant.subdomain}-itsm.hi5tech.co.uk/setup`;
+      if (response.ok && data.tenantId) {
+        const subdomain = form.subdomain.toLowerCase().replace(/[^a-z0-9-]/g, '');
+        window.location.href = `https://${subdomain}-itsm.hi5tech.co.uk/setup`;
+      } else {
+        throw new Error(data.error || 'Signup failed');
+      }
     } catch (err) {
-      setError('Signup failed: ' + err.message);
       console.error('❌ Signup error:', err);
-    } finally {
+      setError(err.message || 'Something went wrong');
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <Header />
-      <main className="page animated fadeIn">
-        <h1>Start Your Free Trial</h1>
-        <p>Create your ITSM workspace in just a few clicks.</p>
-        <form className="form-card" onSubmit={handleSubmit}>
-          <label>Company Name</label>
-          <input
-            type="text"
-            required
-            placeholder="e.g. TechSolutions Ltd"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-          />
-
-          <label>Subdomain</label>
-          <div className="subdomain-field">
-            <input
-              type="text"
-              required
-              placeholder="yourcompany"
-              value={subdomain}
-              onChange={(e) => setSubdomain(e.target.value.replace(/[^a-zA-Z0-9-]/g, ''))}
-            />
-            <span className="suffix">-itsm.hi5tech.co.uk</span>
-          </div>
-
-          {error && <div className="error">{error}</div>}
-
-          <button type="submit" disabled={loading}>
-            {loading ? 'Creating...' : 'Get Started'}
-          </button>
-        </form>
-      </main>
-      <Footer />
-
-      <style>{`
-        .form-card {
-          max-width: 500px;
-          margin: 2rem auto;
-          background: white;
-          padding: 2rem;
-          border-radius: 12px;
-          box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        .subdomain-field {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        .subdomain-field input {
-          flex: 1;
-        }
-        .suffix {
-          background: #f0f0f0;
-          padding: 0.5rem 1rem;
-          border-radius: 6px;
-          font-size: 0.9rem;
-          color: #444;
-        }
-        .error {
-          color: red;
-          font-weight: bold;
-          margin-top: 0.5rem;
-        }
-      `}</style>
-    </>
+    <div className="signup-container">
+      <h2>Start your Free ITSM Trial</h2>
+      <form onSubmit={handleSubmit}>
+        <input name="companyName" placeholder="Company Name" required value={form.companyName} onChange={handleChange} />
+        <input name="subdomain" placeholder="Subdomain (e.g. mycompany)" required value={form.subdomain} onChange={handleChange} />
+        <input name="industry" placeholder="Industry" required value={form.industry} onChange={handleChange} />
+        <input name="size" placeholder="Company Size" required value={form.size} onChange={handleChange} />
+        {error && <p className="error">{error}</p>}
+        <button type="submit" disabled={loading}>
+          {loading ? 'Submitting...' : 'Continue'}
+        </button>
+      </form>
+    </div>
   );
 };
 
