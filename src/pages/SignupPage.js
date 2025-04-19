@@ -1,54 +1,50 @@
 import React, { useState } from 'react';
-import { TextField, InputAdornment, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  Paper,
+  InputAdornment,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const SignupPage = () => {
-  const [form, setForm] = useState({
-    companyName: '',
-    subdomain: '',
-    industry: '',
-    size: '',
-    timezone: 'Europe/London',
-    dateFormat: 'DD/MM/YYYY',
-  });
-
-  const [error, setError] = useState(null);
+  const [companyName, setCompanyName] = useState('');
+  const [subdomain, setSubdomain] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    setError(null);
-    setConfirmOpen(true); // Show confirmation dialog
-  };
-
-  const confirmSubmit = async () => {
+    setError('');
     setLoading(true);
-    setConfirmOpen(false);
+
+    const tenant_domain = `${subdomain}-itsm.hi5tech.co.uk`;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://api.hi5tech.co.uk'}/api/tenants`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/setup/company`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          company_name: companyName,
+          tenant_domain,
+          logo_url: '',
+        }),
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Signup failed');
 
-      if (response.ok && data.tenantId) {
-        const cleanSubdomain = form.subdomain.toLowerCase().replace(/[^a-z0-9-]/g, '');
-        window.location.href = `https://${cleanSubdomain}-itsm.hi5tech.co.uk/setup`;
-      } else {
-        throw new Error(data.error || 'Signup failed');
-      }
+      window.location.href = `https://${subdomain}-itsm.hi5tech.co.uk/setup`;
     } catch (err) {
       console.error('❌ Signup error:', err);
-      setError(err.message || 'Something went wrong');
+      setError(err.message || 'Signup failed');
+    } finally {
       setLoading(false);
     }
   };
@@ -56,97 +52,59 @@ const SignupPage = () => {
   return (
     <>
       <Header />
-      <div style={{ padding: '4rem 1rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ marginBottom: '2rem' }}>Start your Free ITSM Trial</h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <TextField
-            name="companyName"
-            label="Company Name"
-            fullWidth
-            required
-            value={form.companyName}
-            onChange={handleChange}
-          />
+      <Container maxWidth="sm" sx={{ mt: 8, mb: 6 }}>
+        <Paper elevation={3} sx={{ p: 4 }}>
+          <Typography variant="h4" gutterBottom align="center">
+            Create Your ITSM Workspace
+          </Typography>
+          <Typography variant="body1" align="center" gutterBottom>
+            Start your free trial by creating a dedicated workspace for your organization.
+          </Typography>
 
-          <TextField
-            name="subdomain"
-            label="Subdomain"
-            required
-            value={form.subdomain}
-            onChange={handleChange}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">-itsm.hi5tech.co.uk</InputAdornment>,
-            }}
-            helperText="This will be your ITSM portal address."
-          />
+          <Box component="form" onSubmit={handleSignup} sx={{ mt: 3 }}>
+            <TextField
+              fullWidth
+              label="Company Name"
+              required
+              margin="normal"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
 
-          <TextField
-            name="industry"
-            label="Industry"
-            fullWidth
-            required
-            value={form.industry}
-            onChange={handleChange}
-          />
+            <TextField
+              fullWidth
+              label="Choose Subdomain"
+              required
+              margin="normal"
+              value={subdomain}
+              onChange={(e) =>
+                setSubdomain(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase())
+              }
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">-itsm.hi5tech.co.uk</InputAdornment>
+                ),
+              }}
+            />
 
-          <TextField
-            name="size"
-            label="Company Size"
-            fullWidth
-            required
-            value={form.size}
-            onChange={handleChange}
-          />
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            )}
 
-          <TextField
-            name="timezone"
-            label="Timezone"
-            select
-            fullWidth
-            value={form.timezone}
-            onChange={handleChange}
-          >
-            <MenuItem value="Europe/London">Europe/London</MenuItem>
-            <MenuItem value="America/New_York">America/New_York</MenuItem>
-            <MenuItem value="Asia/Tokyo">Asia/Tokyo</MenuItem>
-            <MenuItem value="Australia/Sydney">Australia/Sydney</MenuItem>
-          </TextField>
-
-          <TextField
-            name="dateFormat"
-            label="Date Format"
-            select
-            fullWidth
-            value={form.dateFormat}
-            onChange={handleChange}
-          >
-            <MenuItem value="DD/MM/YYYY">DD/MM/YYYY</MenuItem>
-            <MenuItem value="MM/DD/YYYY">MM/DD/YYYY</MenuItem>
-            <MenuItem value="YYYY-MM-DD">YYYY-MM-DD</MenuItem>
-          </TextField>
-
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-
-          <Button variant="contained" type="submit" disabled={loading} sx={{ padding: '12px' }}>
-            {loading ? 'Submitting...' : 'Continue'}
-          </Button>
-        </form>
-      </div>
-
-      {/* Confirmation Dialog */}
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Confirm Your Signup</DialogTitle>
-        <DialogContent>
-          <p>You're about to create a new tenant for <strong>{form.companyName}</strong>.</p>
-          <p>Your URL will be: <strong>{form.subdomain}-itsm.hi5tech.co.uk</strong></p>
-          <p>Do you want to continue?</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)} color="secondary">Cancel</Button>
-          <Button onClick={confirmSubmit} color="primary" autoFocus>Confirm</Button>
-        </DialogActions>
-      </Dialog>
-
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3 }}
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Create Workspace'}
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
       <Footer />
     </>
   );
