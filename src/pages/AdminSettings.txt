@@ -1,0 +1,72 @@
+import React, { useState } from "react";
+import {
+  Box,
+  Tabs,
+  Tab,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Divider,
+} from "@mui/material";
+
+const AdminSettings = () => {
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+  };
+
+  return (
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Admin Settings
+      </Typography>
+
+      <Paper sx={{ mb: 3 }}>
+        <Tabs value={tabIndex} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
+          <Tab label="Knowledge Base" />
+          <Tab label="Email Settings" />
+          <Tab label="SLA Definitions" />
+        </Tabs>
+      </Paper>
+
+      {tabIndex === 0 && (
+        <Box>
+          <Typography variant="h6">Manage Knowledge Base Articles</Typography>
+          <TextField label="Title" fullWidth sx={{ my: 1 }} />
+          <TextField label="Category" fullWidth sx={{ my: 1 }} />
+          <TextField label="Content" fullWidth multiline rows={4} sx={{ my: 1 }} />
+          <Button variant="contained">Save Article</Button>
+        </Box>
+      )}
+
+      {tabIndex === 1 && (
+        <Box>
+          <Typography variant="h6">Email Configuration</Typography>
+          <TextField label="From Email" fullWidth sx={{ my: 1 }} />
+          <TextField label="From Name" fullWidth sx={{ my: 1 }} />
+          <Button variant="contained">Save Email Settings</Button>
+        </Box>
+      )}
+
+      {tabIndex === 2 && (
+        <Box>
+          <Typography variant="h6">SLA Response Times</Typography>
+          {['Critical', 'High', 'Medium', 'Low'].map((priority) => (
+            <TextField
+              key={priority}
+              label={`${priority} Priority SLA (hours)`}
+              type="number"
+              fullWidth
+              sx={{ my: 1 }}
+            />
+          ))}
+          <Button variant="contained">Save SLA Settings</Button>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default AdminSettings;
