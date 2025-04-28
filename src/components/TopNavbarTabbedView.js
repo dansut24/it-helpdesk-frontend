@@ -1,31 +1,26 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
   Box,
   Typography,
   IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
+  Tooltip,
   Avatar,
-  Menu,
+  Select,
   MenuItem,
+  Paper,
+  InputBase,
+  Menu,
   useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { useTheme } from "@mui/material/styles";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import HomeIcon from "@mui/icons-material/Home";
-import FolderIcon from "@mui/icons-material/Folder";
-import BuildIcon from "@mui/icons-material/Build";
-import SettingsIcon from "@mui/icons-material/Settings";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ListAltIcon from "@mui/icons-material/ListAlt";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { useThemeMode } from "../context/ThemeContext";
 
 const TopNavbarTabbedView = ({
   tabs,
@@ -34,94 +29,279 @@ const TopNavbarTabbedView = ({
   setSelectedTab,
   storedUser,
   handleLogout,
-  sidebarOpen,
-  toggleSidebar,
+  handleSwitchRole,
+  goBack,
+  tabHistory,
+  sidebarWidth,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { mode, setMode } = useThemeMode();
+  const scrollRef = useRef(null);
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  const openMenu = (e) => setAnchorEl(e.currentTarget);
-  const closeMenu = () => setAnchorEl(null);
 
   const openTab = (tab) => {
     if (!tabs.includes(tab)) setTabs([...tabs, tab]);
     setSelectedTab(tab);
-    if (isMobile) setMobileSidebarOpen(false);
   };
 
-  const sidebarItems = [
-    { label: "Dashboard", icon: <HomeIcon />, tab: "Dashboard" },
-    { label: "Incidents", icon: <FolderIcon />, tab: "Incidents" },
-    { label: "Service Requests", icon: <BuildIcon />, tab: "Service Requests" },
-    { label: "Changes", icon: <SettingsIcon />, tab: "Changes" },
-    { label: "Tasks", icon: <ListAltIcon />, tab: "Tasks" },
-    { label: "Profile", icon: <AccountCircleIcon />, tab: "Profile" },
-  ];
+  const closeTab = (tab) => {
+    if (tab === "Dashboard") return;
+    const newTabs = tabs.filter((t) => t !== tab);
+    setTabs(newTabs);
+    if (selectedTab === tab) setSelectedTab("Dashboard");
+  };
+
+  const renderedTabs = ["Dashboard", ...tabs.filter((t) => t !== "Dashboard")];
+
+  const updateScrollArrows = () => {
+    const node = scrollRef.current;
+    if (!node) return;
+    setShowLeft(node.scrollLeft > 0);
+    setShowRight(node.scrollLeft + node.clientWidth < node.scrollWidth);
+  };
+
+  useEffect(() => {
+    updateScrollArrows();
+  }, [tabs]);
+
+  const handleMenuClick = (e) => setAnchorEl(e.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: theme.palette.primary.main }}>
-        <Toolbar variant="dense">
-          {isMobile && (
-            <IconButton color="inherit" onClick={() => setMobileSidebarOpen(true)}>
-              <MenuIcon />
-            </IconButton>
-          )}
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            ITSM Workspace
-          </Typography>
-
-          <IconButton color="inherit">
-            <SearchIcon />
-          </IconButton>
-
-          <IconButton color="inherit">
-            <NotificationsIcon />
-          </IconButton>
-
-          <IconButton color="inherit" onClick={openMenu}>
-            <Avatar sx={{ width: 28, height: 28 }}>{storedUser?.username?.[0]?.toUpperCase() || "U"}</Avatar>
-          </IconButton>
-
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
-
-      <Drawer
-        variant={isMobile ? "temporary" : "permanent"}
-        open={isMobile ? mobileSidebarOpen : true}
-        onClose={() => setMobileSidebarOpen(false)}
-        ModalProps={{ keepMounted: true }}
+      <AppBar
+        position="fixed"
+        elevation={0}
         sx={{
-          width: isMobile ? 240 : 240,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: 240,
-            boxSizing: 'border-box',
-            top: isMobile ? 0 : 48, // offset for AppBar height
-          },
+          ml: `${sidebarWidth}px`,
+          width: `calc(100% - ${sidebarWidth}px)`,
+          bgcolor: theme.palette.primary.main,
+          height: 48,
+          zIndex: 1201,
+          transition: "margin-left 0.3s ease, width 0.3s ease",
         }}
       >
-        <Toolbar />
-        <Divider />
-        <List sx={{ overflowY: "auto" }}>
-          {sidebarItems.map((item) => (
-            <ListItem
-              button
-              key={item.label}
-              selected={selectedTab === item.tab}
-              onClick={() => openTab(item.tab)}
+        <Toolbar variant="dense" sx={{ px: 1, minHeight: 48 }}>
+          <Box display="flex" alignItems="center" gap={1} sx={{ flexShrink: 0 }}>
+            <img src="/logo192.png" alt="Logo" style={{ height: 24 }} />
+            {!isMobile && (
+              <Typography variant="h6" noWrap sx={{ fontSize: 16, color: "#fff" }}>
+                Hi5Tech ITSM
+              </Typography>
+            )}
+          </Box>
+
+          <Box flexGrow={1} />
+
+          {isMobile ? (
+            <>
+              <IconButton
+                size="small"
+                sx={{ color: "white" }}
+                onClick={() => setSearchOpen((prev) => !prev)}
+              >
+                <SearchIcon fontSize="small" />
+              </IconButton>
+            </>
+          ) : (
+            <>
+              <InputBase
+                placeholder="Search…"
+                sx={{
+                  bgcolor: "#ffffff22",
+                  color: "white",
+                  px: 1,
+                  borderRadius: 1,
+                  fontSize: 14,
+                  width: 180,
+                  mr: 1,
+                }}
+              />
+              {tabHistory.length > 0 && (
+                <Tooltip title="Go Back">
+                  <IconButton size="small" onClick={goBack} sx={{ color: "white" }}>
+                    <ArrowBackIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
+              <Tooltip title="Theme">
+                <Select
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value)}
+                  size="small"
+                  variant="standard"
+                  disableUnderline
+                  sx={{
+                    fontSize: "0.75rem",
+                    color: "white",
+                    mx: 1,
+                    ".MuiSelect-icon": { color: "white" },
+                  }}
+                >
+                  <MenuItem value="light">Light</MenuItem>
+                  <MenuItem value="dark">Dark</MenuItem>
+                  <MenuItem value="system">System</MenuItem>
+                  <MenuItem value="ocean">Ocean</MenuItem>
+                  <MenuItem value="sunset">Sunset</MenuItem>
+                  <MenuItem value="forest">Forest</MenuItem>
+                </Select>
+              </Tooltip>
+            </>
+          )}
+
+          <IconButton size="small" sx={{ color: "white" }} onClick={handleMenuClick}>
+            <Avatar
+              src={
+                storedUser.avatar_url?.startsWith("http")
+                  ? storedUser.avatar_url
+                  : storedUser.avatar_url
+                  ? `http://localhost:5000${storedUser.avatar_url}`
+                  : ""
+              }
+              sx={{ width: 28, height: 28 }}
             >
-              {item.icon}
-              <ListItemText primary={item.label} sx={{ ml: 2 }} />
-            </ListItem>
+              {storedUser.username?.[0]?.toUpperCase() || "U"}
+            </Avatar>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            <MenuItem onClick={handleMenuClose}>View Profile</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Edit Profile</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Change Password</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleSwitchRole();
+                handleMenuClose();
+              }}
+            >
+              Switch Role
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleLogout();
+                handleMenuClose();
+              }}
+            >
+              Logout
+            </MenuItem>
+          </Menu>
+        </Toolbar>
+
+        {/* Mobile Collapsible Search */}
+        {isMobile && searchOpen && (
+          <Box sx={{ px: 2, pb: 1, backgroundColor: theme.palette.primary.main }}>
+            <InputBase
+              placeholder="Search..."
+              fullWidth
+              sx={{
+                bgcolor: "#ffffff",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                fontSize: 14,
+              }}
+            />
+          </Box>
+        )}
+      </AppBar>
+
+      {/* Tab Bar */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 48,
+          left: `${sidebarWidth}px`,
+          width: `calc(100% - ${sidebarWidth}px)`,
+          display: "flex",
+          alignItems: "center",
+          height: 44,
+          backgroundColor: theme.palette.background.paper,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          px: 1,
+          zIndex: 1200,
+          transition: "left 0.3s ease, width 0.3s ease",
+        }}
+      >
+        {showLeft && (
+          <IconButton size="small" onClick={() => (scrollRef.current.scrollLeft -= 150)}>
+            <ArrowBackIosNewIcon fontSize="small" />
+          </IconButton>
+        )}
+
+        <Box
+          ref={scrollRef}
+          onScroll={updateScrollArrows}
+          sx={{
+            overflowX: "auto",
+            flexGrow: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            px: 2,
+            py: 0.75,
+            minHeight: 44,
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+          }}
+        >
+          {renderedTabs.map((tab) => (
+            <Paper
+              key={tab}
+              elevation={0}
+              sx={{
+                px: 1.5,
+                py: 0.5,
+                display: "flex",
+                alignItems: "center",
+                borderRadius: 999,
+                height: 32,
+                bgcolor:
+                  selectedTab === tab
+                    ? theme.palette.primary.light
+                    : theme.palette.action.hover,
+                cursor: "pointer",
+                transition: "all 0.2s ease-in-out",
+              }}
+              onClick={() => openTab(tab)}
+            >
+              <Typography
+                variant="body2"
+                sx={{ whiteSpace: "nowrap", pl: 1, pr: tab !== "Dashboard" ? 0.5 : 1.25 }}
+              >
+                {tab}
+              </Typography>
+              {tab !== "Dashboard" && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    closeTab(tab);
+                  }}
+                  sx={{ p: 0.5 }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Paper>
           ))}
-        </List>
-      </Drawer>
+        </Box>
+
+        {showRight && (
+          <IconButton size="small" onClick={() => (scrollRef.current.scrollLeft += 150)}>
+            <ArrowForwardIosIcon fontSize="small" />
+          </IconButton>
+        )}
+      </Box>
     </>
   );
 };
