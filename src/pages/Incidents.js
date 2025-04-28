@@ -112,13 +112,17 @@ const Incidents = ({ openTab }) => {
   return (
     <Box p={3}>
       {/* Search + Filter Bar */}
-      {/* Search + Filter Bar */}
+{/* Search + Filter Bar */}
 <Box
   sx={{
-    display: "flex",
-    alignItems: "center",
+    width: '100%',
+    mx: { xs: 0, sm: 0 }, // ✅ No horizontal margin
+    px: { xs: 2, sm: 3 }, // ✅ Small horizontal padding manually
+    mt: 2, // Space under AppBar
+    display: 'flex',
+    alignItems: 'center',
     gap: 2,
-    flexWrap: isMobile ? "wrap" : "nowrap",
+    flexWrap: isMobile ? 'wrap' : 'nowrap',
   }}
 >
   <TextField
@@ -134,7 +138,11 @@ const Incidents = ({ openTab }) => {
         </InputAdornment>
       ),
     }}
-    sx={{ flexGrow: 1, minWidth: isMobile ? "100%" : "auto" }}
+    fullWidth // ✅ Full width input
+    sx={{
+      flexGrow: 1,
+      minWidth: isMobile ? '100%' : 'auto',
+    }}
   />
 
   <IconButton color="primary" onClick={() => setFilterDrawerOpen(true)}>
