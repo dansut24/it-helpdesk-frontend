@@ -332,62 +332,62 @@ const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs })
 
         {/* Main Content Area */}
         <Box
-          sx={{
-            flexGrow: 1,
-            marginLeft: { xs: 0, sm: `${sidebarWidth}px` },
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100vh',
-            overflow: 'hidden',
-            transition: 'margin-left 0.3s ease, width 0.3s ease',
-          }}
-        >
-          {/* Top Navbar */}
-          <TopNavbarTabbedView
-            tabs={tabs}
-            setTabs={setTabs}
-            selectedTab={selectedTab}
-            setSelectedTab={setSelectedTab}
-            storedUser={storedUser}
-            handleLogout={handleLogout}
-            handleSwitchRole={handleSwitchRole}
-            goBack={goBack}
-            tabHistory={tabHistory}
-            sidebarWidth={sidebarWidth}
-            toggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-            isMobile={isMobile}
-          />
+  sx={{
+    flexGrow: 1,
+    marginLeft: { xs: 0, sm: `${sidebarWidth}px` },
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    overflow: 'hidden',
+    transition: 'margin-left 0.3s ease, width 0.3s ease',
+  }}
+>
+  {/* Top Navbar */}
+  <TopNavbarTabbedView
+    tabs={tabs}
+    setTabs={setTabs}
+    selectedTab={selectedTab}
+    setSelectedTab={setSelectedTab}
+    storedUser={storedUser}
+    handleLogout={handleLogout}
+    handleSwitchRole={handleSwitchRole}
+    goBack={goBack}
+    tabHistory={tabHistory}
+    sidebarWidth={sidebarWidth}
+    toggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+    isMobile={isMobile}
+  />
 
-          {/* Scrollable Content with PullToRefresh */}
-          <Box sx={{ flexGrow: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', bgcolor: theme.palette.background.default }}>
-            <PullToRefresh
-              onRefresh={handleRefresh}
-              style={{ height: '100%', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}
-              pullDownContent={
-                <Typography align="center" sx={{ mt: 2 }}>
-                  Pull down to refresh
-                </Typography>
-              }
-              refreshingContent={
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-                  <CircularProgress size={24} sx={{ mr: 1 }} />
-                  <Typography>Refreshing...</Typography>
-                </Box>
-              }
-              releaseContent={
-                <Typography align="center" sx={{ mt: 2 }}>
-                  Release to refresh
-                </Typography>
-              }
-            >
-              <Toolbar />
-              <Box sx={{ p: 3, paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
-                {renderContent()}
-              </Box>
-            </PullToRefresh>
+  {/* Scrollable Content */}
+  <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', bgcolor: theme.palette.background.default, overflow: 'hidden' }}>
+    {isMobile ? (
+      <PullToRefresh
+        onRefresh={handleRefresh}
+        style={{ height: '100%', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}
+        pullDownContent={<Typography align="center" sx={{ mt: 2 }}>Pull down to refresh</Typography>}
+        refreshingContent={
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+            <CircularProgress size={24} sx={{ mr: 1 }} />
+            <Typography>Refreshing...</Typography>
           </Box>
+        }
+        releaseContent={<Typography align="center" sx={{ mt: 2 }}>Release to refresh</Typography>}
+      >
+        <Toolbar />
+        <Box sx={{ p: 3, paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
+          {renderContent()}
+        </Box>
+      </PullToRefresh>
+    ) : (
+      <Box sx={{ height: '100%', overflowY: 'auto' }}>
+        <Toolbar />
+        <Box sx={{ p: 3, paddingBottom: '80px' }}>
+          {renderContent()}
         </Box>
       </Box>
+    )}
+  </Box>
+</Box>
 
       {/* KB Article Modal */}
       <Modal open={kbModalOpen} onClose={() => setKbModalOpen(false)}>
