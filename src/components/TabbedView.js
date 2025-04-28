@@ -814,12 +814,10 @@ return (
   sx={{
     flexGrow: 1,
     overflowY: 'auto',
-    overflowX: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    height: 'calc(100vh - 92px)', // ✅ subtract Top Navbar + Tab Bar combined height!
-    mt: '92px', // ✅ margin-top equal to TopNavbar + TabBar height
+    px: 0,
     bgcolor: theme.palette.background.default,
+    pb: 3,        // Add padding-bottom inside the content
+    mb: 1,        // Add margin-bottom outside the scrollable box
   }}
 >
   {renderContent()}
