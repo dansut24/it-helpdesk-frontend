@@ -4,6 +4,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SettingsIcon from '@mui/icons-material/Settings';
+import MenuIcon from "@mui/icons-material/Menu"; // ✅ (new for mobile hamburger icon)
 import AddIcon from "@mui/icons-material/Add";
 import ListAltIcon from "@mui/icons-material/List";
 import Badge from "@mui/material/Badge";
@@ -11,8 +12,9 @@ import Popover from "@mui/material/Popover";
 import {
   Avatar, Drawer, List, ListItem, ListItemText, Divider, Typography,
   IconButton, Box, Paper, BottomNavigation, BottomNavigationAction,
-  Menu, MenuItem, Tooltip, TextField, InputAdornment, Button, Select, Popper, Fade, Paper as MuiPaper
-} from "@mui/material";
+  Menu, MenuItem, Tooltip, TextField, InputAdornment, Button, Select, Popper, Fade, Paper as MuiPaper,
+  useMediaQuery
+} from "@mui/material"; // ✅ add useMediaQuery
 import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import HomeIcon from "@mui/icons-material/Home";
@@ -60,7 +62,9 @@ const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs })
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const sidebarWidth = sidebarOpen ? 240 : 60;
-
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // ✅ detects mobile
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false); // ✅ tracks mobile sidebar
+  
   const navItemStyles = (active, open) => ({
   borderRadius: 2,
   mb: 1,
@@ -568,120 +572,214 @@ return (
   <>
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* Sidebar */}
-      <Box
-        sx={{
-          width: sidebarWidth,
-          minHeight: '100vh',
-          bgcolor: theme.palette.background.paper,
-          borderRight: `1px solid ${theme.palette.divider}`,
-          transition: 'width 0.3s ease',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: sidebarOpen ? 'flex-start' : 'center',
-          py: 2,
-          px: sidebarOpen ? 2 : 0,
-          boxShadow: theme.shadows[1],
-          position: 'fixed',
-          zIndex: 1200,
+ {/* Sidebar */}
+{isMobile ? (
+  <Drawer
+    anchor="left"
+    open={mobileSidebarOpen}
+    onClose={() => setMobileSidebarOpen(false)}
+    sx={{ "& .MuiDrawer-paper": { width: 240, boxSizing: "border-box" } }}
+  >
+    <List>
+      <Divider textAlign="left" sx={{ width: '100%', mb: 1 }}>
+        <Typography variant="caption" color="text.secondary">
+          MAIN
+        </Typography>
+      </Divider>
+
+      <ListItem
+        button
+        selected={selectedTab === "Dashboard"}
+        onClick={() => {
+          openTab("Dashboard");
+          setMobileSidebarOpen(false);
         }}
       >
-        {/* Collapse/Expand Arrow */}
-        <IconButton
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          sx={{
-            position: 'absolute',
-            top: 16,
-            right: sidebarOpen ? -16 : -8,
-            backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            zIndex: 1301,
-          }}
-          size="small"
-        >
-          {sidebarOpen ? <ArrowBackIcon /> : <ArrowForwardIcon />}
-        </IconButton>
+        <HomeIcon sx={{ mr: 1 }} />
+        <ListItemText primary="Dashboard" />
+      </ListItem>
 
-        <List sx={{ width: '100%' }}>
-          {/* MAIN */}
-          <Divider textAlign="left" sx={{ width: '100%', mb: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              MAIN
-            </Typography>
-          </Divider>
+      <HoverMenuItem
+        icon={<FolderIcon />}
+        label="Incidents"
+        active={selectedTab.includes("Incident")}
+        open={true}
+        subItems={[
+          { label: "View Incidents", onClick: () => { openTab("Incidents"); setMobileSidebarOpen(false); } },
+          { label: "New Incident", onClick: () => { openTab("New Incident"); setMobileSidebarOpen(false); } },
+        ]}
+      />
 
-          <ListItem
-            button
-            selected={selectedTab === "Dashboard"}
-            onClick={() => openTab("Dashboard")}
-            sx={navItemStyles(selectedTab === "Dashboard", sidebarOpen)}
-          >
-            <HomeIcon sx={navIconStyles(sidebarOpen)} />
-            {sidebarOpen && <ListItemText primary="Dashboard" />}
-          </ListItem>
+      <HoverMenuItem
+        icon={<BuildIcon />}
+        label="Service Requests"
+        active={selectedTab.includes("Service Request")}
+        open={true}
+        subItems={[
+          { label: "View Requests", onClick: () => { openTab("Service Requests"); setMobileSidebarOpen(false); } },
+          { label: "Raise Request", onClick: () => { openTab("Raise Service Request"); setMobileSidebarOpen(false); } },
+        ]}
+      />
 
-          <HoverMenuItem
-            icon={<FolderIcon />}
-            label="Incidents"
-            active={selectedTab.includes("Incident")}
-            open={sidebarOpen}
-            subItems={[
-              { label: "View Incidents", onClick: () => openTab("Incidents") },
-              { label: "New Incident", onClick: () => openTab("New Incident") },
-            ]}
-          />
+      <HoverMenuItem
+        icon={<MoreVertIcon />}
+        label="Changes"
+        active={selectedTab.includes("Change")}
+        open={true}
+        subItems={[
+          { label: "Change Log", onClick: () => { openTab("Changes"); setMobileSidebarOpen(false); } },
+          { label: "New Change", onClick: () => { openTab("New Change"); setMobileSidebarOpen(false); } },
+        ]}
+      />
 
-          <HoverMenuItem
-            icon={<BuildIcon />}
-            label="Service Requests"
-            active={selectedTab.includes("Service Request")}
-            open={sidebarOpen}
-            subItems={[
-              { label: "View Requests", onClick: () => openTab("Service Requests") },
-              { label: "Raise Request", onClick: () => openTab("Raise Service Request") },
-            ]}
-          />
+      <Divider textAlign="left" sx={{ width: '100%', mt: 2, mb: 1 }}>
+        <Typography variant="caption" color="text.secondary">
+          ADMIN
+        </Typography>
+      </Divider>
 
-          <HoverMenuItem
-            icon={<MoreVertIcon />}
-            label="Changes"
-            active={selectedTab.includes("Change")}
-            open={sidebarOpen}
-            subItems={[
-              { label: "Change Log", onClick: () => openTab("Changes") },
-              { label: "New Change", onClick: () => openTab("New Change") },
-            ]}
-          />
+      <ListItem
+        button
+        selected={selectedTab === "Admin Settings"}
+        onClick={() => {
+          openTab("Admin Settings");
+          setMobileSidebarOpen(false);
+        }}
+      >
+        <SettingsIcon sx={{ mr: 1 }} />
+        <ListItemText primary="Admin Settings" />
+      </ListItem>
 
-          {/* ADMIN */}
-          <Divider textAlign="left" sx={{ width: '100%', mt: 2, mb: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              ADMIN
-            </Typography>
-          </Divider>
+      <Divider sx={{ width: '100%', mt: 2 }} />
 
-          <ListItem
-            button
-            selected={selectedTab === "Admin Settings"}
-            onClick={() => openTab("Admin Settings")}
-            sx={navItemStyles(selectedTab === "Admin Settings", sidebarOpen)}
-          >
-            <SettingsIcon sx={navIconStyles(sidebarOpen)} />
-            {sidebarOpen && <ListItemText primary="Admin Settings" />}
-          </ListItem>
+      <ListItem
+        button
+        selected={selectedTab === "Profile"}
+        onClick={() => {
+          openTab("Profile");
+          setMobileSidebarOpen(false);
+        }}
+      >
+        <AccountCircleIcon sx={{ mr: 1 }} />
+        <ListItemText primary="Profile" />
+      </ListItem>
+    </List>
+  </Drawer>
+) : (
+  <Box
+    sx={{
+      width: sidebarWidth,
+      minHeight: '100vh',
+      bgcolor: theme.palette.background.paper,
+      borderRight: `1px solid ${theme.palette.divider}`,
+      transition: 'width 0.3s ease',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: sidebarOpen ? 'flex-start' : 'center',
+      py: 2,
+      px: sidebarOpen ? 2 : 0,
+      boxShadow: theme.shadows[1],
+      position: 'fixed',
+      zIndex: 1200,
+      overflowY: 'auto' // ✅ makes sidebar scrollable when landscape on mobile
+    }}
+  >
+    {/* Collapse/Expand Arrow */}
+    <IconButton
+      onClick={() => setSidebarOpen(!sidebarOpen)}
+      sx={{
+        position: 'absolute',
+        top: 16,
+        right: sidebarOpen ? -16 : -8,
+        backgroundColor: theme.palette.background.paper,
+        border: `1px solid ${theme.palette.divider}`,
+        zIndex: 1301,
+      }}
+      size="small"
+    >
+      {sidebarOpen ? <ArrowBackIcon /> : <ArrowForwardIcon />}
+    </IconButton>
 
-          {/* PROFILE */}
-          <Divider sx={{ width: '100%', mt: 2 }} />
-          <ListItem
-            button
-            selected={selectedTab === "Profile"}
-            onClick={() => openTab("Profile")}
-            sx={navItemStyles(selectedTab === "Profile", sidebarOpen)}
-          >
-            <AccountCircleIcon sx={navIconStyles(sidebarOpen)} />
-            {sidebarOpen && <ListItemText primary="Profile" />}
-          </ListItem>
-        </List>
-      </Box>
+    <List sx={{ width: '100%' }}>
+      <Divider textAlign="left" sx={{ width: '100%', mb: 1 }}>
+        <Typography variant="caption" color="text.secondary">
+          MAIN
+        </Typography>
+      </Divider>
+
+      <ListItem
+        button
+        selected={selectedTab === "Dashboard"}
+        onClick={() => openTab("Dashboard")}
+        sx={navItemStyles(selectedTab === "Dashboard", sidebarOpen)}
+      >
+        <HomeIcon sx={navIconStyles(sidebarOpen)} />
+        {sidebarOpen && <ListItemText primary="Dashboard" />}
+      </ListItem>
+
+      <HoverMenuItem
+        icon={<FolderIcon />}
+        label="Incidents"
+        active={selectedTab.includes("Incident")}
+        open={sidebarOpen}
+        subItems={[
+          { label: "View Incidents", onClick: () => openTab("Incidents") },
+          { label: "New Incident", onClick: () => openTab("New Incident") },
+        ]}
+      />
+
+      <HoverMenuItem
+        icon={<BuildIcon />}
+        label="Service Requests"
+        active={selectedTab.includes("Service Request")}
+        open={sidebarOpen}
+        subItems={[
+          { label: "View Requests", onClick: () => openTab("Service Requests") },
+          { label: "Raise Request", onClick: () => openTab("Raise Service Request") },
+        ]}
+      />
+
+      <HoverMenuItem
+        icon={<MoreVertIcon />}
+        label="Changes"
+        active={selectedTab.includes("Change")}
+        open={sidebarOpen}
+        subItems={[
+          { label: "Change Log", onClick: () => openTab("Changes") },
+          { label: "New Change", onClick: () => openTab("New Change") },
+        ]}
+      />
+
+      <Divider textAlign="left" sx={{ width: '100%', mt: 2, mb: 1 }}>
+        <Typography variant="caption" color="text.secondary">
+          ADMIN
+        </Typography>
+      </Divider>
+
+      <ListItem
+        button
+        selected={selectedTab === "Admin Settings"}
+        onClick={() => openTab("Admin Settings")}
+        sx={navItemStyles(selectedTab === "Admin Settings", sidebarOpen)}
+      >
+        <SettingsIcon sx={navIconStyles(sidebarOpen)} />
+        {sidebarOpen && <ListItemText primary="Admin Settings" />}
+      </ListItem>
+
+      <Divider sx={{ width: '100%', mt: 2 }} />
+
+      <ListItem
+        button
+        selected={selectedTab === "Profile"}
+        onClick={() => openTab("Profile")}
+        sx={navItemStyles(selectedTab === "Profile", sidebarOpen)}
+      >
+        <AccountCircleIcon sx={navIconStyles(sidebarOpen)} />
+        {sidebarOpen && <ListItemText primary="Profile" />}
+      </ListItem>
+    </List>
+  </Box>
+)}
 
       {/* Main Content Wrapper (shifts based on sidebar) */}
       <Box
@@ -707,6 +805,8 @@ return (
           goBack={goBack}
           tabHistory={tabHistory}
           sidebarWidth={sidebarWidth}
+          toggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)} // ✅ add this
+          isMobile={isMobile} // ✅ add this
         />
 
         {/* Scrollable Main Content */}
