@@ -2,24 +2,23 @@ import React, { useRef, useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
-  Box,
-  Typography,
   IconButton,
-  Tooltip,
+  Typography,
+  Box,
   Avatar,
-  Select,
-  MenuItem,
-  Paper,
-  InputBase,
   Menu,
+  MenuItem,
+  Select,
+  InputBase,
+  Tooltip,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import CloseIcon from "@mui/icons-material/Close";
 import { useThemeMode } from "../context/ThemeContext";
 
 const TopNavbarTabbedView = ({
@@ -33,15 +32,27 @@ const TopNavbarTabbedView = ({
   goBack,
   tabHistory,
   sidebarWidth,
+  toggleMobileSidebar,
+  isMobile,
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { mode, setMode } = useThemeMode();
   const scrollRef = useRef(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const updateScrollArrows = () => {
+    const node = scrollRef.current;
+    if (!node) return;
+    setShowLeft(node.scrollLeft > 0);
+    setShowRight(node.scrollLeft + node.clientWidth < node.scrollWidth);
+  };
+
+  useEffect(() => {
+    updateScrollArrows();
+  }, [tabs]);
 
   const openTab = (tab) => {
     if (!tabs.includes(tab)) setTabs([...tabs, tab]);
@@ -55,21 +66,10 @@ const TopNavbarTabbedView = ({
     if (selectedTab === tab) setSelectedTab("Dashboard");
   };
 
-  const renderedTabs = ["Dashboard", ...tabs.filter((t) => t !== "Dashboard")];
-
-  const updateScrollArrows = () => {
-    const node = scrollRef.current;
-    if (!node) return;
-    setShowLeft(node.scrollLeft > 0);
-    setShowRight(node.scrollLeft + node.clientWidth < node.scrollWidth);
-  };
-
-  useEffect(() => {
-    updateScrollArrows();
-  }, [tabs]);
-
   const handleMenuClick = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
+
+  const renderedTabs = ["Dashboard", ...tabs.filter((t) => t !== "Dashboard")];
 
   return (
     <>
@@ -77,15 +77,23 @@ const TopNavbarTabbedView = ({
         position="fixed"
         elevation={0}
         sx={{
-          ml: `${sidebarWidth}px`,
-          width: `calc(100% - ${sidebarWidth}px)`,
+          ml: isMobile ? 0 : `${sidebarWidth}px`,
+          width: isMobile ? "100%" : `calc(100% - ${sidebarWidth}px)`,
           bgcolor: theme.palette.primary.main,
           height: 48,
           zIndex: 1201,
           transition: "margin-left 0.3s ease, width 0.3s ease",
         }}
       >
-        <Toolbar variant="dense" sx={{ px: 1, minHeight: 48 }}>
+        <Toolbar variant="dense" sx={{ minHeight: 48, px: 1 }}>
+          {/* Hamburger Menu */}
+          {isMobile && (
+            <IconButton size="small" onClick={toggleMobileSidebar} sx={{ color: "white" }}>
+              <MenuIcon fontSize="small" />
+            </IconButton>
+          )}
+
+          {/* Logo and Title */}
           <Box display="flex" alignItems="center" gap={1} sx={{ flexShrink: 0 }}>
             <img src="/logo192.png" alt="Logo" style={{ height: 24 }} />
             {!isMobile && (
@@ -97,16 +105,15 @@ const TopNavbarTabbedView = ({
 
           <Box flexGrow={1} />
 
+          {/* Search and Theme */}
           {isMobile ? (
-            <>
-              <IconButton
-                size="small"
-                sx={{ color: "white" }}
-                onClick={() => setSearchOpen((prev) => !prev)}
-              >
-                <SearchIcon fontSize="small" />
-              </IconButton>
-            </>
+            <IconButton
+              size="small"
+              sx={{ color: "white" }}
+              onClick={() => setSearchOpen((prev) => !prev)}
+            >
+              <SearchIcon fontSize="small" />
+            </IconButton>
           ) : (
             <>
               <InputBase
@@ -124,7 +131,7 @@ const TopNavbarTabbedView = ({
               {tabHistory.length > 0 && (
                 <Tooltip title="Go Back">
                   <IconButton size="small" onClick={goBack} sx={{ color: "white" }}>
-                    <ArrowBackIcon fontSize="small" />
+                    <ArrowBackIosNewIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               )}
@@ -153,6 +160,7 @@ const TopNavbarTabbedView = ({
             </>
           )}
 
+          {/* Avatar / Profile */}
           <IconButton size="small" sx={{ color: "white" }} onClick={handleMenuClick}>
             <Avatar
               src={
@@ -195,23 +203,6 @@ const TopNavbarTabbedView = ({
             </MenuItem>
           </Menu>
         </Toolbar>
-
-        {/* Mobile Collapsible Search */}
-        {isMobile && searchOpen && (
-          <Box sx={{ px: 2, pb: 1, backgroundColor: theme.palette.primary.main }}>
-            <InputBase
-              placeholder="Search..."
-              fullWidth
-              sx={{
-                bgcolor: "#ffffff",
-                px: 1,
-                py: 0.5,
-                borderRadius: 1,
-                fontSize: 14,
-              }}
-            />
-          </Box>
-        )}
       </AppBar>
 
       {/* Tab Bar */}
@@ -219,8 +210,8 @@ const TopNavbarTabbedView = ({
         sx={{
           position: "fixed",
           top: 48,
-          left: `${sidebarWidth}px`,
-          width: `calc(100% - ${sidebarWidth}px)`,
+          left: isMobile ? 0 : `${sidebarWidth}px`,
+          width: isMobile ? "100%" : `calc(100% - ${sidebarWidth}px)`,
           display: "flex",
           alignItems: "center",
           height: 44,
@@ -228,79 +219,46 @@ const TopNavbarTabbedView = ({
           borderBottom: `1px solid ${theme.palette.divider}`,
           px: 1,
           zIndex: 1200,
+          overflowX: "auto",
           transition: "left 0.3s ease, width 0.3s ease",
+          gap: 1,
         }}
       >
-        {showLeft && (
-          <IconButton size="small" onClick={() => (scrollRef.current.scrollLeft -= 150)}>
-            <ArrowBackIosNewIcon fontSize="small" />
-          </IconButton>
-        )}
-
-        <Box
-          ref={scrollRef}
-          onScroll={updateScrollArrows}
-          sx={{
-            overflowX: "auto",
-            flexGrow: 1,
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            px: 2,
-            py: 0.75,
-            minHeight: 44,
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            "&::-webkit-scrollbar": { display: "none" },
-          }}
-        >
-          {renderedTabs.map((tab) => (
-            <Paper
-              key={tab}
-              elevation={0}
-              sx={{
-                px: 1.5,
-                py: 0.5,
-                display: "flex",
-                alignItems: "center",
-                borderRadius: 999,
-                height: 32,
-                bgcolor:
-                  selectedTab === tab
-                    ? theme.palette.primary.light
-                    : theme.palette.action.hover,
-                cursor: "pointer",
-                transition: "all 0.2s ease-in-out",
-              }}
-              onClick={() => openTab(tab)}
-            >
-              <Typography
-                variant="body2"
-                sx={{ whiteSpace: "nowrap", pl: 1, pr: tab !== "Dashboard" ? 0.5 : 1.25 }}
+        {renderedTabs.map((tab) => (
+          <Box
+            key={tab}
+            sx={{
+              px: 2,
+              py: 0.5,
+              display: "flex",
+              alignItems: "center",
+              borderRadius: 999,
+              height: 32,
+              bgcolor:
+                selectedTab === tab
+                  ? theme.palette.primary.light
+                  : theme.palette.action.hover,
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              fontSize: 14,
+            }}
+            onClick={() => openTab(tab)}
+          >
+            {tab}
+            {tab !== "Dashboard" && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeTab(tab);
+                }}
+                sx={{ p: 0.5 }}
               >
-                {tab}
-              </Typography>
-              {tab !== "Dashboard" && (
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeTab(tab);
-                  }}
-                  sx={{ p: 0.5 }}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              )}
-            </Paper>
-          ))}
-        </Box>
-
-        {showRight && (
-          <IconButton size="small" onClick={() => (scrollRef.current.scrollLeft += 150)}>
-            <ArrowForwardIosIcon fontSize="small" />
-          </IconButton>
-        )}
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
+          </Box>
+        ))}
       </Box>
     </>
   );
