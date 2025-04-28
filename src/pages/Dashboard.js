@@ -135,7 +135,7 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ p: { xs: 1, md: 3 }, backgroundColor: theme.palette.background.default, minHeight: "100vh" }}>
+   <Box sx={{ p: { xs: 1, md: 3 }, backgroundColor: theme.palette.background.default }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" fontWeight="bold">
           Dashboard
