@@ -122,7 +122,6 @@ const Incidents = ({ openTab }) => {
     backgroundColor: "#f5f5f5",
     p: 2,
     borderRadius: 2,
-    mx: -3, // <-- cancels the outer Box p={3} padding!
     flexWrap: isMobile ? "wrap" : "nowrap",
   }}
 >
