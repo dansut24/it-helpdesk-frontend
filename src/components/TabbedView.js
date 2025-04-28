@@ -809,17 +809,16 @@ return (
         />
 
         {/* Scrollable Content */}
-        <Box
+  <Box
   sx={{
     flexGrow: 1,
     overflowY: 'auto',
     bgcolor: theme.palette.background.default,
     px: 0,
     py: 0,
-    paddingTop: '64px', // 👈 fixes scroll start position
+    paddingTop: theme.mixins.toolbar.minHeight,
   }}
 >
-  {/* Global page padding */}
   <Box sx={{ p: 3 }}>
     {renderContent()}
   </Box>
