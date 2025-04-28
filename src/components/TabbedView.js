@@ -817,7 +817,7 @@ return (
     px: 0,
     py: 0,
     paddingTop: '64px', // 👈 fixes scroll start position
-    paddingBottom: '64px',
+    paddingBottom: '92px',
   }}
 >
   {renderContent()}
