@@ -8,6 +8,8 @@ import MenuIcon from "@mui/icons-material/Menu"; // ✅ (new for mobile hamburge
 import AddIcon from "@mui/icons-material/Add";
 import ListAltIcon from "@mui/icons-material/List";
 import Badge from "@mui/material/Badge";
+import PullToRefresh from 'react-pull-to-refresh';
+import CircularProgress from '@mui/material/CircularProgress';
 import Popover from "@mui/material/Popover";
 import {
   Avatar, Drawer, List, ListItem, ListItemText, Divider, Typography,
@@ -847,6 +849,7 @@ return (
     </Box>
   </PullToRefresh>
 </Box>
+      </Box>
     </Box>
 
 {/* ✅ KB Article Modal goes here */}
