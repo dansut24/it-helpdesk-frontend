@@ -24,8 +24,8 @@ import {
 } from "@mui/material";
 import { fetchIncidents, assignIncidentToMe } from "../api";
 import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/Tune"; // Settings / Filter icon
-import CloseIcon from "@mui/icons-material/Close"; // Close drawer
+import TuneIcon from "@mui/icons-material/Tune"; 
+import CloseIcon from "@mui/icons-material/Close"; 
 
 const Incidents = ({ openTab }) => {
   const [myIncidents, setMyIncidents] = useState([]);
@@ -35,6 +35,7 @@ const Incidents = ({ openTab }) => {
   const [toast, setToast] = useState({ open: false, message: "", severity: "success" });
   const [search, setSearch] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [tabIndex, setTabIndex] = useState(0);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
@@ -43,9 +44,9 @@ const Incidents = ({ openTab }) => {
   useEffect(() => {
     const camelizeIncident = (i) => ({
       ...i,
-      referenceNumber: i.reference_number,
-      assignedTeamId: i.assigned_team_id,
-      assignedUserId: i.assigned_user_id,
+      referenceNumber: i.reference_number || i.referenceNumber,
+      assignedTeamId: i.assigned_team_id || i.assignedTeamId,
+      assignedUserId: i.assigned_user_id || i.assignedUserId,
       assigned_team_name: i.assigned_team_name || "Unassigned",
       assigned_user_name: i.assigned_user_name || "Unassigned",
       created_by_user_name: i.created_by_user_name || `${i.created_by_first || ""} ${i.created_by_last || ""}`.trim(),
@@ -57,20 +58,34 @@ const Incidents = ({ openTab }) => {
         const normalizeList = (list) => (list || []).map(camelizeIncident);
 
         if (selectedRole === "admin") {
-          setAdminIncidents(data.all || []);
+          setAdminIncidents(normalizeList(data.all || []));
           setMyIncidents([]);
           setTeamAssigned([]);
           setTeamUnassigned([]);
         } else if (selectedRole === "selfservice") {
-          setMyIncidents(data.myIncidents || []);
+          setMyIncidents(normalizeList(data.myIncidents || []));
           setTeamAssigned([]);
           setTeamUnassigned([]);
         } else {
-          setMyIncidents(data.myIncidents || []);
+          setMyIncidents(normalizeList(data.myIncidents || []));
           const unassigned = (data.teamIncidents || []).filter(i => !i.assigned_user_id);
           const assigned = (data.teamIncidents || []).filter(i => i.assigned_user_id);
-          setTeamAssigned(assigned);
-          setTeamUnassigned(unassigned);
+          setTeamAssigned(normalizeList(assigned));
+          setTeamUnassigned(normalizeList(unassigned));
+        }
+
+        // Load test incidents from localStorage
+        const fakeIncidents = [];
+        for (let key in localStorage) {
+          if (key.startsWith("fake-incident-")) {
+            const item = localStorage.getItem(key);
+            if (item) {
+              fakeIncidents.push(JSON.parse(item));
+            }
+          }
+        }
+        if (fakeIncidents.length > 0) {
+          setMyIncidents(prev => [...fakeIncidents, ...prev]);
         }
       } catch (error) {
         console.error("Error fetching incidents:", error);
@@ -93,23 +108,17 @@ const Incidents = ({ openTab }) => {
         setToast({ open: true, message: "❌ Failed to assign incident.", severity: "error" });
       }
     }
-
-    const updated = await fetchIncidents();
-    setMyIncidents(updated.myIncidents || []);
-    const unassigned = (updated.teamIncidents || []).filter(i => !i.assigned_user_id);
-    const assigned = (updated.teamIncidents || []).filter(i => i.assigned_user_id);
-    setTeamAssigned(assigned);
-    setTeamUnassigned(unassigned);
   };
 
   const applyFilters = (list) => {
     return list.filter((incident) => {
       const matchesSearch = search
-        ? incident.title.toLowerCase().includes(search.toLowerCase()) ||
-          incident.referenceNumber.toLowerCase().includes(search.toLowerCase())
+        ? (incident.title || "").toLowerCase().includes(search.toLowerCase()) ||
+          (incident.referenceNumber || "").toLowerCase().includes(search.toLowerCase())
         : true;
       const matchesPriority = priorityFilter ? incident.priority === priorityFilter : true;
-      return matchesSearch && matchesPriority;
+      const matchesStatus = statusFilter ? incident.status === statusFilter : true;
+      return matchesSearch && matchesPriority && matchesStatus;
     });
   };
 
@@ -257,11 +266,28 @@ const Incidents = ({ openTab }) => {
             </Select>
           </FormControl>
 
+          <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              label="Status"
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="Open">Open</MenuItem>
+              <MenuItem value="Paused">Paused</MenuItem>
+              <MenuItem value="Waiting for Customer">Waiting for Customer</MenuItem>
+              <MenuItem value="Resolved">Resolved</MenuItem>
+              <MenuItem value="Closed">Closed</MenuItem>
+            </Select>
+          </FormControl>
+
           <Button
             variant="outlined"
             fullWidth
             onClick={() => {
               setPriorityFilter("");
+              setStatusFilter("");
               setSearch("");
             }}
           >
