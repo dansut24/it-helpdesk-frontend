@@ -118,10 +118,6 @@ const Incidents = ({ openTab }) => {
     display: "flex",
     alignItems: "center",
     gap: 2,
-    mb: 3,
-    backgroundColor: "#f5f5f5",
-    p: 2,
-    borderRadius: 2,
     flexWrap: isMobile ? "wrap" : "nowrap",
   }}
 >
