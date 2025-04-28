@@ -573,6 +573,7 @@ return (
 <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
       {/* Sidebar */}
  {/* Sidebar */}
+<Box sx={{ display: 'flex', flexGrow: 1 }}>
 {isMobile ? (
   <Drawer
     anchor="left"
@@ -783,17 +784,17 @@ return (
 
       {/* Main Content Wrapper (shifts based on sidebar) */}
       <Box
-        sx={{
-          marginLeft: isMobile ? 0 : `${sidebarWidth}px`,
-          width: isMobile ? "100%" : `calc(100% - ${sidebarWidth}px)`,
-          pt: '92px',
-          pb: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          minheight: '100vh',
-          transition: 'margin-left 0.3s ease',
-        }}
-      >
+  sx={{
+    marginLeft: `${sidebarWidth}px`,
+    width: `calc(100% - ${sidebarWidth}px)`,
+    paddingTop: '92px',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1, // ✅
+    minHeight: 0, // ✅ Prevent overflow cutting off
+    transition: 'margin-left 0.3s ease',
+  }}
+>
         {/* Top Navbar and Tabs */}
         <TopNavbarTabbedView
           tabs={tabs}
@@ -814,17 +815,18 @@ return (
      <Box
   sx={{
     flexGrow: 1,
-    overflow: 'auto',
+    overflowY: 'auto',
     px: 2,
-    pb: 4,
+    pt: 2,
+    pb: 4, // ✅ important to allow bottom scroll without bounce
     bgcolor: theme.palette.background.default,
-    minHeight: 0, // ✅
   }}
 >
   {renderContent()}
 </Box>
       </Box>
     </Box>
+  </Box>
 
 {/* ✅ KB Article Modal goes here */}
 <Modal open={kbModalOpen} onClose={() => setKbModalOpen(false)}>
