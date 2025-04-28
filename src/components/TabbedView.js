@@ -812,22 +812,40 @@ return (
 <Box
   sx={{
     flexGrow: 1,
-    overflowY: 'auto',
+    overflow: 'hidden',
     bgcolor: theme.palette.background.default,
   }}
 >
-  <Toolbar /> {/* Top spacing to match Navbar */}
-
-  <Fade in={true} timeout={400}>
+  <PullToRefresh
+    onRefresh={handleRefresh}
+    style={{ height: '100%', overflow: 'auto' }}
+    pullDownContent={
+      <Typography align="center" sx={{ mt: 2 }}>
+        Pull down to refresh
+      </Typography>
+    }
+    refreshingContent={
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+        <CircularProgress size={24} sx={{ mr: 1 }} />
+        <Typography>Refreshing...</Typography>
+      </Box>
+    }
+    releaseContent={
+      <Typography align="center" sx={{ mt: 2 }}>
+        Release to refresh
+      </Typography>
+    }
+  >
+    <Toolbar />
     <Box
       sx={{
         p: 3,
-        paddingBottom: `calc(80px + env(safe-area-inset-bottom))`, // Bottom safe padding
+        paddingBottom: 'calc(80px + env(safe-area-inset-bottom))',
       }}
     >
       {renderContent()}
     </Box>
-  </Fade>
+  </PullToRefresh>
 </Box>
       </Box>
     </Box>
