@@ -570,7 +570,7 @@ const HoverMenuItem = ({ icon, label, active, open, subItems }) => {
 
 return (
   <>
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+  <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'row' }}>
       {/* Sidebar */}
  {/* Sidebar */}
 {isMobile ? (
@@ -786,10 +786,11 @@ return (
         sx={{
           marginLeft: isMobile ? 0 : `${sidebarWidth}px`,
           width: isMobile ? "100%" : `calc(100% - ${sidebarWidth}px)`,
-          paddingTop: '92px',
+          pt: '92px',
+          pb: 2,
           display: 'flex',
           flexDirection: 'column',
-          height: '100vh',
+          minheight: '100vh',
           transition: 'margin-left 0.3s ease',
         }}
       >
@@ -810,15 +811,15 @@ return (
         />
 
         {/* Scrollable Main Content */}
-       <Box
+       + <Box
   sx={{
-    flexGrow: 1,
-    overflowY: 'auto',
-    px: 0,
-    bgcolor: theme.palette.background.default,
-    minHeight: 0, // ✅ This is critical
+  flexGrow: 1,
+  overflow: 'auto',
+  px: 2,
+  pb: 4,
+  bgcolor: theme.palette.background.default,
   }}
->
+ >
   {renderContent()}
 </Box>
       </Box>
