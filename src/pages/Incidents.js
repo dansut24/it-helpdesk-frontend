@@ -16,7 +16,8 @@ import {
   Drawer,
   IconButton,
   Divider,
-  useMediaQuery
+  Chip,
+  useMediaQuery,
 } from "@mui/material";
 import { fetchIncidents } from "../api";
 import SearchIcon from "@mui/icons-material/Search";
@@ -34,63 +35,85 @@ const Incidents = ({ openTab }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
-    const camelizeIncident = (i) => ({
-      ...i,
-      referenceNumber: i.reference_number || i.referenceNumber,
-      assignedTeamId: i.assigned_team_id || i.assignedTeamId,
-      assignedUserId: i.assigned_user_id || i.assignedUserId,
-      assigned_team_name: i.assigned_team_name || "Unassigned",
-      assigned_user_name: i.assigned_user_name || "Unassigned",
-      created_by_user_name: i.created_by_user_name || `${i.created_by_first || ""} ${i.created_by_last || ""}`.trim(),
-    });
-
     const getIncidents = async () => {
-      let fetchedIncidents = [];
-
       try {
         const data = await fetchIncidents();
-        const normalizeList = (list) => (list || []).map(camelizeIncident);
-        fetchedIncidents = normalizeList(data.all || data.myIncidents || []);
-      } catch (error) {
-        console.error("Error fetching incidents from backend:", error);
-      }
+        const normalizeList = (list) => (list || []).map((i) => ({
+          referenceNumber: i.reference_number || i.referenceNumber,
+          title: i.title,
+          priority: i.priority || "Medium",
+          status: i.status || "Open",
+          created_by_user_name: i.created_by_user_name || "Unknown",
+          created_at: i.created_at || new Date().toISOString(),
+        }));
 
-      // Load fake incidents from localStorage
-      const fakeIncidents = [];
-      for (let key in localStorage) {
-        if (key.startsWith("fake-incident-")) {
-          const item = localStorage.getItem(key);
-          if (item) {
-            fakeIncidents.push(JSON.parse(item));
-          }
+        let fetched = normalizeList(data.all || data.myIncidents || []);
+
+        if (fetched.length === 0) {
+          fetched = Array.from({ length: 5 }).map((_, idx) => ({
+            referenceNumber: `TEST-${1000 + idx}`,
+            title: `Test Incident ${idx + 1}`,
+            priority: ["High", "Medium", "Low"][idx % 3],
+            status: ["Open", "Paused", "Waiting for Customer", "Resolved", "Closed"][idx % 5],
+            created_by_user_name: "Demo User",
+            created_at: new Date().toISOString(),
+          }));
         }
-      }
 
-      // If still no incidents, inject manual test data
-      if (fetchedIncidents.length === 0 && fakeIncidents.length === 0) {
+        setIncidents(fetched);
+      } catch (error) {
+        console.error("Failed to fetch incidents:", error);
+
         const demoIncidents = Array.from({ length: 5 }).map((_, idx) => ({
           referenceNumber: `TEST-${1000 + idx}`,
           title: `Test Incident ${idx + 1}`,
           priority: ["High", "Medium", "Low"][idx % 3],
           status: ["Open", "Paused", "Waiting for Customer", "Resolved", "Closed"][idx % 5],
           created_by_user_name: "Demo User",
-          assigned_team_name: "Support Team",
-          assigned_user_name: "Technician A",
+          created_at: new Date().toISOString(),
         }));
+
         setIncidents(demoIncidents);
-      } else {
-        setIncidents([...fakeIncidents, ...fetchedIncidents]);
       }
     };
 
     getIncidents();
   }, []);
 
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High":
+        return "#ff4d4f"; // red
+      case "Medium":
+        return "#faad14"; // orange
+      case "Low":
+        return "#52c41a"; // green
+      default:
+        return "#d9d9d9"; // grey
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
+    return new Date(dateStr).toLocaleDateString(undefined, options);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Open": return "primary";
+      case "Paused": return "warning";
+      case "Resolved": return "success";
+      case "Waiting for Customer": return "info";
+      case "Closed": return "default";
+      default: return "default";
+    }
+  };
+
   const applyFilters = (list) => {
     return list.filter((incident) => {
       const matchesSearch = search
-        ? (incident.title || "").toLowerCase().includes(search.toLowerCase()) ||
-          (incident.referenceNumber || "").toLowerCase().includes(search.toLowerCase())
+        ? incident.title.toLowerCase().includes(search.toLowerCase()) ||
+          incident.referenceNumber.toLowerCase().includes(search.toLowerCase())
         : true;
       const matchesPriority = priorityFilter ? incident.priority === priorityFilter : true;
       const matchesStatus = statusFilter ? incident.status === statusFilter : true;
@@ -98,18 +121,9 @@ const Incidents = ({ openTab }) => {
     });
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "High": return "#fdecea";
-      case "Medium": return "#fff4e5";
-      case "Low": return "#e7f4e4";
-      default: return "#f4f4f4";
-    }
-  };
-
   return (
     <Box p={3}>
-      {/* Search + Filter Bar */}
+      {/* Search Bar */}
       <Box
         sx={{
           display: "flex",
@@ -135,12 +149,8 @@ const Incidents = ({ openTab }) => {
               </InputAdornment>
             ),
           }}
-          sx={{
-            flexGrow: 1,
-            minWidth: 0,
-          }}
+          sx={{ flexGrow: 1, minWidth: 0 }}
         />
-
         <IconButton
           color="primary"
           onClick={() => setFilterDrawerOpen(true)}
@@ -155,36 +165,66 @@ const Incidents = ({ openTab }) => {
         <Card
           key={incident.referenceNumber}
           variant="outlined"
-          sx={{ mb: 3, backgroundColor: "#fff", boxShadow: 2 }}
+          sx={{
+            mb: 2,
+            cursor: "pointer",
+            display: "flex",
+            borderLeft: `6px solid ${getPriorityColor(incident.priority)}`,
+            transition: "background-color 0.2s",
+            "&:hover": { backgroundColor: "#f0f0f0" },
+          }}
+          onClick={() => openTab(`Incident ${incident.referenceNumber}`)}
         >
           <CardContent
-            onClick={() => openTab(`Incident ${incident.referenceNumber}`)}
-            sx={{ cursor: "pointer" }}
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              p: 2,
+            }}
           >
-            <Typography variant="h6">
-              [{incident.referenceNumber}] {incident.title}
-            </Typography>
+            {/* Left side (Priority Chip + Title + User) */}
+            <Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                <Chip
+                  label={incident.priority}
+                  size="small"
+                  sx={{
+                    backgroundColor: getPriorityColor(incident.priority),
+                    color: "#fff",
+                    height: 20,
+                  }}
+                />
+                <Typography variant="subtitle2" fontWeight="bold">
+                  {incident.title}
+                </Typography>
+              </Box>
+              <Typography variant="caption" color="text.secondary">
+                {incident.created_by_user_name}
+              </Typography>
+            </Box>
 
-            <Typography variant="body2" color="textSecondary">
-              Status: {incident.status || "Open"} | Priority: {incident.priority || "N/A"}
-            </Typography>
-
-            <Typography variant="body2" color="textSecondary">
-              Customer: {incident.created_by_user_name || "Unknown"}
-            </Typography>
-
-            <Typography variant="body2" color="textSecondary">
-              Assigned Team: {incident.assigned_team_name || "Unassigned"}
-            </Typography>
-
-            <Typography variant="body2" color="textSecondary">
-              Assigned User: {incident.assigned_user_name || "Unassigned"}
-            </Typography>
+            {/* Right side (ID + Date + Status badge) */}
+            <Box textAlign="right">
+              <Typography variant="caption" color="text.secondary">
+                ID: {incident.referenceNumber}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" display="block">
+                {formatDate(incident.created_at)}
+              </Typography>
+              <Chip
+                label={incident.status}
+                size="small"
+                color={getStatusColor(incident.status)}
+                sx={{ mt: 0.5 }}
+              />
+            </Box>
           </CardContent>
         </Card>
       ))}
 
-      {/* Filter Drawer */}
+      {/* Drawer */}
       <Drawer
         anchor="left"
         open={filterDrawerOpen}
