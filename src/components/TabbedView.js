@@ -810,13 +810,15 @@ return (
         />
 
         {/* Scrollable Main Content */}
-        <Box
+       <Box
   sx={{
     flexGrow: 1,
-    height: 'calc(100vh - 92px)', // ✅ adjust height to fit below the top navbar
-    overflowY: 'auto',             // ✅ allow vertical scrolling only here
-    overflowX: 'hidden',           // ✅ no horizontal scroll
-    px: 0,
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    height: 'calc(100vh - 92px)', // ✅ subtract Top Navbar + Tab Bar combined height!
+    mt: '92px', // ✅ margin-top equal to TopNavbar + TabBar height
     bgcolor: theme.palette.background.default,
   }}
 >
