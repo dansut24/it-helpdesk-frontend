@@ -817,12 +817,12 @@ return (
     bgcolor: theme.palette.background.default,
   }}
 >
-  <Toolbar /> {/* Top spacing matching AppBar automatically */}
-
+  <Toolbar /> {/* Correct top spacing under Navbar */}
+  
   <Box
     sx={{
       p: 3,
-      paddingBottom: 'env(safe-area-inset-bottom)', // ✅ proper mobile safe padding
+      paddingBottom: `calc(80px + env(safe-area-inset-bottom))`, // ✅ real fix
     }}
   >
     {renderContent()}
