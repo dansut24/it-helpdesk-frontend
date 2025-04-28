@@ -811,7 +811,7 @@ return (
         />
 
         {/* Scrollable Main Content */}
-       + <Box
+       <Box
   sx={{
   flexGrow: 1,
   overflow: 'auto',
