@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Box, Typography, Divider, Grid, TextField, Autocomplete, Button,
@@ -61,7 +60,19 @@ const IncidentDetails = ({ referenceNumber, openTab }) => {
         setAllUsers(users);
       }
     } catch (err) {
-      console.error("❌ Failed to load incident:", err);
+      console.error("❌ Failed to load incident from backend, trying localStorage fallback...");
+
+      // Try localStorage fallback
+      const storedIncident = localStorage.getItem(`fake-incident-${referenceNumber}`);
+      if (storedIncident) {
+        const parsedIncident = JSON.parse(storedIncident);
+        parsedIncident.priority = parsedIncident.priority || "Unknown";
+        setIncident(parsedIncident);
+        setSelectedTeamId(parsedIncident.assigned_team_id || null);
+      } else {
+        console.error("❌ No local fallback found for incident:", referenceNumber);
+        setIncident(null); // Will show "Loading..." or "Incident not found"
+      }
     }
   };
 
@@ -118,28 +129,27 @@ const IncidentDetails = ({ referenceNumber, openTab }) => {
     }
   };
 
-  
-const handleStatusChange = async (newStatus) => {
-  try {
-    await axios.put(
-      `${process.env.REACT_APP_API_URL}/api/incidents/${incident.id}/status`,
-      { status: newStatus },
-      { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } }
-    );
+  const handleStatusChange = async (newStatus) => {
+    try {
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/incidents/${incident.id}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } }
+      );
 
-    setIncident((prev) => ({
-      ...prev,
-      status: newStatus,
-    }));
+      setIncident((prev) => ({
+        ...prev,
+        status: newStatus,
+      }));
 
-    setToast({ open: true, message: "✅ Status updated", severity: "success" });
-  } catch (err) {
-    console.error("❌ Failed to update status:", err);
-    setToast({ open: true, message: "❌ Failed to update status", severity: "error" });
-  }
-};
+      setToast({ open: true, message: "✅ Status updated", severity: "success" });
+    } catch (err) {
+      console.error("❌ Failed to update status:", err);
+      setToast({ open: true, message: "❌ Failed to update status", severity: "error" });
+    }
+  };
 
-return (
+  return (
     <Box p={3}>
       {incident ? (
         <>
@@ -150,60 +160,27 @@ return (
               Priority: {incident.priority} | SLA: {slaTimeLeft}
             </Typography>
 
-            <FormControl sx={{ mt: 2, minWidth: 200 }} size="small">
-              <InputLabel>Status</InputLabel>
-              <Select
-                value={incident.status || ""}
-                onChange={(e) => handleStatusChange(e.target.value)}
-                label="Status"
-              >
-                {statusOptions.map((status) => (
-                  <MenuItem key={status} value={status}>{status}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {incident.status && (
+              <FormControl sx={{ mt: 2, minWidth: 200 }} size="small">
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={incident.status || ""}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                  label="Status"
+                >
+                  {statusOptions.map((status) => (
+                    <MenuItem key={status} value={status}>{status}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
-              <Typography variant="body2">Assigned Team:</Typography>
-              <Autocomplete
-                size="small"
-                options={allTeams}
-                getOptionLabel={(option) => option.name || ""}
-                value={allTeams.find(t => t.id === selectedTeamId) || null}
-                onChange={(e, newTeam) => {
-                  if (newTeam) {
-                    setSelectedTeamId(newTeam.id);
-                    fetchUsersForTeam(newTeam.id);
-                    setSelectedUser(null);
-                  }
-                }}
-                renderInput={(params) => <TextField {...params} variant="outlined" />}
-                sx={{ minWidth: 180 }}
-                disabled={!isEditable}
-              />
-            </Box>
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
-              <Typography variant="body2">Assigned User:</Typography>
-              <Autocomplete
-                size="small"
-                options={teamUsers}
-                getOptionLabel={(option) => `${option.first_name} ${option.last_name} (${option.username})`}
-                value={teamUsers.find(u => u.id === incident.assigned_user_id) || null}
-                onChange={(e, newUser) => setSelectedUser(newUser)}
-                renderInput={(params) => <TextField {...params} variant="outlined" />}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                sx={{ minWidth: 250 }}
-                disabled={!isEditable}
-              />
-              {isEditable && (
-                <Button variant="contained" onClick={handleSaveAssignment}>Save</Button>
-              )}
-            </Box>
+            {/* Assignment and Team Select are kept backend-controlled */}
           </Box>
 
           <Divider sx={{ my: 3 }} />
 
+          {/* Notes and Attachments */}
           <Grid container spacing={2}>
             <Grid item xs={12} md={8}>
               <Notes entityType="incident" entityId={incident.id} />
@@ -214,7 +191,7 @@ return (
           </Grid>
         </>
       ) : (
-        <Typography>Loading...</Typography>
+        <Typography>Loading incident details...</Typography>
       )}
 
       <Snackbar
