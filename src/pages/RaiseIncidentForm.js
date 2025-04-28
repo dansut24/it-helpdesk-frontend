@@ -86,16 +86,21 @@ const handleSubmit = async (e) => {
       throw new Error("Unexpected response from server");
     }
   } catch (err) {
-    console.error("❌ Error submitting incident (simulating success):", err);
+  console.error("❌ Error submitting incident (simulating success):", err);
 
-    // Simulate a successful incident creation
-    const simulatedReference = reference || `SIM${Math.floor(Math.random() * 10000)}`;
-    const simulatedId = incidentId || Math.floor(Math.random() * 10000);
+  const simulatedReference = reference || `SIM${Math.floor(Math.random() * 10000)}`;
+  
+  // Save using REFERENCE number
+  localStorage.setItem(`fake-incident-${simulatedReference}`, JSON.stringify({
+    referenceNumber: simulatedReference,
+    customerName: customerName,
+    ...formData
+  }));
 
-    if (renameTabAfterSubmit) {
-      renameTabAfterSubmit("New Incident", simulatedReference, simulatedId);
-    }
-  } finally {
+  if (renameTabAfterSubmit) {
+    renameTabAfterSubmit("New Incident", simulatedReference, simulatedReference); // openTab uses ref
+  }
+} finally {
     setSubmitting(false);
   }
 };
