@@ -1,0 +1,547 @@
+import React, { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
+import {
+  Avatar, Drawer, List, ListItem, ListItemText, Divider, Typography,
+  IconButton, Box, Paper, Menu, MenuItem, Tooltip, TextField, Button, Select, Popper, Fade,
+  Modal, useMediaQuery, BottomNavigation, BottomNavigationAction
+} from "@mui/material";
+import {
+  Notifications as NotificationsIcon,
+  ArrowBack as ArrowBackIcon,
+  ArrowForward as ArrowForwardIcon,
+  Settings as SettingsIcon,
+  Menu as MenuIcon,
+  Add as AddIcon,
+  ListAlt as ListAltIcon,
+  Close as CloseIcon,
+  MoreVert as MoreVertIcon,
+  Home as HomeIcon,
+  Folder as FolderIcon,
+  Build as BuildIcon,
+  AccountCircle as AccountCircleIcon,
+  Logout as LogoutIcon,
+  Search as SearchIcon
+} from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { Modal as MuiModal } from "@mui/material";
+import PullToRefresh from 'react-pull-to-refresh';
+import CircularProgress from '@mui/material/CircularProgress';
+import Toolbar from '@mui/material/Toolbar';
+
+import Dashboard from "../pages/Dashboard";
+import Incidents from "../pages/Incidents";
+import ServiceRequests from "../pages/ServiceRequests";
+import Profile from "../pages/Profile";
+import RaiseIncidentForm from "../pages/RaiseIncidentForm";
+import IncidentDetails from "../pages/IncidentDetails";
+import ServiceRequestDetails from "../pages/ServiceRequestDetails";
+import RaiseServiceRequestForm from "../components/RaiseServiceRequestForm";
+import Changes from "../pages/Changes";
+import RaiseChangeForm from "../pages/RaiseChangeForm";
+import ChangeDetails from "../pages/ChangeDetails";
+import AdminSettings from "../pages/AdminSettings";
+import Tasks from "../pages/Tasks";
+import TaskDetails from "../pages/TaskDetails";
+import TopNavbarTabbedView from "../components/TopNavbarTabbedView";
+import SearchResults from "../components/SearchResults";
+import { fetchKbArticles } from "../api";
+import axios from "axios";
+
+const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs }) => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  
+  const [moreAnchor, setMoreAnchor] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [incidents, setIncidents] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [changes, setChanges] = useState([]);
+  const [searchTriggered, setSearchTriggered] = useState(false);
+  const [confirmCloseAllOpen, setConfirmCloseAllOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [kbArticles, setKbArticles] = useState([]);
+  const [kbModalOpen, setKbModalOpen] = useState(false);
+  const [selectedKbArticle, setSelectedKbArticle] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
+  const [socket, setSocket] = useState(null);
+  const [tabHistory, setTabHistory] = useState([]);
+
+  const sidebarWidth = sidebarOpen ? 240 : 60;
+  
+  const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const activeRole = sessionStorage.getItem("selectedRole") || storedUser?.role?.toLowerCase() || "Unknown";
+
+  const handleRefresh = () => {
+    return new Promise((resolve) => {
+      console.log('🔄 Site refreshed via pull-to-refresh');
+      // Optionally refetch your global incidents, service requests, changes, etc.
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  };
+
+  const openTab = (tab) => {
+    if (selectedTab && selectedTab !== tab) {
+      setTabHistory((prev) => [...prev, selectedTab]);
+    }
+    if (!tabs.includes(tab)) {
+      setTabs([...tabs, tab]);
+    }
+    setSelectedTab(tab);
+    setMoreAnchor(null);
+  };
+
+  const closeTab = (tab) => {
+    if (tab === "Dashboard") return;
+    const newTabs = tabs.filter((t) => t !== tab);
+    setTabs(newTabs);
+    localStorage.setItem("openTabs", JSON.stringify(newTabs));
+    if (selectedTab === tab) {
+      const newSelectedTab = newTabs[0] || "Dashboard";
+      setSelectedTab(newSelectedTab);
+      localStorage.setItem("selectedTab", newSelectedTab);
+    }
+  };
+
+  const goBack = () => {
+    if (tabHistory.length > 0) {
+      const lastTab = tabHistory[tabHistory.length - 1];
+      const newTabs = tabs.filter((t) => t !== selectedTab);
+      setTabs(newTabs);
+      localStorage.setItem("openTabs", JSON.stringify(newTabs));
+      setSelectedTab(lastTab);
+      localStorage.setItem("selectedTab", lastTab);
+      setTabHistory(tabHistory.slice(0, -1));
+    }
+  };
+
+  const clearTabHistory = () => {
+    setTabHistory([]);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.reload();
+  };
+
+  const handleSwitchRole = () => {
+    const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+    const roles = userData?.roles || [];
+    if (roles.length > 1) {
+      sessionStorage.removeItem("selectedRole");
+      navigate("/select-role", { state: { roles, user: userData } });
+    } else {
+      alert("Only one role assigned to this account.");
+    }
+  };
+
+  const fetchData = async () => {
+    const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+    if (!token) {
+      console.error("❌ No token found. Cannot fetch secured data.");
+      return;
+    }
+    const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+    try {
+      const [incidentsRes, requestsRes, changesRes] = await Promise.all([
+        fetch(`${process.env.REACT_APP_API_URL}/api/incidents`, { headers }),
+        fetch(`${process.env.REACT_APP_API_URL}/api/service-requests`, { headers }),
+        fetch(`${process.env.REACT_APP_API_URL}/api/changes`, { headers }),
+      ]);
+      if (!incidentsRes.ok || !requestsRes.ok || !changesRes.ok) {
+        throw new Error("❌ Failed to fetch one or more API responses.");
+      }
+      const incidentsData = await incidentsRes.json();
+      const requestsData = await requestsRes.json();
+      const changesData = await changesRes.json();
+      setIncidents(Array.isArray(incidentsData) ? incidentsData : incidentsData.incidents || []);
+      setRequests(requestsData);
+      setChanges(changesData);
+    } catch (err) {
+      console.error("❌ Failed to fetch data for global search.", err);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setNotifications(Array.isArray(data) ? data : data.notifications || []);
+    } catch (err) {
+      console.error("❌ Failed to fetch notifications", err);
+    }
+  };
+
+  const fetchArticles = async () => {
+    try {
+      const articles = await fetchKbArticles();
+      setKbArticles(articles);
+    } catch (err) {
+      console.error("❌ Failed to fetch KB articles:", err);
+    }
+  };
+
+  useEffect(() => {
+    const wasSearching = localStorage.getItem("searchTriggered") === "true";
+    if (wasSearching) {
+      setSearchTriggered(true);
+    }
+    fetchData();
+    fetchArticles();
+    fetchNotifications();
+    console.log("📦 selectedRole in sessionStorage:", sessionStorage.getItem("selectedRole"));
+  }, []);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+    if (!user?.id || !token) return;
+
+    const newSocket = io("http://localhost:5000", {
+      auth: { token },
+    });
+
+    newSocket.emit("join", user.id);
+    newSocket.on("new_notification", (notification) => {
+      console.log("📥 New live notification:", notification);
+      setNotifications((prev) => [notification, ...prev]);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  const renderContent = () => {
+    if (typeof selectedTab !== "string") return null;
+
+    if (selectedTab === "Dashboard") return <Dashboard openTab={openTab} />;
+    if (selectedTab === "Incidents") return <Incidents openTab={openTab} />;
+    if (selectedTab === "Service Requests") return <ServiceRequests openTab={openTab} />;
+    if (selectedTab === "Profile") return <Profile />;
+    if (selectedTab === "Changes") return <Changes openTab={openTab} />;
+    if (selectedTab === "Tasks") return <Tasks openTab={openTab} />;
+
+    if (selectedTab === "Search results") {
+      const previousTab = tabs.find(tab => tab !== "Search results" && tab !== selectedTab);
+      return (
+        <SearchResults
+          query={searchQuery}
+          results={{
+            incidents: incidents.filter((i) => i.title?.toLowerCase().includes(searchQuery.toLowerCase())),
+            requests: requests.filter((r) => r.title?.toLowerCase().includes(searchQuery.toLowerCase())),
+            changes: changes.filter((c) => c.title?.toLowerCase().includes(searchQuery.toLowerCase())),
+            kb: kbArticles.filter((k) => k.title?.toLowerCase().includes(searchQuery.toLowerCase())),
+          }}
+          openTab={openTab}
+          previousTab={previousTab}
+        />
+      );
+    }
+
+    if (selectedTab === "Admin Settings" && allowedTabs.includes("Admin Settings")) return <AdminSettings />;
+    if (selectedTab === "New Incident") return <RaiseIncidentForm renameTabAfterSubmit={(oldTab, newRef) => {
+      const updatedTabs = tabs.map((t) => (t === oldTab ? `Incident ${newRef}` : t));
+      setTabs(updatedTabs);
+      setSelectedTab(`Incident ${newRef}`);
+    }} />;
+    if (selectedTab === "Raise Service Request") return <RaiseServiceRequestForm renameTabAfterSubmit={(oldTab, newId) => {
+      const newTabName = `Service Request ${newId}`;
+      const updatedTabs = tabs.map((t) => (t === oldTab ? newTabName : t));
+      setTabs(updatedTabs);
+      setSelectedTab(newTabName);
+    }} />;
+    if (selectedTab === "New Change") return <RaiseChangeForm renameTabAfterSubmit={(oldTab, newId) => {
+      const updatedTabs = tabs.map((t) => (t === oldTab ? `Change ${newId}` : t));
+      setTabs(updatedTabs);
+      setSelectedTab(`Change ${newId}`);
+    }} />;
+
+    if (selectedTab.startsWith("Incident")) {
+      const ref = selectedTab.split(" ")[1];
+      const fromSearch = tabs.includes("Search results");
+      return <IncidentDetails referenceNumber={ref} fromSearch={fromSearch} openTab={openTab} />;
+    }
+
+    if (selectedTab.startsWith("Service Request")) {
+      const id = selectedTab.split(" ")[2];
+      return <ServiceRequestDetails id={id} />;
+    }
+
+    if (selectedTab.startsWith("Change")) {
+      const id = selectedTab.split(" ")[1];
+      return <ChangeDetails id={id} />;
+    }
+
+    if (selectedTab.startsWith("Task")) {
+      const id = selectedTab.split(" ")[1];
+      return <TaskDetails id={id} openTab={openTab} />;
+    }
+
+    return null;
+  };
+
+  return (
+    <>
+      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+        {/* Sidebar */}
+        {isMobile ? (
+          <Drawer
+            anchor="left"
+            open={mobileSidebarOpen}
+            onClose={() => setMobileSidebarOpen(false)}
+            sx={{ "& .MuiDrawer-paper": { width: 240, boxSizing: "border-box" } }}
+          >
+            {/* Drawer sidebar content here */}
+          </Drawer>
+        ) : (
+          <Box
+            sx={{
+              width: sidebarWidth,
+              height: '100vh',
+              bgcolor: theme.palette.background.paper,
+              borderRight: `1px solid ${theme.palette.divider}`,
+              transition: 'width 0.3s ease',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: sidebarOpen ? 'flex-start' : 'center',
+              py: 2,
+              px: sidebarOpen ? 2 : 0,
+              boxShadow: theme.shadows[1],
+              position: 'fixed',
+              zIndex: 1200,
+              overflowY: 'auto',
+            }}
+          >
+            {/* Desktop Sidebar content */}
+          </Box>
+        )}
+
+        {/* Main Content Area */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            marginLeft: { xs: 0, sm: `${sidebarWidth}px` },
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+            overflow: 'hidden',
+            transition: 'margin-left 0.3s ease, width 0.3s ease',
+          }}
+        >
+          {/* Top Navbar */}
+          <TopNavbarTabbedView
+            tabs={tabs}
+            setTabs={setTabs}
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+            storedUser={storedUser}
+            handleLogout={handleLogout}
+            handleSwitchRole={handleSwitchRole}
+            goBack={goBack}
+            tabHistory={tabHistory}
+            sidebarWidth={sidebarWidth}
+            toggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+            isMobile={isMobile}
+          />
+
+          {/* Scrollable Content with PullToRefresh */}
+          <Box sx={{ flexGrow: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', bgcolor: theme.palette.background.default }}>
+            <PullToRefresh
+              onRefresh={handleRefresh}
+              style={{ height: '100%', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}
+              pullDownContent={
+                <Typography align="center" sx={{ mt: 2 }}>
+                  Pull down to refresh
+                </Typography>
+              }
+              refreshingContent={
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+                  <CircularProgress size={24} sx={{ mr: 1 }} />
+                  <Typography>Refreshing...</Typography>
+                </Box>
+              }
+              releaseContent={
+                <Typography align="center" sx={{ mt: 2 }}>
+                  Release to refresh
+                </Typography>
+              }
+            >
+              <Toolbar />
+              <Box sx={{ p: 3, paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
+                {renderContent()}
+              </Box>
+            </PullToRefresh>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* KB Article Modal */}
+      <Modal open={kbModalOpen} onClose={() => setKbModalOpen(false)}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '90%',
+            maxWidth: 600,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          {selectedKbArticle && (
+            <>
+              <Typography variant="h5">{selectedKbArticle.title}</Typography>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
+                Category: {selectedKbArticle.category}
+              </Typography>
+              <Typography>{selectedKbArticle.content}</Typography>
+            </>
+          )}
+        </Box>
+      </Modal>
+
+      {/* Logout Confirmation Modal */}
+      <Modal open={showLogoutConfirm} onClose={() => setShowLogoutConfirm(false)}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 300,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            borderRadius: 2,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Confirm Logout
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Are you sure you want to log out?
+          </Typography>
+          <Box display="flex" justifyContent="flex-end" gap={1}>
+            <Button variant="outlined" onClick={() => setShowLogoutConfirm(false)}>
+              Cancel
+            </Button>
+            <Button variant="contained" color="error" onClick={handleLogout}>
+              Logout
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Notifications Popover */}
+      <Popover
+        open={Boolean(notificationAnchorEl)}
+        anchorEl={notificationAnchorEl}
+        onClose={() => setNotificationAnchorEl(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+      >
+        <Box sx={{ p: 2, minWidth: 320 }}>
+          <Typography variant="h6" gutterBottom>
+            Notifications
+          </Typography>
+          {notifications.length === 0 ? (
+            <Typography variant="body2">No notifications.</Typography>
+          ) : (
+            notifications.map((note) => (
+              <Paper
+                key={note.id}
+                sx={{
+                  p: 1,
+                  mb: 1,
+                  bgcolor: note.is_read ? "grey.100" : "#fff8e1",
+                  opacity: note.is_read ? 0.7 : 1,
+                }}
+              >
+                <Typography variant="body2">{note.message}</Typography>
+                <Box mt={1} display="flex" gap={1}>
+                  {note.link && (
+                    <Button
+                      size="small"
+                      onClick={async () => {
+                        try {
+                          await axios.put(`${process.env.REACT_APP_API_URL}/api/notifications/${note.id}/read`, {}, {
+                            headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+                          });
+                          setNotifications((prev) =>
+                            prev.map((n) => (n.id === note.id ? { ...n, is_read: 1 } : n))
+                          );
+                          openTab(note.link);
+                          setNotificationAnchorEl(null);
+                        } catch (err) {
+                          console.error("❌ Failed to mark as read:", err);
+                        }
+                      }}
+                    >
+                      View
+                    </Button>
+                  )}
+                  {!note.is_read && (
+                    <Button
+                      size="small"
+                      onClick={async () => {
+                        try {
+                          await axios.put(`${process.env.REACT_APP_API_URL}/api/notifications/${note.id}/read`, {}, {
+                            headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+                          });
+                          setNotifications((prev) =>
+                            prev.map((n) => (n.id === note.id ? { ...n, is_read: 1 } : n))
+                          );
+                        } catch (err) {
+                          console.error("❌ Failed to mark as read:", err);
+                        }
+                      }}
+                    >
+                      Mark as Read
+                    </Button>
+                  )}
+                </Box>
+              </Paper>
+            ))
+          )}
+          {notifications.length > 0 && (
+            <Box display="flex" justifyContent="flex-end" mt={2}>
+              <Button
+                size="small"
+                onClick={async () => {
+                  try {
+                    await axios.put(`${process.env.REACT_APP_API_URL}/api/notifications/mark-all-read`, {}, {
+                      headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+                    });
+                    setNotifications((prev) => Array.isArray(prev) ? prev.map((n) => ({ ...n, is_read: 1 })) : []);
+                  } catch (err) {
+                    console.error("❌ Failed to mark all as read:", err);
+                  }
+                }}
+              >
+                Mark all as read
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Popover>
+    </>
+  );
+};
+
+export default TabbedView;
