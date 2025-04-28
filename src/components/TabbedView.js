@@ -847,7 +847,6 @@ return (
     </Box>
   </PullToRefresh>
 </Box>
-      </Box>
     </Box>
 
 {/* ✅ KB Article Modal goes here */}
