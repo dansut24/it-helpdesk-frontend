@@ -65,7 +65,7 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
       const result = await createIncident({
         id: incidentId,
         reference_number: reference,
-        customer_name: customerName, // Include customer name
+        customer_name: customerName,
         ...formData,
       });
 
@@ -88,46 +88,56 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
   };
 
   return (
-    <Box p={3}>
-      <Paper elevation={4} sx={{ p: 4, maxWidth: 800, mx: "auto" }}>
-        {/* Step Indicator */}
-        <Typography variant="subtitle1" align="center" sx={{ mb: 2 }}>
+    <Box p={2}>
+      <Paper elevation={3} sx={{ p: 2, maxWidth: 800, mx: "auto", borderRadius: 2 }}>
+        {/* Step Progress */}
+        <Typography variant="subtitle2" align="center" sx={{ mb: 2 }}>
           Step {step} of 2
         </Typography>
 
-        {/* Customer Name Step */}
-        <Fade in={step === 1} timeout={500} unmountOnExit>
+        {/* Step 1: Customer Search / Entry */}
+        <Fade in={step === 1} timeout={400} unmountOnExit>
           <Box>
-            <Typography variant="h5" gutterBottom align="center">
-              Start New Incident
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            <TextField
-              label="Customer Name"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              fullWidth
-              required
-              helperText="Enter the name of the customer reporting the issue."
-            />
-            <Box display="flex" justifyContent="center" mt={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleCustomerNext}
-                disabled={!customerName.trim()}
-                size="large"
-              >
-                Next
-              </Button>
-            </Box>
+            <Paper elevation={1} sx={{ borderRadius: 2, overflow: "hidden", mb: 3 }}>
+              <Box bgcolor="primary.main" p={1}>
+                <Typography color="white" variant="subtitle2">
+                  End-User Details
+                </Typography>
+              </Box>
+              <Box p={2}>
+                <Grid container spacing={1} alignItems="center">
+                  <Grid item xs={12}>
+                    <TextField
+                      placeholder="Search by name or info"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      fullWidth
+                      size="small"
+                    />
+                  </Grid>
+                </Grid>
+
+                <Box textAlign="center" mt={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={handleCustomerNext}
+                    disabled={!customerName.trim()}
+                  >
+                    Next
+                  </Button>
+                </Box>
+              </Box>
+            </Paper>
           </Box>
         </Fade>
 
-        {/* Full Incident Form Step */}
-        <Fade in={step === 2} timeout={500} unmountOnExit>
+        {/* Step 2: Incident Details */}
+        <Fade in={step === 2} timeout={400} unmountOnExit>
           <Box component="form" onSubmit={handleSubmit}>
-            <Typography variant="h5" gutterBottom align="center">
+            {/* New Incident Header */}
+            <Typography variant="h6" align="center" sx={{ mb: 2 }}>
               {reference ? `New Incident - ${reference}` : "New Incident"}
             </Typography>
 
@@ -137,92 +147,104 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
               </Alert>
             )}
 
-            {/* Customer Info Section */}
-            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-              Customer Information
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <TextField
-              label="Customer Name"
-              value={customerName}
-              fullWidth
-              disabled
-              sx={{ mb: 3 }}
-            />
-
-            {/* Incident Details Section */}
-            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-              Incident Details
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <TextField
-              label="Title"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              fullWidth
-              required
-              helperText="Enter a brief summary of the incident."
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              fullWidth
-              multiline
-              rows={4}
-              required
-              helperText="Please describe the issue in as much detail as possible."
-              sx={{ mb: 3 }}
-            />
-
-            {/* Priority and Category */}
-            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-              Priority and Category
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+            {/* End-User Details Card */}
+            <Paper elevation={1} sx={{ borderRadius: 2, overflow: "hidden", mb: 3 }}>
+              <Box bgcolor="primary.main" p={1}>
+                <Typography color="white" variant="subtitle2">
+                  End-User Details
+                </Typography>
+              </Box>
+              <Box p={2}>
                 <TextField
-                  label="Priority"
-                  name="priority"
-                  value={formData.priority}
-                  onChange={handleChange}
-                  select
+                  label="Customer Name"
+                  value={customerName}
                   fullWidth
-                  required
-                >
-                  {["Low", "Medium", "High"].map((level) => (
-                    <MenuItem key={level} value={level}>
-                      {level}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+                  size="small"
+                  disabled
+                />
+              </Box>
+            </Paper>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  select
-                  fullWidth
-                  required
-                >
-                  {["Hardware", "Software", "Network"].map((cat) => (
-                    <MenuItem key={cat} value={cat}>
-                      {cat}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
+            {/* Incident Details Card */}
+            <Paper elevation={1} sx={{ borderRadius: 2, overflow: "hidden", mb: 3 }}>
+              <Box bgcolor="primary.main" p={1}>
+                <Typography color="white" variant="subtitle2">
+                  Incident Details
+                </Typography>
+              </Box>
+              <Box p={2}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                      required
+                      helperText="Enter a brief summary of the incident."
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                      multiline
+                      rows={3}
+                      required
+                      helperText="Describe the issue clearly for faster resolution."
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Priority"
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleChange}
+                      select
+                      fullWidth
+                      size="small"
+                      required
+                    >
+                      {["Low", "Medium", "High"].map((level) => (
+                        <MenuItem key={level} value={level}>
+                          {level}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Category"
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      select
+                      fullWidth
+                      size="small"
+                      required
+                    >
+                      {["Hardware", "Software", "Network"].map((cat) => (
+                        <MenuItem key={cat} value={cat}>
+                          {cat}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Paper>
 
             {/* Submit Button */}
-            <Box display="flex" justifyContent="center" mt={5}>
+            <Box textAlign="center" mt={3}>
               <Button
                 type="submit"
                 variant="contained"
