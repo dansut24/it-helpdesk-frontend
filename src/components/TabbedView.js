@@ -816,8 +816,7 @@ return (
     overflowY: 'auto',
     px: 0,
     bgcolor: theme.palette.background.default,
-    pb: 3,        // Add padding-bottom inside the content
-    mb: 1,        // Add margin-bottom outside the scrollable box
+    minHeight: 0, // ✅ This is critical
   }}
 >
   {renderContent()}
