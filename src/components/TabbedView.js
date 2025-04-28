@@ -811,15 +811,17 @@ return (
 
         {/* Scrollable Main Content */}
         <Box
-          sx={{
-            flexGrow: 1,
-            overflowY: 'auto',
-            px: 0,
-            bgcolor: theme.palette.background.default,
-          }}
-        >
-          {renderContent()}
-        </Box>
+  sx={{
+    flexGrow: 1,
+    height: 'calc(100vh - 92px)', // ✅ adjust height to fit below the top navbar
+    overflowY: 'auto',             // ✅ allow vertical scrolling only here
+    overflowX: 'hidden',           // ✅ no horizontal scroll
+    px: 0,
+    bgcolor: theme.palette.background.default,
+  }}
+>
+  {renderContent()}
+</Box>
       </Box>
     </Box>
 
