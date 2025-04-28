@@ -573,7 +573,6 @@ return (
 <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
       {/* Sidebar */}
  {/* Sidebar */}
-<Box sx={{ display: 'flex', flexGrow: 1 }}>
 {isMobile ? (
   <Drawer
     anchor="left"
@@ -826,7 +825,6 @@ return (
 </Box>
       </Box>
     </Box>
-  </Box>
 
 {/* ✅ KB Article Modal goes here */}
 <Modal open={kbModalOpen} onClose={() => setKbModalOpen(false)}>
