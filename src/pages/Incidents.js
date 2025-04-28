@@ -19,6 +19,7 @@ import {
   Drawer,
   IconButton,
   Divider,
+  useMediaQuery,
 } from "@mui/material";
 import { fetchIncidents, assignIncidentToMe } from "../api";
 import SearchIcon from "@mui/icons-material/Search";
@@ -32,6 +33,8 @@ const Incidents = ({ openTab }) => {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     const camelizeIncident = (i) => ({
@@ -48,7 +51,9 @@ const Incidents = ({ openTab }) => {
       try {
         const data = await fetchIncidents();
         const normalizeList = (list) => (list || []).map(camelizeIncident);
-        setIncidents(normalizeList(data.all || data.myIncidents || []));
+
+        let fetchedIncidents = normalizeList(data.all || data.myIncidents || []);
+
         // Load test incidents from localStorage
         const fakeIncidents = [];
         for (let key in localStorage) {
@@ -59,9 +64,22 @@ const Incidents = ({ openTab }) => {
             }
           }
         }
-        if (fakeIncidents.length > 0) {
-          setIncidents(prev => [...fakeIncidents, ...prev]);
+
+        // If no real incidents, inject some demo ones
+        if (fetchedIncidents.length === 0 && fakeIncidents.length === 0) {
+          const demoIncidents = Array.from({ length: 5 }).map((_, idx) => ({
+            referenceNumber: `DEMO-${1000 + idx}`,
+            title: `Test Incident ${idx + 1}`,
+            priority: idx % 3 === 0 ? "High" : idx % 2 === 0 ? "Medium" : "Low",
+            status: ["Open", "Paused", "Resolved", "Waiting for Customer", "Closed"][idx % 5],
+            created_by_user_name: "Demo User",
+            assigned_team_name: "Support",
+            assigned_user_name: "Technician A",
+          }));
+          fetchedIncidents = demoIncidents;
         }
+
+        setIncidents([...fakeIncidents, ...fetchedIncidents]);
       } catch (error) {
         console.error("Error fetching incidents:", error);
       }
@@ -69,21 +87,6 @@ const Incidents = ({ openTab }) => {
 
     getIncidents();
   }, []);
-
-  const handleAssignToMe = async (incidentId) => {
-    try {
-      const res = await assignIncidentToMe(incidentId);
-      if (res.status === 200) {
-        setToast({ open: true, message: "✅ Incident assigned to you.", severity: "success" });
-      }
-    } catch (err) {
-      if (err.response?.status === 409) {
-        setToast({ open: true, message: "⚠️ This incident was already assigned.", severity: "warning" });
-      } else {
-        setToast({ open: true, message: "❌ Failed to assign incident.", severity: "error" });
-      }
-    }
-  };
 
   const applyFilters = (list) => {
     return list.filter((incident) => {
@@ -118,6 +121,7 @@ const Incidents = ({ openTab }) => {
           backgroundColor: "#f5f5f5",
           p: 2,
           borderRadius: 2,
+          flexWrap: isMobile ? "wrap" : "nowrap",
         }}
       >
         <TextField
@@ -127,7 +131,7 @@ const Incidents = ({ openTab }) => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           InputProps={{ startAdornment: (<InputAdornment position="start"><SearchIcon /></InputAdornment>) }}
-          sx={{ flexGrow: 1 }}
+          sx={{ flexGrow: 1, minWidth: isMobile ? "100%" : "auto" }}
         />
 
         <IconButton color="primary" onClick={() => setFilterDrawerOpen(true)}>
