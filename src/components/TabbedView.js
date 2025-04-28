@@ -47,7 +47,6 @@ import TopNavbarTabbedView from "../components/TopNavbarTabbedView"; // adjust p
 
 import Toolbar from '@mui/material/Toolbar';  
 
-import Fade from '@mui/material/Fade';
 // Due to length, this will be posted in multiple parts
 
 const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs }) => {
