@@ -570,7 +570,7 @@ const HoverMenuItem = ({ icon, label, active, open, subItems }) => {
 
 return (
   <>
-<Box sx={{ display: 'flex', minHeight: '100vh', overflow: 'hidden' }}>
+<Box sx={{ display: 'flex', minHeight: '100vh', overflow: 'auto' }}>
       {/* Sidebar */}
  {/* Sidebar */}
 {isMobile ? (
