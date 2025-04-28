@@ -817,9 +817,14 @@ return (
     bgcolor: theme.palette.background.default,
   }}
 >
-  <Toolbar /> {/* Automatically matches AppBar height */}
-  
-  <Box sx={{ p: 3 }}>
+  <Toolbar /> {/* Top spacing matching AppBar automatically */}
+
+  <Box
+    sx={{
+      p: 3,
+      paddingBottom: 'env(safe-area-inset-bottom)', // ✅ proper mobile safe padding
+    }}
+  >
     {renderContent()}
   </Box>
 </Box>
