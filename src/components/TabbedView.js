@@ -66,6 +66,17 @@ const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs })
   const sidebarWidth = sidebarOpen ? 240 : 60;
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // ✅ detects mobile
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false); // ✅ tracks mobile sidebar
+
+
+  const handleRefresh = () => {
+  return new Promise((resolve) => {
+    console.log('🔄 Site refreshed via pull-to-refresh');
+    // Optionally refetch your global incidents, service requests, changes, etc.
+    setTimeout(() => {
+      resolve();
+    }, 1000); // 1 second simulated refresh
+  });
+};
   
   const navItemStyles = (active, open) => ({
   borderRadius: 2,
