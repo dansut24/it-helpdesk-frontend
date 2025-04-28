@@ -45,6 +45,7 @@ import Tasks from "../pages/Tasks"; // Adjust path if needed
 import TaskDetails from "../pages/TaskDetails";
 import TopNavbarTabbedView from "../components/TopNavbarTabbedView"; // adjust path if needed
 
+import Toolbar from '@mui/material/Toolbar';  
 
 
 // Due to length, this will be posted in multiple parts
@@ -814,11 +815,10 @@ return (
     flexGrow: 1,
     overflowY: 'auto',
     bgcolor: theme.palette.background.default,
-    px: 0,
-    py: 0,
-    paddingTop: theme.mixins.toolbar.minHeight,
   }}
 >
+  <Toolbar /> {/* Automatically matches AppBar height */}
+  
   <Box sx={{ p: 3 }}>
     {renderContent()}
   </Box>
