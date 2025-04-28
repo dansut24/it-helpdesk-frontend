@@ -24,6 +24,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
 import CloseIcon from "@mui/icons-material/Close";
 
+// New icons for status chips
+import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
 const Incidents = ({ openTab }) => {
   const [incidents, setIncidents] = useState([]);
   const [toast, setToast] = useState({ open: false, message: "", severity: "success" });
@@ -82,20 +88,26 @@ const Incidents = ({ openTab }) => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case "High":
-        return "#ff4d4f"; // red
-      case "Medium":
-        return "#faad14"; // orange
-      case "Low":
-        return "#52c41a"; // green
-      default:
-        return "#d9d9d9"; // grey
+      case "High": return "#ff4d4f"; // red
+      case "Medium": return "#faad14"; // orange
+      case "Low": return "#52c41a"; // green
+      default: return "#d9d9d9"; // grey
     }
   };
 
   const formatDate = (dateStr) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
     return new Date(dateStr).toLocaleDateString(undefined, options);
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "Paused": return <PauseCircleOutlineIcon fontSize="small" />;
+      case "Waiting for Customer": return <HourglassBottomIcon fontSize="small" />;
+      case "Resolved": return <CheckCircleOutlineIcon fontSize="small" />;
+      case "Closed": return <LockOutlinedIcon fontSize="small" />;
+      default: return null;
+    }
   };
 
   const getStatusColor = (status) => {
@@ -207,7 +219,7 @@ const Incidents = ({ openTab }) => {
                 </Typography>
               </Box>
 
-              {/* Right side (ID + Date + Status badge) */}
+              {/* Right side (ID + Date + Status Chip with Icon) */}
               <Box textAlign="right">
                 <Typography variant="caption" color="text.secondary">
                   ID: {incident.referenceNumber}
@@ -219,6 +231,7 @@ const Incidents = ({ openTab }) => {
                   label={incident.status}
                   size="small"
                   color={getStatusColor(incident.status)}
+                  icon={getStatusIcon(incident.status)}
                   sx={{ mt: 0.5 }}
                 />
               </Box>
