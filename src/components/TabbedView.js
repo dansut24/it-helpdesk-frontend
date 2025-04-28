@@ -822,7 +822,8 @@ return (
   <Box
     sx={{
       p: 3,
-      paddingBottom: `calc(80px + env(safe-area-inset-bottom))`, // ✅ real fix
+      paddingTop: '10px',
+      paddingBottom: `calc(100px + env(safe-area-inset-bottom))`, // ✅ real fix
     }}
   >
     {renderContent()}
