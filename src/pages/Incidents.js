@@ -45,39 +45,41 @@ const Incidents = ({ openTab }) => {
     });
 
     const getIncidents = async () => {
+      let fetchedIncidents = [];
+
       try {
         const data = await fetchIncidents();
         const normalizeList = (list) => (list || []).map(camelizeIncident);
+        fetchedIncidents = normalizeList(data.all || data.myIncidents || []);
+      } catch (error) {
+        console.error("Error fetching incidents from backend:", error);
+      }
 
-        let fetchedIncidents = normalizeList(data.all || data.myIncidents || []);
-
-        // Load test incidents from localStorage
-        const fakeIncidents = [];
-        for (let key in localStorage) {
-          if (key.startsWith("fake-incident-")) {
-            const item = localStorage.getItem(key);
-            if (item) {
-              fakeIncidents.push(JSON.parse(item));
-            }
+      // Load fake incidents from localStorage
+      const fakeIncidents = [];
+      for (let key in localStorage) {
+        if (key.startsWith("fake-incident-")) {
+          const item = localStorage.getItem(key);
+          if (item) {
+            fakeIncidents.push(JSON.parse(item));
           }
         }
+      }
 
-        if (fetchedIncidents.length === 0 && fakeIncidents.length === 0) {
-          // If no real data or fake, inject 5 test incidents
-          fetchedIncidents = Array.from({ length: 5 }).map((_, idx) => ({
-            referenceNumber: `TEST-${1000 + idx}`,
-            title: `Test Incident ${idx + 1}`,
-            priority: ["High", "Medium", "Low"][idx % 3],
-            status: ["Open", "Paused", "Waiting for Customer", "Resolved", "Closed"][idx % 5],
-            created_by_user_name: "Test User",
-            assigned_team_name: "Support Team",
-            assigned_user_name: "Technician",
-          }));
-        }
-
+      // If still no incidents, inject manual test data
+      if (fetchedIncidents.length === 0 && fakeIncidents.length === 0) {
+        const demoIncidents = Array.from({ length: 5 }).map((_, idx) => ({
+          referenceNumber: `TEST-${1000 + idx}`,
+          title: `Test Incident ${idx + 1}`,
+          priority: ["High", "Medium", "Low"][idx % 3],
+          status: ["Open", "Paused", "Waiting for Customer", "Resolved", "Closed"][idx % 5],
+          created_by_user_name: "Demo User",
+          assigned_team_name: "Support Team",
+          assigned_user_name: "Technician A",
+        }));
+        setIncidents(demoIncidents);
+      } else {
         setIncidents([...fakeIncidents, ...fetchedIncidents]);
-      } catch (error) {
-        console.error("Error fetching incidents:", error);
       }
     };
 
@@ -116,7 +118,7 @@ const Incidents = ({ openTab }) => {
           backgroundColor: "#f5f5f5",
           p: 2,
           borderRadius: 2,
-          mx: -3, // cancel outer padding on mobile
+          mx: -3,
           px: { xs: 2, sm: 3 },
         }}
       >
