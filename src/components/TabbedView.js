@@ -820,7 +820,10 @@ return (
     paddingBottom: '92px',
   }}
 >
-  {renderContent()}
+  {/* Global page padding */}
+  <Box sx={{ p: 3 }}>
+    {renderContent()}
+  </Box>
 </Box>
       </Box>
     </Box>
