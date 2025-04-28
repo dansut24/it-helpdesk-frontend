@@ -784,8 +784,8 @@ return (
       {/* Main Content Wrapper (shifts based on sidebar) */}
       <Box
         sx={{
-          marginLeft: `${sidebarWidth}px`,
-          width: `calc(100% - ${sidebarWidth}px)`,
+          marginLeft: isMobile ? 0 : `${sidebarWidth}px`,
+          width: isMobile ? "100%" : `calc(100% - ${sidebarWidth}px)`,
           paddingTop: '92px',
           display: 'flex',
           flexDirection: 'column',
