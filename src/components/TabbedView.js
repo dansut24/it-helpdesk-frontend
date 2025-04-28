@@ -47,7 +47,7 @@ import TopNavbarTabbedView from "../components/TopNavbarTabbedView"; // adjust p
 
 import Toolbar from '@mui/material/Toolbar';  
 
-
+import Fade from '@mui/material/Fade';
 // Due to length, this will be posted in multiple parts
 
 const TabbedView = ({ tabs, setTabs, selectedTab, setSelectedTab, allowedTabs }) => {
@@ -810,23 +810,25 @@ return (
         />
 
         {/* Scrollable Content */}
-  <Box
+<Box
   sx={{
     flexGrow: 1,
     overflowY: 'auto',
     bgcolor: theme.palette.background.default,
   }}
 >
-  <Toolbar /> {/* Correct top spacing under Navbar */}
-  
-  <Box
-    sx={{
-      p: 3,
-      paddingBottom: `calc(100px + env(safe-area-inset-bottom))`, // ✅ real fix
-    }}
-  >
-    {renderContent()}
-  </Box>
+  <Toolbar /> {/* Top spacing to match Navbar */}
+
+  <Fade in={true} timeout={400}>
+    <Box
+      sx={{
+        p: 3,
+        paddingBottom: `calc(80px + env(safe-area-inset-bottom))`, // Bottom safe padding
+      }}
+    >
+      {renderContent()}
+    </Box>
+  </Fade>
 </Box>
       </Box>
     </Box>
