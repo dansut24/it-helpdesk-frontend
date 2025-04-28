@@ -811,15 +811,16 @@ return (
         />
 
         {/* Scrollable Main Content */}
-       <Box
+     <Box
   sx={{
-  flexGrow: 1,
-  overflow: 'auto',
-  px: 2,
-  pb: 4,
-  bgcolor: theme.palette.background.default,
+    flexGrow: 1,
+    overflow: 'auto',
+    px: 2,
+    pb: 4,
+    bgcolor: theme.palette.background.default,
+    minHeight: 0, // ✅
   }}
- >
+>
   {renderContent()}
 </Box>
       </Box>
