@@ -128,7 +128,7 @@ const Incidents = ({ openTab }) => {
         sx={{
           display: "flex",
           alignItems: "center",
-          mb: 3,
+          mb: 2,
           backgroundColor: "#f5f5f5",
           p: 2,
           borderRadius: 2,
@@ -160,71 +160,74 @@ const Incidents = ({ openTab }) => {
         </IconButton>
       </Box>
 
-      {/* Incident Cards */}
-      {applyFilters(incidents).map((incident) => (
-        <Card
-          key={incident.referenceNumber}
-          variant="outlined"
-          sx={{
-            mb: 2,
-            cursor: "pointer",
-            display: "flex",
-            borderLeft: `6px solid ${getPriorityColor(incident.priority)}`,
-            transition: "background-color 0.2s",
-            "&:hover": { backgroundColor: "#f0f0f0" },
-          }}
-          onClick={() => openTab(`Incident ${incident.referenceNumber}`)}
-        >
-          <CardContent
+      {/* Incident List */}
+      <Box sx={{ mx: { xs: -3, sm: 0 } }}>
+        {applyFilters(incidents).map((incident) => (
+          <Card
+            key={incident.referenceNumber}
+            variant="outlined"
             sx={{
-              flexGrow: 1,
+              mb: 1,
+              cursor: "pointer",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2,
+              borderLeft: `6px solid ${getPriorityColor(incident.priority)}`,
+              borderRadius: 0,
+              transition: "background-color 0.2s",
+              "&:hover": { backgroundColor: "#f0f0f0" },
             }}
+            onClick={() => openTab(`Incident ${incident.referenceNumber}`)}
           >
-            {/* Left side (Priority Chip + Title + User) */}
-            <Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-                <Chip
-                  label={incident.priority}
-                  size="small"
-                  sx={{
-                    backgroundColor: getPriorityColor(incident.priority),
-                    color: "#fff",
-                    height: 20,
-                  }}
-                />
-                <Typography variant="subtitle2" fontWeight="bold">
-                  {incident.title}
+            <CardContent
+              sx={{
+                flexGrow: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                p: 2,
+              }}
+            >
+              {/* Left side (Priority Chip + Title + User) */}
+              <Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                  <Chip
+                    label={incident.priority}
+                    size="small"
+                    sx={{
+                      backgroundColor: getPriorityColor(incident.priority),
+                      color: "#fff",
+                      height: 20,
+                    }}
+                  />
+                  <Typography variant="subtitle2" fontWeight="bold" noWrap>
+                    {incident.title}
+                  </Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  {incident.created_by_user_name}
                 </Typography>
               </Box>
-              <Typography variant="caption" color="text.secondary">
-                {incident.created_by_user_name}
-              </Typography>
-            </Box>
 
-            {/* Right side (ID + Date + Status badge) */}
-            <Box textAlign="right">
-              <Typography variant="caption" color="text.secondary">
-                ID: {incident.referenceNumber}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" display="block">
-                {formatDate(incident.created_at)}
-              </Typography>
-              <Chip
-                label={incident.status}
-                size="small"
-                color={getStatusColor(incident.status)}
-                sx={{ mt: 0.5 }}
-              />
-            </Box>
-          </CardContent>
-        </Card>
-      ))}
+              {/* Right side (ID + Date + Status badge) */}
+              <Box textAlign="right">
+                <Typography variant="caption" color="text.secondary">
+                  ID: {incident.referenceNumber}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  {formatDate(incident.created_at)}
+                </Typography>
+                <Chip
+                  label={incident.status}
+                  size="small"
+                  color={getStatusColor(incident.status)}
+                  sx={{ mt: 0.5 }}
+                />
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
 
-      {/* Drawer */}
+      {/* Filter Drawer */}
       <Drawer
         anchor="left"
         open={filterDrawerOpen}
