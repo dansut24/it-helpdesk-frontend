@@ -813,11 +813,12 @@ return (
         {/* Scrollable Main Content */}
      <Box
   sx={{
-    flexGrow: 1,
-    overflowY: 'auto',
-    px: 2,
-    pb: 4,  // ✅ Add padding-bottom so content doesn't bounce
-    backgroundColor: theme.palette.background.default,
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100%',
+    bgcolor: theme.palette.background.default,
+    px: 0,
   }}
 >
   {renderContent()}
