@@ -816,9 +816,10 @@ return (
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '100%',
+    minHeight: '0',            // <--- IMPORTANT: allow flex children to shrink
     bgcolor: theme.palette.background.default,
     px: 0,
+    overflowY: 'auto',          // <--- ADD THIS
   }}
 >
   {renderContent()}
