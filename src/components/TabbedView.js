@@ -825,40 +825,47 @@ return (
 <Box
   sx={{
     flexGrow: 1,
-    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
     bgcolor: theme.palette.background.default,
+    overflow: 'hidden', // Only here, PullToRefresh manages the scroll
   }}
 >
   <PullToRefresh
-  onRefresh={handleRefresh}
-  style={{ height: '100%', overflow: 'auto' }}
-  pullDownContent={
-    <Typography align="center" sx={{ mt: 2 }}>
-      Pull down to refresh
-    </Typography>
-  }
-  refreshingContent={
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-      <CircularProgress size={24} sx={{ mr: 1 }} />
-      <Typography>Refreshing...</Typography>
-    </Box>
-  }
-  releaseContent={
-    <Typography align="center" sx={{ mt: 2 }}>
-      Release to refresh
-    </Typography>
-  }
->
-  <Toolbar />
-  <Box
-    sx={{
-      p: 3,
-      paddingBottom: 'calc(80px + env(safe-area-inset-bottom))',
+    onRefresh={handleRefresh}
+    style={{
+      height: '100%',
+      overflow: 'auto',
+      WebkitOverflowScrolling: 'touch',
     }}
+    pullDownContent={
+      <Typography align="center" sx={{ mt: 2 }}>
+        Pull down to refresh
+      </Typography>
+    }
+    refreshingContent={
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+        <CircularProgress size={24} sx={{ mr: 1 }} />
+        <Typography>Refreshing...</Typography>
+      </Box>
+    }
+    releaseContent={
+      <Typography align="center" sx={{ mt: 2 }}>
+        Release to refresh
+      </Typography>
+    }
   >
-    {renderContent()}
-  </Box>
-</PullToRefresh>
+    <Toolbar />
+
+    <Box
+      sx={{
+        p: 3,
+        paddingBottom: 'calc(80px + env(safe-area-inset-bottom))',
+      }}
+    >
+      {renderContent()}
+    </Box>
+  </PullToRefresh>
 </Box>
       </Box>
     </Box>
