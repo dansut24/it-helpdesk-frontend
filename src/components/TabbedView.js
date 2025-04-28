@@ -784,14 +784,14 @@ return (
       {/* Main Content Wrapper (shifts based on sidebar) */}
       <Box
   sx={{
-    marginLeft: `${sidebarWidth}px`,
-    width: `calc(100% - ${sidebarWidth}px)`,
+    marginLeft: { xs: 0, sm: `${sidebarWidth}px` },  // ✅ 0 margin-left on mobile
+    width: { xs: '100%', sm: `calc(100% - ${sidebarWidth}px)` },  // ✅ full width mobile
     paddingTop: '92px',
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1, // ✅
-    minHeight: 0, // ✅ Prevent overflow cutting off
-    transition: 'margin-left 0.3s ease',
+    minHeight: '100vh',   // ✅ use minHeight not height
+    overflow: 'hidden',   // ✅ fix for layout shifts
+    transition: 'margin-left 0.3s ease, width 0.3s ease',
   }}
 >
         {/* Top Navbar and Tabs */}
@@ -816,9 +816,8 @@ return (
     flexGrow: 1,
     overflowY: 'auto',
     px: 2,
-    pt: 2,
-    pb: 4, // ✅ important to allow bottom scroll without bounce
-    bgcolor: theme.palette.background.default,
+    pb: 4,  // ✅ Add padding-bottom so content doesn't bounce
+    backgroundColor: theme.palette.background.default,
   }}
 >
   {renderContent()}
