@@ -11,8 +11,14 @@ import {
   Grid,
   Fade,
   Divider,
+  LinearProgress,
+  Fab,
 } from "@mui/material";
 import { createIncident, reserveIncident } from "../api";
+import AddIcon from "@mui/icons-material/Add";
+import ComputerIcon from "@mui/icons-material/Computer";
+import BuildIcon from "@mui/icons-material/Build";
+import SettingsEthernetIcon from "@mui/icons-material/SettingsEthernet";
 
 const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
   const [step, setStep] = useState(1);
@@ -87,35 +93,61 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
     }
   };
 
-  return (
-    <Box p={2}>
-      <Paper elevation={3} sx={{ p: 2, maxWidth: 800, mx: "auto", borderRadius: 2 }}>
-        {/* Step Progress */}
-        <Typography variant="subtitle2" align="center" sx={{ mb: 2 }}>
-          Step {step} of 2
-        </Typography>
+  const categoryIcons = {
+    Hardware: <ComputerIcon fontSize="small" sx={{ mr: 1 }} />,
+    Software: <BuildIcon fontSize="small" sx={{ mr: 1 }} />,
+    Network: <SettingsEthernetIcon fontSize="small" sx={{ mr: 1 }} />,
+  };
 
-        {/* Step 1: Customer Search / Entry */}
+  return (
+    <Box p={2} position="relative">
+      {/* Animated Progress Bar */}
+      <LinearProgress
+        variant="determinate"
+        value={step === 1 ? 50 : 100}
+        sx={{ height: 8, borderRadius: 5, mb: 2 }}
+      />
+
+      {/* Main Form Container */}
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          maxWidth: 800,
+          mx: "auto",
+          borderRadius: 2,
+          transition: "0.3s",
+          "&:hover": {
+            boxShadow: 6,
+          },
+        }}
+      >
+        {/* Step 1: Customer Search */}
         <Fade in={step === 1} timeout={400} unmountOnExit>
           <Box>
-            <Paper elevation={1} sx={{ borderRadius: 2, overflow: "hidden", mb: 3 }}>
+            <Paper
+              elevation={1}
+              sx={{
+                borderRadius: 2,
+                overflow: "hidden",
+                mb: 3,
+                transition: "0.3s",
+                "&:hover": { boxShadow: 4 },
+              }}
+            >
               <Box bgcolor="primary.main" p={1}>
                 <Typography color="white" variant="subtitle2">
                   End-User Details
                 </Typography>
               </Box>
               <Box p={2}>
-                <Grid container spacing={1} alignItems="center">
-                  <Grid item xs={12}>
-                    <TextField
-                      placeholder="Search by name or info"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      fullWidth
-                      size="small"
-                    />
-                  </Grid>
-                </Grid>
+                <TextField
+                  placeholder="Search by name or info"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  fullWidth
+                  size="small"
+                />
 
                 <Box textAlign="center" mt={2}>
                   <Button
@@ -124,6 +156,11 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
                     size="small"
                     onClick={handleCustomerNext}
                     disabled={!customerName.trim()}
+                    sx={{
+                      borderRadius: 8,
+                      px: 4,
+                      "&:hover": { backgroundColor: "primary.dark" },
+                    }}
                   >
                     Next
                   </Button>
@@ -136,7 +173,6 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
         {/* Step 2: Incident Details */}
         <Fade in={step === 2} timeout={400} unmountOnExit>
           <Box component="form" onSubmit={handleSubmit}>
-            {/* New Incident Header */}
             <Typography variant="h6" align="center" sx={{ mb: 2 }}>
               {reference ? `New Incident - ${reference}` : "New Incident"}
             </Typography>
@@ -147,8 +183,17 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
               </Alert>
             )}
 
-            {/* End-User Details Card */}
-            <Paper elevation={1} sx={{ borderRadius: 2, overflow: "hidden", mb: 3 }}>
+            {/* End-User Section */}
+            <Paper
+              elevation={1}
+              sx={{
+                borderRadius: 2,
+                overflow: "hidden",
+                mb: 3,
+                transition: "0.3s",
+                "&:hover": { boxShadow: 4 },
+              }}
+            >
               <Box bgcolor="primary.main" p={1}>
                 <Typography color="white" variant="subtitle2">
                   End-User Details
@@ -165,8 +210,17 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
               </Box>
             </Paper>
 
-            {/* Incident Details Card */}
-            <Paper elevation={1} sx={{ borderRadius: 2, overflow: "hidden", mb: 3 }}>
+            {/* Incident Details Section */}
+            <Paper
+              elevation={1}
+              sx={{
+                borderRadius: 2,
+                overflow: "hidden",
+                mb: 3,
+                transition: "0.3s",
+                "&:hover": { boxShadow: 4 },
+              }}
+            >
               <Box bgcolor="primary.main" p={1}>
                 <Typography color="white" variant="subtitle2">
                   Incident Details
@@ -183,7 +237,7 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
                       fullWidth
                       size="small"
                       required
-                      helperText="Enter a brief summary of the incident."
+                      helperText="Briefly summarize the issue."
                     />
                   </Grid>
 
@@ -198,7 +252,7 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
                       multiline
                       rows={3}
                       required
-                      helperText="Describe the issue clearly for faster resolution."
+                      helperText="Provide as much detail as possible."
                     />
                   </Grid>
 
@@ -234,7 +288,10 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
                     >
                       {["Hardware", "Software", "Network"].map((cat) => (
                         <MenuItem key={cat} value={cat}>
-                          {cat}
+                          <Box display="flex" alignItems="center">
+                            {categoryIcons[cat]}
+                            {cat}
+                          </Box>
                         </MenuItem>
                       ))}
                     </TextField>
@@ -252,6 +309,11 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
                 size="large"
                 disabled={submitting}
                 startIcon={submitting && <CircularProgress size={20} />}
+                sx={{
+                  borderRadius: 8,
+                  px: 5,
+                  "&:hover": { backgroundColor: "primary.dark" },
+                }}
               >
                 {submitting ? "Submitting..." : "Submit Incident"}
               </Button>
@@ -259,6 +321,21 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
           </Box>
         </Fade>
       </Paper>
+
+      {/* Floating Add Button (just a visual addition) */}
+      <Fab
+        color="primary"
+        aria-label="add"
+        sx={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          boxShadow: 6,
+          "&:hover": { bgcolor: "primary.dark" },
+        }}
+      >
+        <AddIcon />
+      </Fab>
     </Box>
   );
 };
