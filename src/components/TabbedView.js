@@ -849,9 +849,14 @@ return (
           }}
         >
           <Toolbar />
-          <Box sx={{ p: 3, paddingBottom: '80px' }}>
-            {renderContent()}
-          </Box>
+         <Box
+  sx={{
+    p: { xs: 0, sm: 3 }, // ✅ No padding on mobile (xs), normal padding on tablet/desktop (sm+)
+    paddingBottom: '80px',
+  }}
+>
+  {renderContent()}
+</Box>
         </Box>
       </Box>
     </Box>
