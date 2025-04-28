@@ -835,7 +835,7 @@ return (
     onRefresh={handleRefresh}
     style={{
       height: '100%',
-      overflow: 'auto',
+      overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
     }}
     pullDownContent={
