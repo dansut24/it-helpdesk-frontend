@@ -9,6 +9,8 @@ import {
   CircularProgress,
   Alert,
   Grid,
+  Fade,
+  Divider,
 } from "@mui/material";
 import { createIncident, reserveIncident } from "../api";
 
@@ -63,7 +65,7 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
       const result = await createIncident({
         id: incidentId,
         reference_number: reference,
-        customer_name: customerName, // You might want to save this too
+        customer_name: customerName, // Include customer name
         ...formData,
       });
 
@@ -87,35 +89,45 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
 
   return (
     <Box p={3}>
-      <Paper elevation={3} sx={{ p: 4, maxWidth: 800, mx: "auto" }}>
-        {step === 1 && (
-          <>
-            <Typography variant="h5" gutterBottom>
+      <Paper elevation={4} sx={{ p: 4, maxWidth: 800, mx: "auto" }}>
+        {/* Step Indicator */}
+        <Typography variant="subtitle1" align="center" sx={{ mb: 2 }}>
+          Step {step} of 2
+        </Typography>
+
+        {/* Customer Name Step */}
+        <Fade in={step === 1} timeout={500} unmountOnExit>
+          <Box>
+            <Typography variant="h5" gutterBottom align="center">
               Start New Incident
             </Typography>
+            <Divider sx={{ my: 2 }} />
             <TextField
               label="Customer Name"
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
               fullWidth
               required
+              helperText="Enter the name of the customer reporting the issue."
             />
-            <Box display="flex" justifyContent="flex-end" mt={2}>
+            <Box display="flex" justifyContent="center" mt={3}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleCustomerNext}
                 disabled={!customerName.trim()}
+                size="large"
               >
                 Next
               </Button>
             </Box>
-          </>
-        )}
+          </Box>
+        </Fade>
 
-        {step === 2 && (
-          <>
-            <Typography variant="h5" gutterBottom>
+        {/* Full Incident Form Step */}
+        <Fade in={step === 2} timeout={500} unmountOnExit>
+          <Box component="form" onSubmit={handleSubmit}>
+            <Typography variant="h5" gutterBottom align="center">
               {reference ? `New Incident - ${reference}` : "New Incident"}
             </Typography>
 
@@ -125,95 +137,105 @@ const RaiseIncidentForm = ({ renameTabAfterSubmit }) => {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={2}>
-                {/* Customer Name (read-only) */}
-                <Grid item xs={12}>
-                  <TextField
-                    label="Customer Name"
-                    value={customerName}
-                    fullWidth
-                    disabled
-                  />
-                </Grid>
+            {/* Customer Info Section */}
+            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+              Customer Information
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <TextField
+              label="Customer Name"
+              value={customerName}
+              fullWidth
+              disabled
+              sx={{ mb: 3 }}
+            />
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Grid>
+            {/* Incident Details Section */}
+            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+              Incident Details
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <TextField
+              label="Title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              fullWidth
+              required
+              helperText="Enter a brief summary of the incident."
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              fullWidth
+              multiline
+              rows={4}
+              required
+              helperText="Please describe the issue in as much detail as possible."
+              sx={{ mb: 3 }}
+            />
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    fullWidth
-                    multiline
-                    rows={4}
-                    required
-                  />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Priority"
-                    name="priority"
-                    value={formData.priority}
-                    onChange={handleChange}
-                    select
-                    fullWidth
-                    required
-                  >
-                    {["Low", "Medium", "High"].map((level) => (
-                      <MenuItem key={level} value={level}>
-                        {level}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    select
-                    fullWidth
-                    required
-                  >
-                    {["Hardware", "Software", "Network"].map((cat) => (
-                      <MenuItem key={cat} value={cat}>
-                        {cat}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12}>
-                  <Box display="flex" justifyContent="flex-end">
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disabled={submitting}
-                      startIcon={submitting && <CircularProgress size={20} />}
-                    >
-                      {submitting ? "Submitting..." : "Submit Incident"}
-                    </Button>
-                  </Box>
-                </Grid>
+            {/* Priority and Category */}
+            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+              Priority and Category
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Priority"
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleChange}
+                  select
+                  fullWidth
+                  required
+                >
+                  {["Low", "Medium", "High"].map((level) => (
+                    <MenuItem key={level} value={level}>
+                      {level}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
-            </form>
-          </>
-        )}
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  select
+                  fullWidth
+                  required
+                >
+                  {["Hardware", "Software", "Network"].map((cat) => (
+                    <MenuItem key={cat} value={cat}>
+                      {cat}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            </Grid>
+
+            {/* Submit Button */}
+            <Box display="flex" justifyContent="center" mt={5}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                disabled={submitting}
+                startIcon={submitting && <CircularProgress size={20} />}
+              >
+                {submitting ? "Submitting..." : "Submit Incident"}
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
       </Paper>
     </Box>
   );
