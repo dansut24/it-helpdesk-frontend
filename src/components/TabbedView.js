@@ -125,14 +125,15 @@ const HoverMenuItem = ({ icon, label, active, open, subItems }) => {
 
       {open && (
         <Popper
-          open={menuVisible}
-          anchorEl={anchorEl}
-          placement="right-start"
-          transition
-          disablePortal
-          onMouseEnter={() => clearTimeout(timeoutRef.current)}
-          onMouseLeave={handleLeave}
-        >
+  open={menuVisible}
+  anchorEl={anchorEl}
+  placement="right-start"
+  transition
+  disablePortal={false} // <- important!
+  container={document.body} // <- important!
+  onMouseEnter={() => clearTimeout(timeoutRef.current)}
+  onMouseLeave={handleLeave}
+>
           {({ TransitionProps }) => (
             <Fade {...TransitionProps} timeout={200}>
               <MuiPaper sx={{ p: 1, minWidth: 200, boxShadow: 3 }}>
