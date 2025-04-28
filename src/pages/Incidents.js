@@ -13,15 +13,12 @@ import {
   Select,
   FormControl,
   InputLabel,
-  List,
-  ListItem,
-  ListItemText,
   Drawer,
   IconButton,
   Divider,
-  useMediaQuery,
+  useMediaQuery
 } from "@mui/material";
-import { fetchIncidents, assignIncidentToMe } from "../api";
+import { fetchIncidents } from "../api";
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
 import CloseIcon from "@mui/icons-material/Close";
@@ -65,18 +62,17 @@ const Incidents = ({ openTab }) => {
           }
         }
 
-        // If no real incidents, inject some demo ones
         if (fetchedIncidents.length === 0 && fakeIncidents.length === 0) {
-          const demoIncidents = Array.from({ length: 5 }).map((_, idx) => ({
-            referenceNumber: `DEMO-${1000 + idx}`,
+          // If no real data or fake, inject 5 test incidents
+          fetchedIncidents = Array.from({ length: 5 }).map((_, idx) => ({
+            referenceNumber: `TEST-${1000 + idx}`,
             title: `Test Incident ${idx + 1}`,
-            priority: idx % 3 === 0 ? "High" : idx % 2 === 0 ? "Medium" : "Low",
-            status: ["Open", "Paused", "Resolved", "Waiting for Customer", "Closed"][idx % 5],
-            created_by_user_name: "Demo User",
-            assigned_team_name: "Support",
-            assigned_user_name: "Technician A",
+            priority: ["High", "Medium", "Low"][idx % 3],
+            status: ["Open", "Paused", "Waiting for Customer", "Resolved", "Closed"][idx % 5],
+            created_by_user_name: "Test User",
+            assigned_team_name: "Support Team",
+            assigned_user_name: "Technician",
           }));
-          fetchedIncidents = demoIncidents;
         }
 
         setIncidents([...fakeIncidents, ...fetchedIncidents]);
@@ -112,43 +108,46 @@ const Incidents = ({ openTab }) => {
   return (
     <Box p={3}>
       {/* Search + Filter Bar */}
-{/* Search + Filter Bar */}
-<Box
-  sx={{
-    width: '100%',
-    mx: { xs: 0, sm: 0 }, // ✅ No horizontal margin
-    px: { xs: 2, sm: 3 }, // ✅ Small horizontal padding manually
-    mt: 2, // Space under AppBar
-    display: 'flex',
-    alignItems: 'center',
-    gap: 2,
-    flexWrap: isMobile ? 'wrap' : 'nowrap',
-  }}
->
-  <TextField
-    variant="outlined"
-    size="small"
-    placeholder="Search incidents..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <SearchIcon />
-        </InputAdornment>
-      ),
-    }}
-    fullWidth // ✅ Full width input
-    sx={{
-      flexGrow: 1,
-      minWidth: isMobile ? '100%' : 'auto',
-    }}
-  />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          mb: 3,
+          backgroundColor: "#f5f5f5",
+          p: 2,
+          borderRadius: 2,
+          mx: -3, // cancel outer padding on mobile
+          px: { xs: 2, sm: 3 },
+        }}
+      >
+        <TextField
+          variant="outlined"
+          size="small"
+          placeholder="Search incidents..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+          }}
+        />
 
-  <IconButton color="primary" onClick={() => setFilterDrawerOpen(true)}>
-    <TuneIcon />
-  </IconButton>
-</Box>
+        <IconButton
+          color="primary"
+          onClick={() => setFilterDrawerOpen(true)}
+          sx={{ ml: 1 }}
+        >
+          <TuneIcon />
+        </IconButton>
+      </Box>
+
       {/* Incident Cards */}
       {applyFilters(incidents).map((incident) => (
         <Card
