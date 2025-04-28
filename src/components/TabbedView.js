@@ -814,8 +814,6 @@ return (
             flexGrow: 1,
             overflowY: 'auto',
             bgcolor: theme.palette.background.default,
-            px: 2,
-            py: 2,
           }}
         >
           {renderContent()}
