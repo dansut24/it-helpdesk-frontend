@@ -112,33 +112,40 @@ const Incidents = ({ openTab }) => {
   return (
     <Box p={3}>
       {/* Search + Filter Bar */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 2,
-          mb: 3,
-          backgroundColor: "#f5f5f5",
-          p: 2,
-          borderRadius: 2,
-          flexWrap: isMobile ? "wrap" : "nowrap",
-        }}
-      >
-        <TextField
-          variant="outlined"
-          size="small"
-          placeholder="Search incidents..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          InputProps={{ startAdornment: (<InputAdornment position="start"><SearchIcon /></InputAdornment>) }}
-          sx={{ flexGrow: 1, minWidth: isMobile ? "100%" : "auto" }}
-        />
+      {/* Search + Filter Bar */}
+<Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    gap: 2,
+    mb: 3,
+    backgroundColor: "#f5f5f5",
+    p: 2,
+    borderRadius: 2,
+    mx: -3, // <-- cancels the outer Box p={3} padding!
+    flexWrap: isMobile ? "wrap" : "nowrap",
+  }}
+>
+  <TextField
+    variant="outlined"
+    size="small"
+    placeholder="Search incidents..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <SearchIcon />
+        </InputAdornment>
+      ),
+    }}
+    sx={{ flexGrow: 1, minWidth: isMobile ? "100%" : "auto" }}
+  />
 
-        <IconButton color="primary" onClick={() => setFilterDrawerOpen(true)}>
-          <TuneIcon />
-        </IconButton>
-      </Box>
-
+  <IconButton color="primary" onClick={() => setFilterDrawerOpen(true)}>
+    <TuneIcon />
+  </IconButton>
+</Box>
       {/* Incident Cards */}
       {applyFilters(incidents).map((incident) => (
         <Card
