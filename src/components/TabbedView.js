@@ -743,7 +743,7 @@ return (
  <List
   sx={{
     width: '100%',
-    pt: 8, // 64px = theme default AppBar height
+    pt: 4,
   }}
 >
     {/* Section: MAIN */}
