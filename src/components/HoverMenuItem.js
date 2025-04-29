@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
 import { ListItem, ListItemText, Box, MenuItem, Popper, Fade, Paper as MuiPaper } from "@mui/material";
+import Typography from "@mui/material/Typography";  // ✅ Fix missing Typography
+
 
 const HoverMenuItem = ({ icon, label, active, open, subItems }) => {
   const [anchorEl, setAnchorEl] = useState(null);
