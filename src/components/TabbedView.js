@@ -712,7 +712,7 @@ return (
     bgcolor: theme.palette.background.paper,
     borderRight: `1px solid ${theme.palette.divider}`,
     position: 'fixed',
-    top: 64,
+    top: 0,
     left: 0,
     zIndex: 1200,
     transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -740,7 +740,12 @@ return (
   </IconButton>
 
   {/* Sidebar List */}
-  <List sx={{ width: '100%' }}>
+ <List
+  sx={{
+    width: '100%',
+    pt: 8, // 64px = theme default AppBar height
+  }}
+>
     {/* Section: MAIN */}
     <Divider textAlign="left" sx={{ width: '100%', mb: 1 }}>
       {sidebarOpen && (
