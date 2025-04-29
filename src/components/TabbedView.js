@@ -719,7 +719,7 @@ return (
     display: 'flex',
     flexDirection: 'column',
     alignItems: sidebarOpen ? 'flex-start' : 'center',
-    overflow: 'hidden', // ✅ prevent sidebar scrolling
+    overflow: 'hidden',
     py: 2,
     px: sidebarOpen ? 2 : 0,
   }}
@@ -732,7 +732,7 @@ return (
       mb: 2,
       backgroundColor: theme.palette.background.paper,
       border: `1px solid ${theme.palette.divider}`,
-      transition: 'all 0.3s ease', // Smooth the button movement too
+      transition: 'all 0.3s ease',
     }}
     size="small"
   >
@@ -748,7 +748,8 @@ return (
         color="text.secondary"
         sx={{
           opacity: sidebarOpen ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          visibility: sidebarOpen ? 'visible' : 'hidden',
+          transition: 'opacity 0.3s ease, visibility 0.3s ease',
           pl: sidebarOpen ? 1 : 0,
         }}
       >
@@ -767,7 +768,8 @@ return (
       <Box
         sx={{
           opacity: sidebarOpen ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          visibility: sidebarOpen ? 'visible' : 'hidden',
+          transition: 'opacity 0.3s ease, visibility 0.3s ease',
           whiteSpace: 'nowrap',
         }}
       >
@@ -775,7 +777,7 @@ return (
       </Box>
     </ListItem>
 
-    {/* HoverMenuItems */}
+    {/* Hover Menus */}
     <HoverMenuItem
       icon={<FolderIcon />}
       label="Incidents"
@@ -816,7 +818,8 @@ return (
         color="text.secondary"
         sx={{
           opacity: sidebarOpen ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          visibility: sidebarOpen ? 'visible' : 'hidden',
+          transition: 'opacity 0.3s ease, visibility 0.3s ease',
           pl: sidebarOpen ? 1 : 0,
         }}
       >
@@ -835,7 +838,8 @@ return (
       <Box
         sx={{
           opacity: sidebarOpen ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          visibility: sidebarOpen ? 'visible' : 'hidden',
+          transition: 'opacity 0.3s ease, visibility 0.3s ease',
           whiteSpace: 'nowrap',
         }}
       >
@@ -854,14 +858,14 @@ return (
       <Box
         sx={{
           opacity: sidebarOpen ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          visibility: sidebarOpen ? 'visible' : 'hidden',
+          transition: 'opacity 0.3s ease, visibility 0.3s ease',
           whiteSpace: 'nowrap',
         }}
       >
         <ListItemText primary="Profile" />
       </Box>
     </ListItem>
-
   </List>
 </Box>
 )}
