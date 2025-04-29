@@ -715,7 +715,7 @@ return (
     top: 0,
     left: 0,
     zIndex: 1200,
-    transition: 'width 0.3s ease',
+    transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: sidebarOpen ? 'flex-start' : 'center',
@@ -739,25 +739,18 @@ return (
     {sidebarOpen ? <ArrowBackIcon /> : <ArrowForwardIcon />}
   </IconButton>
 
-  {/* Sidebar Content */}
+  {/* Sidebar List */}
   <List sx={{ width: '100%' }}>
-    {/* Section Divider */}
+    {/* Section: MAIN */}
     <Divider textAlign="left" sx={{ width: '100%', mb: 1 }}>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{
-          opacity: sidebarOpen ? 1 : 0,
-          visibility: sidebarOpen ? 'visible' : 'hidden',
-          transition: 'opacity 0.3s ease, visibility 0.3s ease',
-          pl: sidebarOpen ? 1 : 0,
-        }}
-      >
-        MAIN
-      </Typography>
+      {sidebarOpen && (
+        <Typography variant="caption" color="text.secondary" sx={{ pl: 1 }}>
+          MAIN
+        </Typography>
+      )}
     </Divider>
 
-    {/* Dashboard Item */}
+    {/* Dashboard */}
     <ListItem
       button
       selected={selectedTab === "Dashboard"}
@@ -765,19 +758,10 @@ return (
       sx={navItemStyles(selectedTab === "Dashboard", sidebarOpen)}
     >
       <HomeIcon sx={navIconStyles(sidebarOpen)} />
-      <Box
-        sx={{
-          opacity: sidebarOpen ? 1 : 0,
-          visibility: sidebarOpen ? 'visible' : 'hidden',
-          transition: 'opacity 0.3s ease, visibility 0.3s ease',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <ListItemText primary="Dashboard" />
-      </Box>
+      {sidebarOpen && <ListItemText primary="Dashboard" />}
     </ListItem>
 
-    {/* Hover Menus */}
+    {/* Incidents (HoverMenuItem) */}
     <HoverMenuItem
       icon={<FolderIcon />}
       label="Incidents"
@@ -789,6 +773,7 @@ return (
       ]}
     />
 
+    {/* Service Requests */}
     <HoverMenuItem
       icon={<BuildIcon />}
       label="Service Requests"
@@ -800,6 +785,7 @@ return (
       ]}
     />
 
+    {/* Changes */}
     <HoverMenuItem
       icon={<MoreVertIcon />}
       label="Changes"
@@ -811,20 +797,13 @@ return (
       ]}
     />
 
-    {/* Admin Divider */}
+    {/* Section: ADMIN */}
     <Divider textAlign="left" sx={{ width: '100%', mt: 2, mb: 1 }}>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{
-          opacity: sidebarOpen ? 1 : 0,
-          visibility: sidebarOpen ? 'visible' : 'hidden',
-          transition: 'opacity 0.3s ease, visibility 0.3s ease',
-          pl: sidebarOpen ? 1 : 0,
-        }}
-      >
-        ADMIN
-      </Typography>
+      {sidebarOpen && (
+        <Typography variant="caption" color="text.secondary" sx={{ pl: 1 }}>
+          ADMIN
+        </Typography>
+      )}
     </Divider>
 
     {/* Admin Settings */}
@@ -835,16 +814,7 @@ return (
       sx={navItemStyles(selectedTab === "Admin Settings", sidebarOpen)}
     >
       <SettingsIcon sx={navIconStyles(sidebarOpen)} />
-      <Box
-        sx={{
-          opacity: sidebarOpen ? 1 : 0,
-          visibility: sidebarOpen ? 'visible' : 'hidden',
-          transition: 'opacity 0.3s ease, visibility 0.3s ease',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <ListItemText primary="Admin Settings" />
-      </Box>
+      {sidebarOpen && <ListItemText primary="Admin Settings" />}
     </ListItem>
 
     {/* Profile */}
@@ -855,16 +825,7 @@ return (
       sx={navItemStyles(selectedTab === "Profile", sidebarOpen)}
     >
       <AccountCircleIcon sx={navIconStyles(sidebarOpen)} />
-      <Box
-        sx={{
-          opacity: sidebarOpen ? 1 : 0,
-          visibility: sidebarOpen ? 'visible' : 'hidden',
-          transition: 'opacity 0.3s ease, visibility 0.3s ease',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <ListItemText primary="Profile" />
-      </Box>
+      {sidebarOpen && <ListItemText primary="Profile" />}
     </ListItem>
   </List>
 </Box>
