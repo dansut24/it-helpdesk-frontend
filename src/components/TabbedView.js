@@ -705,112 +705,165 @@ return (
   </Drawer>
 ) : (
   // Desktop Sidebar (Box, HoverMenuItem flyouts work)
-  <Box
+<Box
+  sx={{
+    width: sidebarWidth,
+    height: '100vh',
+    bgcolor: theme.palette.background.paper,
+    borderRight: `1px solid ${theme.palette.divider}`,
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    zIndex: 1200,
+    transition: 'width 0.3s ease',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: sidebarOpen ? 'flex-start' : 'center',
+    overflow: 'hidden', // ✅ prevent sidebar scrolling
+    py: 2,
+    px: sidebarOpen ? 2 : 0,
+  }}
+>
+  {/* Collapse/Expand Arrow */}
+  <IconButton
+    onClick={() => setSidebarOpen(!sidebarOpen)}
     sx={{
-      width: sidebarWidth,
-      height: '100vh',
-      bgcolor: theme.palette.background.paper,
-      borderRight: `1px solid ${theme.palette.divider}`,
-      position: 'fixed',
-      zIndex: 1200,
-      transition: 'width 0.3s ease',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: sidebarOpen ? 'flex-start' : 'center',
-      py: 2,
-      px: sidebarOpen ? 2 : 0,
-      overflowY: 'auto',
+      alignSelf: sidebarOpen ? 'flex-end' : 'center',
+      mb: 2,
+      backgroundColor: theme.palette.background.paper,
+      border: `1px solid ${theme.palette.divider}`,
+      transition: 'all 0.3s ease', // Smooth the button movement too
     }}
+    size="small"
   >
-    {/* Collapse/Expand Arrow */}
-    <IconButton
-      onClick={() => setSidebarOpen(!sidebarOpen)}
-      sx={{
-        position: 'absolute',
-        top: 16,
-        right: sidebarOpen ? -16 : -8,
-        backgroundColor: theme.palette.background.paper,
-        border: `1px solid ${theme.palette.divider}`,
-        zIndex: 1301,
-      }}
-      size="small"
+    {sidebarOpen ? <ArrowBackIcon /> : <ArrowForwardIcon />}
+  </IconButton>
+
+  {/* Sidebar Content */}
+  <List sx={{ width: '100%' }}>
+    {/* Section Divider */}
+    <Divider textAlign="left" sx={{ width: '100%', mb: 1 }}>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{
+          opacity: sidebarOpen ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          pl: sidebarOpen ? 1 : 0,
+        }}
+      >
+        MAIN
+      </Typography>
+    </Divider>
+
+    {/* Dashboard Item */}
+    <ListItem
+      button
+      selected={selectedTab === "Dashboard"}
+      onClick={() => openTab("Dashboard")}
+      sx={navItemStyles(selectedTab === "Dashboard", sidebarOpen)}
     >
-      {sidebarOpen ? <ArrowBackIcon /> : <ArrowForwardIcon />}
-    </IconButton>
-
-    <List sx={{ width: '100%' }}>
-      <Divider textAlign="left" sx={{ width: '100%', mb: 1 }}>
-        <Typography variant="caption" color="text.secondary">MAIN</Typography>
-      </Divider>
-
-      <ListItem
-        button
-        selected={selectedTab === "Dashboard"}
-        onClick={() => openTab("Dashboard")}
-        sx={navItemStyles(selectedTab === "Dashboard", sidebarOpen)}
+      <HomeIcon sx={navIconStyles(sidebarOpen)} />
+      <Box
+        sx={{
+          opacity: sidebarOpen ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          whiteSpace: 'nowrap',
+        }}
       >
-        <HomeIcon sx={navIconStyles(sidebarOpen)} />
-        {sidebarOpen && <ListItemText primary="Dashboard" />}
-      </ListItem>
+        <ListItemText primary="Dashboard" />
+      </Box>
+    </ListItem>
 
-      <HoverMenuItem
-        icon={<FolderIcon />}
-        label="Incidents"
-        active={selectedTab.includes("Incident")}
-        open={sidebarOpen}
-        subItems={[
-          { label: "View Incidents", onClick: () => openTab("Incidents") },
-          { label: "New Incident", onClick: () => openTab("New Incident") },
-        ]}
-      />
+    {/* HoverMenuItems */}
+    <HoverMenuItem
+      icon={<FolderIcon />}
+      label="Incidents"
+      active={selectedTab.includes("Incident")}
+      open={sidebarOpen}
+      subItems={[
+        { label: "View Incidents", onClick: () => openTab("Incidents") },
+        { label: "New Incident", onClick: () => openTab("New Incident") },
+      ]}
+    />
 
-      <HoverMenuItem
-        icon={<BuildIcon />}
-        label="Service Requests"
-        active={selectedTab.includes("Service Request")}
-        open={sidebarOpen}
-        subItems={[
-          { label: "View Requests", onClick: () => openTab("Service Requests") },
-          { label: "Raise Request", onClick: () => openTab("Raise Service Request") },
-        ]}
-      />
+    <HoverMenuItem
+      icon={<BuildIcon />}
+      label="Service Requests"
+      active={selectedTab.includes("Service Request")}
+      open={sidebarOpen}
+      subItems={[
+        { label: "View Requests", onClick: () => openTab("Service Requests") },
+        { label: "Raise Request", onClick: () => openTab("Raise Service Request") },
+      ]}
+    />
 
-      <HoverMenuItem
-        icon={<MoreVertIcon />}
-        label="Changes"
-        active={selectedTab.includes("Change")}
-        open={sidebarOpen}
-        subItems={[
-          { label: "Change Log", onClick: () => openTab("Changes") },
-          { label: "New Change", onClick: () => openTab("New Change") },
-        ]}
-      />
+    <HoverMenuItem
+      icon={<MoreVertIcon />}
+      label="Changes"
+      active={selectedTab.includes("Change")}
+      open={sidebarOpen}
+      subItems={[
+        { label: "Change Log", onClick: () => openTab("Changes") },
+        { label: "New Change", onClick: () => openTab("New Change") },
+      ]}
+    />
 
-      <Divider textAlign="left" sx={{ width: '100%', mt: 2, mb: 1 }}>
-        <Typography variant="caption" color="text.secondary">ADMIN</Typography>
-      </Divider>
-
-      <ListItem
-        button
-        selected={selectedTab === "Admin Settings"}
-        onClick={() => openTab("Admin Settings")}
-        sx={navItemStyles(selectedTab === "Admin Settings", sidebarOpen)}
+    {/* Admin Divider */}
+    <Divider textAlign="left" sx={{ width: '100%', mt: 2, mb: 1 }}>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{
+          opacity: sidebarOpen ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          pl: sidebarOpen ? 1 : 0,
+        }}
       >
-        <SettingsIcon sx={navIconStyles(sidebarOpen)} />
-        {sidebarOpen && <ListItemText primary="Admin Settings" />}
-      </ListItem>
+        ADMIN
+      </Typography>
+    </Divider>
 
-      <ListItem
-        button
-        selected={selectedTab === "Profile"}
-        onClick={() => openTab("Profile")}
-        sx={navItemStyles(selectedTab === "Profile", sidebarOpen)}
+    {/* Admin Settings */}
+    <ListItem
+      button
+      selected={selectedTab === "Admin Settings"}
+      onClick={() => openTab("Admin Settings")}
+      sx={navItemStyles(selectedTab === "Admin Settings", sidebarOpen)}
+    >
+      <SettingsIcon sx={navIconStyles(sidebarOpen)} />
+      <Box
+        sx={{
+          opacity: sidebarOpen ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          whiteSpace: 'nowrap',
+        }}
       >
-        <AccountCircleIcon sx={navIconStyles(sidebarOpen)} />
-        {sidebarOpen && <ListItemText primary="Profile" />}
-      </ListItem>
-    </List>
-  </Box>
+        <ListItemText primary="Admin Settings" />
+      </Box>
+    </ListItem>
+
+    {/* Profile */}
+    <ListItem
+      button
+      selected={selectedTab === "Profile"}
+      onClick={() => openTab("Profile")}
+      sx={navItemStyles(selectedTab === "Profile", sidebarOpen)}
+    >
+      <AccountCircleIcon sx={navIconStyles(sidebarOpen)} />
+      <Box
+        sx={{
+          opacity: sidebarOpen ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <ListItemText primary="Profile" />
+      </Box>
+    </ListItem>
+
+  </List>
+</Box>
 )}
       {/* Main Content */}
       <Box
