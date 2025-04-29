@@ -712,7 +712,7 @@ return (
     bgcolor: theme.palette.background.paper,
     borderRight: `1px solid ${theme.palette.divider}`,
     position: 'fixed',
-    top: 0,
+    top: 64,
     left: 0,
     zIndex: 1200,
     transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
