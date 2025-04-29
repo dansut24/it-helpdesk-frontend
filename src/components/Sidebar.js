@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, List, ListItem, ListItemText, Divider, IconButton, Typography } from '@mui/material';
 import { Home as HomeIcon, Folder as FolderIcon, Build as BuildIcon, MoreVert as MoreVertIcon, Settings as SettingsIcon, AccountCircle as AccountCircleIcon, ArrowBack as ArrowBackIcon, ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
 import HoverMenuItem from './HoverMenuItem'; // Make sure you move or import HoverMenuItem correctly
+import { Drawer } from "@mui/material";  // ✅ Fix missing Drawer
 
 const Sidebar = ({
   sidebarOpen,
